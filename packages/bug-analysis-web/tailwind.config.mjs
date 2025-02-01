@@ -1,6 +1,7 @@
+// @ts-check
+
 /** @type {import('tailwindcss').Config} */
-// eslint-disable-next-line no-undef
-module.exports = {
+const config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
@@ -10,3 +11,5 @@ module.exports = {
   },
   plugins: [],
 };
+
+export default config;
