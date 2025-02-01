@@ -1,2 +1,7 @@
-import withPreconstruct from '@preconstruct/next';
-export default withPreconstruct();
+// @ts-check
+
+/** @type {import('next').NextConfig} */
+const config = {
+  reactStrictMode: true,
+};
+export default config;

@@ -1,26 +1,20 @@
 {
-  "name": "@bug-track-monorepo/root",
+  "name": "bug-track-monorepo",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "workspaces": [
-    "packages/*",
     "apps/*",
-    "services/*"
+    "packages/*"
   ],
   "dependencies": {
-    "@babel/core": "^7.26.7",
-    "@babel/plugin-transform-runtime": "^7.25.9",
-    "@babel/preset-env": "^7.26.7",
-    "@babel/preset-react": "^7.26.3",
-    "@preconstruct/cli": "^2.8.10"
-  },
-  "preconstruct": {
-    "packages": [
-      "packages/*"
-    ]
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
   },
   "scripts": {
-    "postinstall": "preconstruct dev",
-    "build": "preconstruct build"
-  }
+    "build": "turbo build",
+    "dev": "turbo dev"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
