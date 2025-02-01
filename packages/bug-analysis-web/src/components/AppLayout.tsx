@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 
 const AppLayout = ({ children }: PropsWithChildren<unknown>) => {
   return (
