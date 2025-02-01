@@ -8,7 +8,6 @@
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
     "noImplicitAny": true,
     "incremental": true,
     "module": "ESNext",

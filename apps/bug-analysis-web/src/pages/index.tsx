@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 const HomePage = () => {
-  const [testApiMsg, setTestApiMsg] = useState<string>(undefined);
+  const [testApiMsg, setTestApiMsg] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     fetch(

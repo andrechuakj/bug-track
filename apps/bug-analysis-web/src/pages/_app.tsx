@@ -1,9 +1,8 @@
+import type { AppProps } from 'next/app';
 import AppLayout from '../components/AppLayout';
 import './globals.css';
 
-import type { AppProps } from 'next/app';
-
-function MyApp({ Component, pageProps }: AppProps) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <AppLayout>
@@ -11,6 +10,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </AppLayout>
     </>
   );
-}
+};
 
 export default MyApp;
