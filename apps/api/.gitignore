@@ -13,3 +13,6 @@ myenv/
 .env
 .env.local
 .env.production
+
+# Code generation
+/client/api.ts

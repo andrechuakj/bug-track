@@ -3,7 +3,23 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "description": "API + client for the Bug Analysis Website",
+  "exports": {
+    ".": "./client/index.ts"
+  },
   "scripts": {
-    "dev": "fastapi dev src/main.py"
+    "dev": "run-p dev:backend dev:api",
+    "dev:backend": "fastapi dev src/main.py",
+    "dev:api": "bun --watch client/main.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.2",
+    "bun": "^1.2.2",
+    "npm-run-all2": "^7.0.2",
+    "openapi-typescript": "^7.6.0",
+    "typescript": "*"
   }
 }

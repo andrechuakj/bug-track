@@ -1,4 +1,3 @@
-// openapi-typescript http://localhost:8000/openapi.json --output src/api.ts
 import fs from 'node:fs';
 import openapiTS, { astToString } from 'openapi-typescript';
 
@@ -19,7 +18,7 @@ const generate = async () => {
   }
   lastHash = hash;
   console.log('Changes detected, updating API client...');
-  fs.writeFileSync('src/api.ts', contents);
+  fs.writeFileSync('client/api.ts', contents);
 };
 
 // Generate the API client every other second
