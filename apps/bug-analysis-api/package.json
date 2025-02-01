@@ -1,0 +1,9 @@
+{
+  "name": "bug-analysis-api",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "fastapi dev src/main.py"
+  }
+}
