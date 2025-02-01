@@ -1,0 +1,22 @@
+{
+  "name": "~api",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "API Client for the Bug Analysis Website",
+  "exports": {
+    ".": "./src/client.ts"
+  },
+  "scripts": {
+    "dev": "bun --watch src/main.ts"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.2",
+    "bun": "^1.2.2",
+    "openapi-typescript": "^7.6.0",
+    "typescript": "*"
+  }
+}
