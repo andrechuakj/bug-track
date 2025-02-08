@@ -1,0 +1,28 @@
+.menuItem {
+  font-size: 14px;
+}
+
+.sider {
+  min-height: 100vh;
+}
+
+.ghSymbol {
+  color: white;
+  opacity: 80%;
+  padding-left: 5px;
+}
+
+.content {
+  margin: 24px 16px;
+  min-height: calc(100vh - 120px);
+  background: var(--ant-primary-color);
+}
+
+.header {
+  padding-left: 5px;
+}
+
+.switch {
+  position: absolute;
+  right: 5px;
+}
