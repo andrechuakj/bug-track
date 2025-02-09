@@ -5,5 +5,8 @@
     "source.organizeImports": "always",
     "source.fixAll.eslint": "always"
   },
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
