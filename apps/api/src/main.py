@@ -4,12 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["http://localhost:3000"],
-  allow_methods=["*"],               
-  allow_headers=["*"],                     
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 @app.get("/")
 def test():
-  return {"message": "Hello from API!"}
+    return {"message": "Hello from API!"}
