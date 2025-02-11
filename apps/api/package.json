@@ -10,7 +10,10 @@
   "scripts": {
     "dev": "run-p dev:backend dev:api",
     "dev:backend": "fastapi dev src/main.py",
-    "dev:api": "bun --watch client/main.ts"
+    "dev:api": "bun --watch client/main.ts",
+    "lint": "run-p lint:backend lint:api",
+    "lint:api": "prettier --check client",
+    "lint:backend": "black src --check"
   },
   "dependencies": {
     "openapi-fetch": "^0.13.4"
@@ -20,6 +23,7 @@
     "bun": "^1.2.2",
     "npm-run-all2": "^7.0.2",
     "openapi-typescript": "^7.6.0",
+    "prettier": "*",
     "typescript": "*"
   }
 }
