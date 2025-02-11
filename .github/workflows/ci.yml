@@ -17,6 +17,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Enable Corepack for Yarn
+        run: corepack enable
+      - name: Cache Yarn dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
           cache: yarn
       - name: Set up Python
         uses: actions/setup-python@v5
