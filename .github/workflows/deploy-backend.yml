@@ -1,0 +1,31 @@
+name: Deploy Backend
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch/Tag/SHA to deploy
+        required: true
+        default: main
+
+permissions:
+  # Allow pushing to the deployment branch
+  contents: write
+
+jobs:
+  deploy-backend:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - name: Push to deployment branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/api
+          publish_branch: deploy-backend
+          exclude_assets: 'client,package.json,tsconfig.json'
