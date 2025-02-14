@@ -5,13 +5,13 @@ from internal.errors import NotFoundError
 
 
 class _UserService:
-    _mock_users: Sequence[User] = [
+    _mock_users: list[User] = [
         User(id=1, name="John Doe", email="john.doe@example", password="password1"),
         User(id=2, name="Jane Doe", email="jane.doe@example", password="password2"),
     ]
     _next_id = 3
 
-    def get_users(self):
+    def get_users(self) -> Sequence[User]:
         return self._mock_users
 
     def get_user(self, user_id: int):

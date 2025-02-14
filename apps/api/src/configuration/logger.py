@@ -5,10 +5,10 @@ from logging import Logger, getLogger
 from fastapi import FastAPI
 from utilities.constants import constants
 
-_logger: Logger = None
+_logger: Logger | None = None
 
 
-def get_logger():
+def get_logger() -> Logger:
     if _logger is None:
         raise ValueError('Logger has not been configured.')
     return _logger
