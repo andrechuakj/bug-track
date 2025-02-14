@@ -1,8 +1,37 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+
+from domain.helpers.Timestampable import Timestampable
+from internal.errors import NotFoundError
+from sqlmodel import Field, Session, SQLModel, select
 
 
-class User(BaseModel):
-    id: int | None = None
+class User(SQLModel, Timestampable, table=True):
+    __tablename__ = 'users'
+    id: int | None = Field(default=None, primary_key=True)
     name: str
     email: str
     password: str = Field(repr=False)
+
+
+def get_users(tx: Session):
+    return tx.exec(select(User))
+
+
+def get_user(tx: Session, user_id: int):
+    return tx.get(User, user_id)
+
+
+def save_user(tx: Session, user: User):
+    user.updated_at = datetime.now()
+    tx.add(user)
+    tx.commit()
+    return user
+
+
+def delete_user(tx: Session, user_id: int):
+    user = tx.get(User, user_id)
+    if not user:
+        raise NotFoundError(f'User {user_id} not found')
+    tx.delete(user)
+    tx.commit()
+    return user
