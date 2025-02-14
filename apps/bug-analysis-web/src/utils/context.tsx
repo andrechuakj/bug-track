@@ -1,9 +1,9 @@
 import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import { AppTheme } from './types';
 
 const AppContext = createContext({
   theme: '',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  updateTheme: (_: string) => {},
+  updateTheme: (_: AppTheme) => {},
 });
 
 export const useAppContext = () => useContext(AppContext);
@@ -11,9 +11,9 @@ export const useAppContext = () => useContext(AppContext);
 export const AppProvider: React.FC<PropsWithChildren> = ({
   children,
 }: PropsWithChildren) => {
-  const [theme, setTheme] = useState<string>('dark');
+  const [theme, setTheme] = useState<AppTheme>('dark');
 
-  const updateTheme = (newTheme: string) => {
+  const updateTheme = (newTheme: AppTheme) => {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
   };

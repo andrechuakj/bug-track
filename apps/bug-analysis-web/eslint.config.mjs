@@ -18,6 +18,10 @@ export default tseslint.config([
       '@typescript-eslint/no-var-requires': 'off',
       'import/no-commonjs': 'off',
       '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
     },
   },
 ]);

@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { ReactNode } from 'react';
 import { BugDistribution, generateBugDistrBar } from '../utils/chart';
 import { useAppContext } from '../utils/context';
+import { AppTheme } from '../utils/types';
 
 // Dynamically import ECharts for client-side rendering only
 const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
@@ -65,7 +66,7 @@ const HomePage: React.FC = (): ReactNode => {
               option={generateBugDistrBar(
                 DUMMY_BUG_DISTR,
                 'Bug Distribution (by Category)',
-                (theme as 'dark' | 'light') ?? 'dark'
+                (theme as AppTheme) ?? 'dark'
               )}
             />
           </Card>

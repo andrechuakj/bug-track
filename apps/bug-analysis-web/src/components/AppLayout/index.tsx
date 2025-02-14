@@ -25,6 +25,7 @@ import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { useAppContext } from '../../utils/context';
 import { APP_THEME } from '../../utils/theme';
+import { AppTheme } from '../../utils/types';
 import styles from './index.module.css';
 
 const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
@@ -52,7 +53,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
   const isDarkMode = themeSetting === 'dark';
 
   useEffect(() => {
-    updateTheme(localStorage.getItem('theme') ?? themeSetting);
+    updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
   }, []);
 
   return (

@@ -1,5 +1,8 @@
 // Bug distribution by category, bar graph
 
+import { EChartsOption } from 'echarts-for-react';
+import { BugTrackColors } from './theme';
+
 export interface BugCategory {
   category: string;
   count: number;
@@ -13,7 +16,7 @@ export const generateBugDistrBar = (
   distr: BugDistribution,
   title: string,
   theme: 'dark' | 'light' = 'dark'
-) => {
+): EChartsOption => {
   const isDark = theme === 'dark';
   const color = isDark ? '#ffffff' : '#000000';
 
@@ -34,7 +37,7 @@ export const generateBugDistrBar = (
       {
         data: distr.categories.map((e) => e.count),
         type: 'bar',
-        itemStyle: { color: '#7f51db' },
+        itemStyle: { color: BugTrackColors.PURPLE },
       },
     ],
   };
