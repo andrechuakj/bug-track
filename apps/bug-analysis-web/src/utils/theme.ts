@@ -1,12 +1,31 @@
 import type { ThemeConfig } from 'antd';
 
 export enum BugTrackColors {
+  MAGENTA = '#E0529C',
   GREEN = '#6FBC98',
   YELLOW = '#E0E3A6',
   ORANGE = '#EFC1A1',
   PURPLE = '#7F51DB',
   BLUE = '#84D2F3',
 }
+
+export const antdTagPresets = [
+  'magenta',
+  'red',
+  'volcano',
+  'orange',
+  'gold',
+  'lime',
+  'green',
+  'cyan',
+  'blue',
+  'geekblue',
+  'purple',
+];
+
+export const BugTrackColorsArr = Object.keys(BugTrackColors).map(
+  (key) => BugTrackColors[key as keyof typeof BugTrackColors]
+);
 
 export const APP_THEME: ThemeConfig = {
   token: {
