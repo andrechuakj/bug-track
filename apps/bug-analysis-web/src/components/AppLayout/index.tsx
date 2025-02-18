@@ -51,6 +51,8 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
   const { Text } = Typography;
   const { theme: themeSetting, updateTheme } = useAppContext();
   const isDarkMode = themeSetting === 'dark';
+  const logo = siderCollapse ? 'favicon.ico' : 'bug_track_logo.png';
+  const logoStyle = siderCollapse ? 'h-3/6' : 'h-5/6';
 
   useEffect(() => {
     updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
@@ -73,15 +75,15 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
           trigger={null}
           collapsible
           collapsed={siderCollapse}
-          collapsedWidth="50"
+          collapsedWidth="55"
           breakpoint="xs"
           onBreakpoint={(c) => setSiderCollapse(c)}
-          width="15vw"
+          width="11vw"
           className={styles.sider}
         >
           <div className="flex flex-col h-full">
-            <div role="none" style={{ height: '64px' }}>
-              Our logo goes here
+            <div role="img" className="flex justify-center h-16 items-center">
+              <img src={logo} className={logoStyle} />
             </div>
 
             <Menu
