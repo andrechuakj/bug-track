@@ -1,0 +1,14 @@
+from pydantic import BaseModel, Field
+
+class Dbms(BaseModel):
+    id: int | None = None
+    name: str
+
+class CategoryEnum(BaseModel):
+    id: int
+    category_name: str
+
+class BugReport(BaseModel):
+    id: int
+    dbms_id: int
+    category_id: int
