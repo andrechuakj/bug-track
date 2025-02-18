@@ -1,44 +1,146 @@
-// Bug distribution by category, bar graph
-
 import { EChartsOption } from 'echarts-for-react';
+import { BugCategory } from '../api/dbms';
+import { truncateName } from './text';
 import { BugTrackColors } from './theme';
 
-export interface BugCategory {
-  category: string;
-  count: number;
-}
-
-export interface BugDistribution {
-  categories: BugCategory[];
-}
+const MAX_LABEL_LEN = 10;
 
 export const generateBugDistrBar = (
-  distr: BugDistribution,
+  distr: BugCategory[],
   title: string,
   theme: 'dark' | 'light' = 'dark'
 ): EChartsOption => {
   const isDark = theme === 'dark';
   const color = isDark ? '#ffffff' : '#000000';
 
+  // Filter categories with counts
+  const filteredDistr = distr.filter((b: BugCategory) => b.count > 0);
+
+  // Show 'No Bugs' if no data
+  if (filteredDistr.length === 0) {
+    return {
+      title: {
+        text: 'No Bugs',
+        left: 'center',
+        top: 'middle',
+        textStyle: {
+          color,
+          fontSize: 20,
+        },
+      },
+    };
+  }
+
+  // Normal Bar Graph with Axis Label Fix
   return {
+    grid: {
+      top: '5%',
+      left: '1%',
+      right: '1%',
+      bottom: '20%',
+      containLabel: true,
+    },
     tooltip: {},
     xAxis: {
       type: 'category',
-      data: distr.categories.map((e) => e.category),
-      axisLabel: { color },
-      axisLine: { lineStyle: { color } },
+      data: filteredDistr.map((e: BugCategory) =>
+        truncateName(e.name, MAX_LABEL_LEN)
+      ),
+      axisLabel: {
+        color,
+        interval: 0, // Show all labels
+        fontSize: 10,
+      },
+      axisLine: {
+        lineStyle: { color },
+      },
     },
     yAxis: {
       type: 'value',
-      axisLabel: { color },
-      axisLine: { lineStyle: { color } },
+      axisLabel: {
+        color,
+        fontSize: 10,
+      },
+      axisLine: {
+        lineStyle: { color },
+      },
     },
     series: [
       {
-        data: distr.categories.map((e) => e.count),
+        data: filteredDistr.map((e: BugCategory) => e.count),
         type: 'bar',
-        itemStyle: { color: BugTrackColors.PURPLE },
+        itemStyle: {
+          color: BugTrackColors.PURPLE,
+        },
       },
     ],
   };
+};
+
+// NOTE: This is a temporary component for showcase of layout
+// TODO: Replace this component/type once dashboard design is finalised
+type BugTallyInstance = { label: string; count: number };
+export const generateBugTrendChart = (
+  bugTallyInstances: BugTallyInstance[]
+) => {
+  // Extract labels and counts from the input
+  const labels = bugTallyInstances.map(
+    (instance: BugTallyInstance) => instance.label
+  );
+  const counts = bugTallyInstances.map(
+    (instance: BugTallyInstance) => instance.count
+  );
+
+  const option = {
+    title: {
+      left: 'center',
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
+    xAxis: {
+      type: 'category',
+      data: labels,
+      axisTick: { alignWithLabel: true },
+      axisLabel: {
+        interval: 0, // Show all labels
+
+        formatter: (value: string) => truncateName(value, 6),
+      },
+    },
+
+    yAxis: {
+      type: 'value',
+      name: 'Bug Count',
+    },
+    grid: {
+      top: '5%',
+      left: '1%',
+      right: '1%',
+      bottom: '20%',
+      containLabel: true,
+    },
+    series: [
+      {
+        name: 'Bugs',
+        type: 'line',
+        smooth: true,
+        showSymbol: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        itemStyle: {
+          color: BugTrackColors.MAGENTA,
+        },
+        areaStyle: {
+          opacity: 0.1,
+        },
+        data: counts,
+      },
+    ],
+  };
+
+  return option;
 };
