@@ -1,8 +1,10 @@
+.idea/
 .next/
 .turbo/
 
 dist/
+out/
 node_modules/
 
 # Environment variables
-/**/*/*.env
+*.env
