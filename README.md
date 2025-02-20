@@ -4,8 +4,9 @@
 
 ## Setup NextJS application and dev environment
 
-1. cd to `packages/bug-analysis-web/`, run `yarn && yarn dev`
-1. Create a `.env.local` file and populate `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_API_PORT` environment variables
+1. Navigate to the `apps/bug-analysis-web/` directory by running `cd apps/bug-analysis-web/`
+1. Install dependencies and start the frontend development server with `yarn && yarn dev`
+1. Create a `.env.local` file in the current directory and populate `NEXT_PUBLIC_API_URL` environment variable, for e.g. `NEXT_PUBLIC_API_URL=http://localhost:8000`
 1. Ensure that prettier and eslint extensions on VSCode are installed
 1. Set your default formatter to 'Prettier - Code formatter' and check the setting `Editor: Format on Save`
 1. Try to shift the code around, to test the auto-formatting. Also try to trigger eslint errors to see if your IDE highlights them
