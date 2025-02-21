@@ -51,7 +51,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
   const { Text } = Typography;
   const { theme: themeSetting, updateTheme } = useAppContext();
   const isDarkMode = themeSetting === 'dark';
-  const logo = siderCollapse ? 'favicon.ico' : 'bug_track_logo.png';
+  const logo = siderCollapse ? '/favicon.ico' : '/bug_track_logo.png';
   const logoStyle = siderCollapse ? 'h-3/6' : 'h-5/6';
 
   useEffect(() => {
