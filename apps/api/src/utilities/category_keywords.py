@@ -1,0 +1,61 @@
+from typing import Dict
+
+CATEGORY_KEYWORDS: Dict[str, list[str]] = {
+    "Crash / Segmentation Fault": [
+        "segmentation fault", "crash", "core dump", "unexpected termination", 
+        "fatal error", "server crash", "process killed", "memory access violation",
+        "invalid memory address", "nil pointer dereference", "SIGSEGV",
+        "unexpected panic", "runtime crash", "heap corruption"
+    ],
+    "Assertion Failure": [
+        "assertion failed", "failed assertion", "assertion error", 
+        "unexpected assertion", "assertion violation", "check failed",
+        "invariant violation", "assert condition not met", "debug assertion failure"
+    ],
+    "Infinite Loop / Hang": [
+        "infinite loop", "query never ends", "query hangs", "unresponsive", 
+        "high cpu usage", "long running query", "never completes", "timeout exceeded",
+        "query stuck", "execution freeze", "loop detected"
+    ],
+    "Incorrect Query Result": [
+        "incorrect result", "wrong output", "mismatch", "unexpected result", 
+        "query inconsistency", "wrong calculation", "incorrect computation", "data mismatch",
+        "unexpected null", "wrong order", "floating point precision issue",
+        "incorrect type conversion", "unexpected duplicate rows", "unexpected NULL behavior"
+    ],
+    "Transaction Anomaly": [
+        "transaction rollback", "transaction inconsistency", "dirty read", 
+        "phantom read", "non-repeatable read", "isolation failure", 
+        "unexpected commit", "rollback failure", "transaction state error",
+        "write skew", "serialization failure", "lost update"
+    ],
+    "Constraint Violation": [
+        "constraint violation", "foreign key error", "unique constraint failed", 
+        "check constraint failed", "primary key violation", "duplicate entry", 
+        "referential integrity issue", "unexpected value in column",
+        "constraint not enforced", "unexpected auto-increment behavior",
+        "constraint check failure"
+    ],
+    "Data Corruption": [
+        "data corruption", "corrupt index", "unexpected null values", 
+        "incorrect storage", "lost data", "inconsistent database state", 
+        "unexpected data loss", "invalid page header", "index corruption",
+        "checksum mismatch", "unexpected NULL storage", "data truncation"
+    ],
+    "Performance Degradation": [
+        "slow query", "query optimization issue", "performance drop", 
+        "high latency", "execution time too long", "suboptimal execution plan",
+        "optimizer failure", "index not used", "unexpected full table scan",
+        "wrong join order", "plan regression", "performance regression",
+        "unexpected high memory usage"
+    ],
+    "Deadlock": [
+        "deadlock detected", "transaction deadlock", "circular wait", 
+        "lock timeout", "waiting for lock", "blocking transaction", 
+        "mutex deadlock", "deadlock victim", "deadlock prevention failed",
+        "unexpected deadlock resolution"
+    ],
+    "Others": []
+}
+
+__all__ = ["CATEGORY_KEYWORDS"]
