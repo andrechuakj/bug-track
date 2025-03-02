@@ -12,16 +12,22 @@
 
 ## Setup FastAPI
 
-1. cd to `packages/bug-analysis-api/`
-1. Run the following:
+1. Navigate to `apps/api/` directory by running `cd apps/api/`
+1. Run the following commands:
 
    ```bash
    python -m venv myenv
    source myenv/bin/activate
    pip install -r requirements.txt
    ```
+   On Windows, run the following instead:
+   ```bash
+   python -m venv myenv
+   myenv\Scripts\activate
+   pip install -r win_requirements.txt
+   ```
 
-1. If there are import errors in `.py` files, you can open your editor at the path specified in `1.`, while ensuring that the env is active
-1. Run `uvicorn app.main:app --reload`
+1. Navigate to `src` with `cd src/`
+1. Start the backend with `uvicorn main:app --reload`
 
 > To check that the environment is set up, run both FE & BE, and ensure that the API is fetching correctly.

@@ -70,7 +70,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
         },
       }}
     >
-      <Layout>
+      <Layout style={{ height: '100vh', overflow: 'hidden'}}>
         <Sider
           trigger={null}
           collapsible
@@ -135,7 +135,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
               />
             </Space>
           </Header>
-          <Content className={styles.content}>{children}</Content>
+          <Content className={styles.content} style={{ overflow: 'auto' }}>{children}</Content>
         </Layout>
       </Layout>
     </ConfigProvider>
