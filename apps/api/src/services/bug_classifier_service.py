@@ -17,6 +17,10 @@ nlp = spacy.load("en_core_web_lg")
 # Load trained ML model
 MODEL_DIR = Path(__file__).parent.parent / "model"
 
+FUZZY_WEIGHT = 0.4
+SPACY_WEIGHT = 0.4
+TOKEN_OVERLAP_WEIGHT = 0.2
+
 with open(MODEL_DIR / "bug_classifier_model.pkl", "rb") as model_file:
     model: LogisticRegression = pickle.load(model_file)
 
@@ -87,7 +91,7 @@ class _BugClassifierService:
 
                 # Dynamic Weighted Scoring
                 length_factor = min(len(issue_title) / 100, 1)  # Normalize length impact
-                combined_score = (0.4 * fuzzy_score) + (0.4 * spacy_score) + (0.2 * common_token_score * length_factor)
+                combined_score = (FUZZY_WEIGHT * fuzzy_score) + (SPACY_WEIGHT * spacy_score) + (TOKEN_OVERLAP_WEIGHT * common_token_score * length_factor)
 
                 # Update best match
                 if combined_score > best_score and combined_score > 0.7:
