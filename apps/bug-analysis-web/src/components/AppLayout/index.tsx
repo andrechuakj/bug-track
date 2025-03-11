@@ -70,7 +70,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
         },
       }}
     >
-      <Layout style={{ height: '100vh', overflow: 'hidden'}}>
+      <Layout className={"h-screen overflow-hidden"}>
         <Sider
           trigger={null}
           collapsible
@@ -83,7 +83,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
         >
           <div className="flex flex-col h-full">
             <div role="img" className="flex justify-center h-16 items-center">
-              <img src={logo} className={logoStyle} />
+              <img src={logo} className={logoStyle} alt={"BugTrack logo"}/>
             </div>
 
             <Menu
@@ -135,7 +135,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
               />
             </Space>
           </Header>
-          <Content className={styles.content} style={{ overflow: 'auto' }}>{children}</Content>
+          <Content className={`${styles.content} overflow-auto`}>{children}</Content>
         </Layout>
       </Layout>
     </ConfigProvider>
