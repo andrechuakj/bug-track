@@ -1,7 +1,7 @@
 import { EChartsOption } from 'echarts-for-react';
 import { BugCategory } from '../api/dbms';
 import { truncateName } from './text';
-import { BugTrackColors } from './theme';
+import { antdTagPresets, BugTrackColors } from './theme';
 
 const MAX_LABEL_LEN = 10;
 
@@ -37,7 +37,7 @@ export const generateBugDistrBar = (
       top: '5%',
       left: '1%',
       right: '1%',
-      bottom: '20%',
+      bottom: '1%',
       containLabel: true,
     },
     tooltip: {},
@@ -67,11 +67,17 @@ export const generateBugDistrBar = (
     },
     series: [
       {
-        data: filteredDistr.map((e: BugCategory) => e.count),
+        data: filteredDistr.map((e: BugCategory, idx: number) => ({
+          value: e.count,
+          itemStyle: {
+            color: antdTagPresets[idx % antdTagPresets.length],
+            opacity: 0.45,
+            borderColor: antdTagPresets[idx % antdTagPresets.length],
+            borderWidth: 2,
+            borderRadius: [2, 2, 0, 0],
+          },
+        })),
         type: 'bar',
-        itemStyle: {
-          color: BugTrackColors.PURPLE,
-        },
       },
     ],
   };
@@ -120,7 +126,7 @@ export const generateBugTrendChart = (
       top: '5%',
       left: '1%',
       right: '1%',
-      bottom: '20%',
+      bottom: '1%',
       containLabel: true,
     },
     series: [

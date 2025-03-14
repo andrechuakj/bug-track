@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fade-in-text {
+  animation: fadeInSwipe 1s ease-out forwards;
+  clip-path: inset(0 100% 0 0);
+}
+
+@keyframes fadeInSwipe {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
