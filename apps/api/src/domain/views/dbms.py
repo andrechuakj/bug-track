@@ -15,3 +15,6 @@ class DbmsResponseDto(BaseModel):
     name: str
     bug_count: int
     bug_categories: List[BugCategory]
+
+class AiSummaryResponseDto(BaseModel):
+    summary: str

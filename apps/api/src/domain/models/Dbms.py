@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class Dbms(BaseModel):
     id: int | None = None
@@ -12,3 +13,4 @@ class BugReport(BaseModel):
     id: int
     dbms_id: int
     category_id: int
+    description: Optional[str]

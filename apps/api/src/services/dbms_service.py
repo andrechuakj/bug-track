@@ -1,11 +1,14 @@
 from domain.models.Dbms import Dbms
 
+from random import sample
+
 from pydantic import BaseModel
 from typing import List
 from enum import Enum
 from collections import defaultdict
 from domain.views.dbms import BugCategory
 from domain.models.Dbms import BugReport
+
 
 # Mock CategoryEnum (Simulating a table from the DB)
 class CategoryEnum(Enum):
@@ -34,48 +37,118 @@ class _DbmsService:
     # Mock Bug Reports
     # Mock Bug Reports for All Categories
     _mock_bug_reports = [
-      BugReport(id=1, dbms_id=1, category_id=CategoryEnum.CRASH.value),
-      BugReport(id=2, dbms_id=1, category_id=CategoryEnum.CRASH.value),
+      BugReport(id=1, dbms_id=1, category_id=CategoryEnum.CRASH.value, description='''## Bug Report
 
-      BugReport(id=3, dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value),
-      BugReport(id=4, dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value),
+        Please answer these questions before submitting your issue. Thanks!
 
-      BugReport(id=5, dbms_id=1, category_id=CategoryEnum.USABILITY.value),
-      BugReport(id=6, dbms_id=1, category_id=CategoryEnum.USABILITY.value),
+        ### 1. Minimal reproduce step (Required)
 
-      BugReport(id=7, dbms_id=1, category_id=CategoryEnum.COMPATIBILITY.value),
+        ```sql
+        SELECT UNCOMPRESSED_LENGTH('invalid_compressed_data')
+        ```
 
-      BugReport(id=8, dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value),
-      BugReport(id=9, dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value),
+        ### 2. What did you expect to see? (Required)
 
-      BugReport(id=10, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value),
-      BugReport(id=11, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value),
-      BugReport(id=12, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value),
+        MySQL returns `561409641`
 
-      BugReport(id=13, dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value),
-      BugReport(id=14, dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value),
+        ### 3. What did you see instead (Required)
 
-      BugReport(id=15, dbms_id=1, category_id=CategoryEnum.DEADLOCK.value),
+        TiDB returns `1635151465`.
 
-      BugReport(id=16, dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value),
-      BugReport(id=17, dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value),
+        ### 4. What is your TiDB version? (Required)
 
-      BugReport(id=18, dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value),
-      BugReport(id=19, dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value),
+        <!-- Paste the output of SELECT tidb_version() -->'''),
+      BugReport(id=2, dbms_id=1, category_id=CategoryEnum.CRASH.value, description=None),
 
-      BugReport(id=20, dbms_id=1, category_id=CategoryEnum.PRIVILEGE_ESCALATION.value),
+      BugReport(id=3, dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value, description=None),
+      BugReport(id=4, dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value, description='''
+        In current code we don't fully make use of the prefetch buffer. There's a background goroutine (spawned in line 48) that uses the prefetch buffer to read data from reader (line 57)
 
-      BugReport(id=21, dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value),
-      BugReport(id=22, dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value),
+        https://github.com/pingcap/tidb/blob/b7e97690b9feb019ab0bec9ea6814af432ae948d/pkg/util/prefetch/reader.go#L48-L63
 
-      BugReport(id=23, dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value),
-      BugReport(id=24, dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value),
+        However if the reader only return partial data (like it's a socket and OS chooses to return only few bytes, naming `N`) this reading action is finished and the loop is waiting on sending to channel (line 62). If the caller of "prefetch reader" doesn't consume the channel quickly, we are wasting a large proportion of the prefetch buffer which is `buf[N:]` because they are not filled. We should let the background goroutine use `io.ReadFull` to fully use the prefetch buffer.'''),
 
-      BugReport(id=25, dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value),
-      BugReport(id=26, dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value),
+      BugReport(id=5, dbms_id=1, category_id=CategoryEnum.USABILITY.value, description=None),
+      BugReport(id=6, dbms_id=1, category_id=CategoryEnum.USABILITY.value, description=None),
 
-      BugReport(id=27, dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value),
-      BugReport(id=28, dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value),
+      BugReport(id=7, dbms_id=1, category_id=CategoryEnum.COMPATIBILITY.value, description=None),
+
+      BugReport(id=8, dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value, description=None),
+      BugReport(id=9, dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value, description=None),
+
+      BugReport(id=10, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
+      BugReport(id=11, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
+      BugReport(id=12, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
+
+      BugReport(id=13, dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value, description=None),
+      BugReport(id=14, dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value, description=None),
+
+      BugReport(id=15, dbms_id=1, category_id=CategoryEnum.DEADLOCK.value, description=None),
+
+      BugReport(id=16, dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value, description=None),
+      BugReport(id=17, dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value, description=None),
+
+      BugReport(id=18, dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value, description=None),
+      BugReport(id=19, dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value, description=None),
+
+      BugReport(id=20, dbms_id=1, category_id=CategoryEnum.PRIVILEGE_ESCALATION.value, description=None),
+
+      BugReport(id=21, dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value, description=None),
+      BugReport(id=22, dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value, description=None),
+
+      BugReport(id=23, dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value, description=None),
+      BugReport(id=24, dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value, description=None),
+
+      BugReport(id=25, dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value, description=None),
+      BugReport(id=26, dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value, description='''## Bug Report
+
+        Please answer these questions before submitting your issue. Thanks!
+
+        ### 1. Minimal reproduce step (Required)
+
+        <!-- a step by step guide for reproducing the bug. -->
+
+        ### 2. What did you expect to see? (Required)
+
+        ```
+        mysql> SELECT IS_UUID(' 6ccd780c-baba-1026-8567-4cc3505b2a62 ');
+        +---------------------------------------------------+
+        | IS_UUID(' 6ccd780c-baba-1026-8567-4cc3505b2a62 ') |
+        +---------------------------------------------------+
+        |                                                 0 |
+        +---------------------------------------------------+
+        1 row in set (0.03 sec)
+
+        mysql> SELECT UUID_TO_BIN(' 6ccd780c-baba-1026-9564-5b8c656024db ');
+        ERROR 1411 (HY000): Incorrect string value: ' 6ccd780c-baba-1026-9564-5b8c656024db ' for function uuid_to_bin
+        ```
+
+        ### 3. What did you see instead (Required)
+
+        ```
+        mysql> SELECT IS_UUID(' 6ccd780c-baba-1026-8567-4cc3505b2a62 ');
+        +---------------------------------------------------+
+        | IS_UUID(' 6ccd780c-baba-1026-8567-4cc3505b2a62 ') |
+        +---------------------------------------------------+
+        |                                                 1 |
+        +---------------------------------------------------+
+        1 row in set (0.00 sec)
+
+        mysql> SELECT UUID_TO_BIN(' 6ccd780c-baba-1026-9564-5b8c656024db ');
+        +--------------------------------------------------------------------------------------------------------------+
+        | UUID_TO_BIN(' 6ccd780c-baba-1026-9564-5b8c656024db ')                                                        |
+        +--------------------------------------------------------------------------------------------------------------+
+        | 0x6CCD780CBABA102695645B8C656024DB                                                                           |
+        +--------------------------------------------------------------------------------------------------------------+
+        1 row in set (0.00 sec)
+        ```
+
+        ### 4. What is your TiDB version? (Required)
+
+        <!-- Paste the output of SELECT tidb_version() -->'''),
+
+      BugReport(id=27, dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value, description=None),
+      BugReport(id=28, dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value, description=None),
     ]
 
 
@@ -122,6 +195,29 @@ class _DbmsService:
         ]
 
         return bug_categories
+    
+    '''
+        Sample a random set of bug descriptions.
 
+        dbms_id: dbms from which we will sample the bug descriptions
+        sample_percent: percentage of bug descriptions to sample
+    '''
+    # TODO: Replace each step with the appropriate ORM query
+    def get_random_bug_descriptions_sample(self, dbms_id: int, sample_percent: float) -> List[str]:
+        # TODO: Establish connection to the correct DBMS-tenant table 
+        # Get the bug count
+        bug_count = len(self._mock_bug_reports)
+        # Get the virtual id corresponding to each row in the database
+        # Note that we do not support deletion yet, hence bug_report_id
+        # (or its equivalent) will correspond to the physical row index 
+        
+        # TODO: Replace the dummy code with the commented out code when
+        #       we have populated the database
+        # sample_idx = sample(range(bug_count), int(bug_count * sample_percent))
+        sample_idx = [0, 3, 25]
+        # Retrieve the corresponding rows with an IN query
+        descriptions_sample = [self._mock_bug_reports[i].description for i in sample_idx]
+
+        return descriptions_sample
 
 DbmsService = _DbmsService()
