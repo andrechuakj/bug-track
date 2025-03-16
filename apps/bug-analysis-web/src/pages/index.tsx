@@ -21,6 +21,7 @@ import {
 import clsx from 'clsx';
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   AiSummary,
@@ -37,6 +38,7 @@ import CategoryTag from '../components/CategoryTag';
 import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
 import SearchResultListItem from '../components/SearchResultListItem';
+import { useAuth } from '../contexts/AuthContext';
 import {
   AcBugSearchResult,
   AcBugSearchResultCategory,
@@ -60,9 +62,23 @@ import {
 const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 const HomePage: React.FC = (): ReactNode => {
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
   const [dbmsData, setDbmsData] = useState<DbmsResponseDto>();
   const [aiSummary, setAiSummary] = useState<AiSummary>();
   const [aiButtonLoading, setAiButtonLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [loading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [loading, isAuthenticated, router]);
 
   // Form logic (bug search)
   const [redemptionForm] = Form.useForm();

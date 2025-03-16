@@ -1,6 +1,17 @@
-import { Grid, Form, Input, Button, FormInstance } from 'antd';
-import DatabaseDropdown from '../components/DatabaseDropdown';
+import {
+  Button,
+  Form,
+  FormInstance,
+  Grid,
+  Input,
+  message,
+  Typography,
+} from 'antd';
+import { useRouter } from 'next/router';
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import authService from '../api/auth';
+import DatabaseDropdown from '../components/DatabaseDropdown';
+import { useAuth } from '../contexts/AuthContext';
 
 interface LoginFormValues {
   database: string;
@@ -8,24 +19,36 @@ interface LoginFormValues {
   password: string;
 }
 
-const onFormSubmit = (values: LoginFormValues): void => {
-  console.log('onFormSubmit | values:', values);
-  // todo auth
-};
-
-
-const onLoginFail = (errorInfo: {
-  values: LoginFormValues;
-  errorFields: { name: (string | number)[]; errors: string[] }[];
-  outOfDate?: boolean;
-}): void => {
-  console.log('Failed:', errorInfo);
-};
-
-
 const Login: React.FC = () => {
   const [form] = Form.useForm();
   const selectedDb = Form.useWatch('database', form);
+  const { login, loading } = useAuth();
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  const onFormSubmit = async (values: LoginFormValues): Promise<void> => {
+    console.log('onFormSubmit | values:', values);
+    setLoginError(null);
+    try {
+      const success = await login(values.username, values.password);
+      if (success) {
+        message.success('Login successful!');
+      } else {
+        setLoginError('Invalid username or password. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setLoginError('An error occurred during login.');
+    }
+  };
+
+  const onLoginFail = (errorInfo: {
+    values: LoginFormValues;
+    errorFields: { name: (string | number)[]; errors: string[] }[];
+    outOfDate?: boolean;
+  }): void => {
+    console.log('Failed:', errorInfo);
+    message.error('Please check the form for errors.');
+  };
 
   const formIsValid = (form: FormInstance) => {
     const requiredFields = ['database', 'username', 'password'];
@@ -39,10 +62,13 @@ const Login: React.FC = () => {
     return allFieldsFilled && !hasErrors;
   };
 
-  const animation = "duration-1000 ease-in-out";
+  const animation = 'duration-1000 ease-in-out';
   const screens = Grid.useBreakpoint();
 
-  const [fieldsHeight, setFieldsHeight]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0);
+  const [fieldsHeight, setFieldsHeight]: [
+    number,
+    React.Dispatch<React.SetStateAction<number>>,
+  ] = useState(0);
   const fieldsRef = useRef<HTMLDivElement | null>(null);
   useLayoutEffect(() => {
     if (fieldsRef.current) {
@@ -72,12 +98,10 @@ const Login: React.FC = () => {
         <Form.Item
           label="Database"
           name="database"
-          rules={[
-            { required: true, message: 'Please select a database!' },
-          ]}
+          rules={[{ required: true, message: 'Please select a database!' }]}
           className={`w-full max-w-xs md:max-w-md transition-all ${animation}`}
         >
-          <DatabaseDropdown/>
+          <DatabaseDropdown />
         </Form.Item>
         <div // for setting boundaries for visible children in transition, and resizing
           className={`w-full max-w-xs md:max-w-md overflow-hidden flex items-end transition-all ${animation} 
@@ -88,7 +112,7 @@ const Login: React.FC = () => {
             ref={fieldsRef}
             className={`w-full transition-opacity ${animation} 
           ${selectedDb ? 'opacity-100' : 'opacity-0'}
-          ${selectedDb ? "pointer-events-auto" : "pointer-events-none"}
+          ${selectedDb ? 'pointer-events-auto' : 'pointer-events-none'}
           `}
           >
             <Form.Item
@@ -111,17 +135,25 @@ const Login: React.FC = () => {
             </Form.Item>
           </div>
         </div>
-        <Form.Item className={"text-center w-full max-w-xs mt-4"}
-                   wrapperCol={screens.md ? { offset: 0, span: 24 } : undefined}
-                   shouldUpdate>
+        {loginError && (
+          <Typography.Text type="danger" className="mb-4">
+            {loginError}
+          </Typography.Text>
+        )}
+        <Form.Item
+          className={'text-center w-full max-w-xs mt-4'}
+          wrapperCol={screens.md ? { offset: 0, span: 24 } : undefined}
+          shouldUpdate
+        >
           {() => {
-            const isDisabled: boolean = !formIsValid(form);
+            const isDisabled: boolean = !formIsValid(form) || loading;
             return (
               <Button
                 type="primary"
                 htmlType="submit"
                 className={`w-1/2 transition-transform ${animation}`}
-                disabled={ isDisabled }
+                disabled={isDisabled}
+                loading={loading}
               >
                 Log In
               </Button>

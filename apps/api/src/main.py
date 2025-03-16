@@ -3,6 +3,7 @@ from configuration.db import configure_database
 from configuration.logger import configure_logger
 from configuration.openai import configure_openai
 from configuration.startup_info import configure_startup_info
+from controllers.auth_controller import router as auth_router
 from controllers.dbms_controller import router as dbms_router
 from controllers.user_controller import router as user_router
 from domain.config import db_txn_manager_generator
@@ -30,5 +31,6 @@ app.add_middleware(
 )
 
 register_error_handler(app)
+app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(dbms_router)

@@ -1,4 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import { AuthProvider } from '../contexts/AuthContext';
 import { AppTheme } from './types';
 
 const AppContext = createContext({
@@ -24,6 +25,8 @@ export const AppProvider: React.FC<PropsWithChildren> = ({
   };
 
   return (
-    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
+    <AppContext.Provider value={contextValue}>
+      <AuthProvider>{children}</AuthProvider>
+    </AppContext.Provider>
   );
 };

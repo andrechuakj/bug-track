@@ -1,4 +1,8 @@
+from dotenv import find_dotenv, load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+dotenv_path = find_dotenv(".env.local") or ".env.local"
+load_dotenv(dotenv_path)
 
 
 class _Constants(BaseSettings, frozen=True):
