@@ -1,6 +1,4 @@
-import os
 import openai
-from dotenv import load_dotenv, find_dotenv
 from utilities.prompts import get_dbms_ai_summary_prompt
 
 from typing import Sequence
@@ -18,11 +16,6 @@ from fastapi import HTTPException
 
 
 router = APIRouter(prefix="/api/v1/dbms", tags=["dbms"])
-
-dotenv_path = find_dotenv(".env.local") or ".env.local"
-load_dotenv(dotenv_path)
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 @router.get("/")

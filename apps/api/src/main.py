@@ -1,6 +1,7 @@
 from configuration.config import load_configurations
 from configuration.db import configure_database
 from configuration.logger import configure_logger
+from configuration.openai import configure_openai
 from configuration.startup_info import configure_startup_info
 from controllers.dbms_controller import router as dbms_router
 from controllers.user_controller import router as user_router
@@ -15,6 +16,7 @@ app = FastAPI(
         configure_logger,
         configure_startup_info,
         configure_database,
+        configure_openai,
     ),
     dependencies=[
         Depends(db_txn_manager_generator),
