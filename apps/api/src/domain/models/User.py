@@ -17,7 +17,7 @@ def get_users(tx: Session):
     return tx.exec(select(User)).all()
 
 
-def get_user(tx: Session, user_id: int):
+def get_user_by_id(tx: Session, user_id: int):
     return tx.get(User, user_id)
 
 
@@ -29,7 +29,7 @@ def save_user(tx: Session, user: User):
 
 
 def delete_user(tx: Session, user_id: int):
-    user = get_user(tx, user_id)
+    user = get_user_by_id(tx, user_id)
     if not user:
         raise NotFoundError(f"User {user_id} not found")
     tx.delete(user)

@@ -9,7 +9,7 @@ class _UserService:
         return get_users(tx)
 
     def get_user(self, tx: Session, user_id: int):
-        return get_user(tx, user_id)
+        return get_user_by_id(tx, user_id)
 
     def save_user(self, tx: Session, user: User):
         return save_user(tx, user)

@@ -18,7 +18,7 @@ def get_dbms_systems(tx: Session):
     return tx.exec(select(DBMSSystem)).all()
 
 
-def get_dbms_system(tx: Session, dbms_system_id: int):
+def get_dbms_system_by_id(tx: Session, dbms_system_id: int):
     return tx.get(DBMSSystem, dbms_system_id)
 
 
@@ -29,7 +29,7 @@ def save_dbms_system(tx: Session, dbms_system: DBMSSystem):
 
 
 def delete_dbms_system(tx: Session, dbms_system_id: int):
-    dbms_system = get_dbms_system(tx, dbms_system_id)
+    dbms_system = get_dbms_system_by_id(tx, dbms_system_id)
     if not dbms_system:
         raise NotFoundError(f"DBMS system {dbms_system_id} not found")
     tx.delete(dbms_system)

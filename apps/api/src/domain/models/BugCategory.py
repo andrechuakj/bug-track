@@ -14,7 +14,7 @@ def get_bug_categories(tx: Session):
     return tx.exec(select(BugCategory)).all()
 
 
-def get_bug_category(tx: Session, bug_category_id: int):
+def get_bug_category_by_id(tx: Session, bug_category_id: int):
     return tx.get(BugCategory, bug_category_id)
 
 
@@ -25,7 +25,7 @@ def save_bug_category(tx: Session, bug_category: BugCategory):
 
 
 def delete_bug_category(tx: Session, bug_category_id: int):
-    bug_category = get_bug_category(tx, bug_category_id)
+    bug_category = get_bug_category_by_id(tx, bug_category_id)
     if not bug_category:
         raise NotFoundError(f"Bug category {bug_category_id} not found")
     tx.delete(bug_category)

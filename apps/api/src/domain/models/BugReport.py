@@ -17,7 +17,7 @@ def get_bug_reports(tx: Session):
     return tx.exec(select(BugReport)).all()
 
 
-def get_bug_report(tx: Session, bug_report_id: int):
+def get_bug_report_by_id(tx: Session, bug_report_id: int):
     return tx.get(BugReport, bug_report_id)
 
 
@@ -28,7 +28,7 @@ def save_bug_report(tx: Session, bug_report: BugReport):
 
 
 def delete_bug_report(tx: Session, bug_report_id: int):
-    bug_report = get_bug_report(tx, bug_report_id)
+    bug_report = get_bug_report_by_id(tx, bug_report_id)
     if not bug_report:
         raise NotFoundError(f"Bug report {bug_report_id} not found")
     tx.delete(bug_report)
