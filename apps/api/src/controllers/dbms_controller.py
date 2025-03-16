@@ -7,7 +7,8 @@ from typing import Sequence
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
 from services.dbms_service import DbmsService
-from domain.views.dbms import DbmsResponseDto, DbmsListResponseDto, AiSummaryResponseDto
+from domain.views.dbms import DbmsResponseDto, DbmsListResponseDto, AiSummaryResponseDto, BugSearchResponseDto, BugSearchCategoryResponseDto
+from fastapi import HTTPException
 
 
 router = APIRouter(prefix='/api/v1/dbms', tags=['dbms'])
@@ -38,7 +39,6 @@ async def get_ai_summary(dbms_id: int) -> AiSummaryResponseDto:
     try: 
         dbms = DbmsService.get_dbms_by_id(dbms_id)
         
-        print('dbmsdbms', dbms)
         sample_desc = DbmsService.get_random_bug_descriptions_sample(dbms_id, 0.005)
 
         response = openai.ChatCompletion.create(
@@ -58,6 +58,55 @@ async def get_ai_summary(dbms_id: int) -> AiSummaryResponseDto:
         print('e:', e)
         return AiSummaryResponseDto(summary="Summary is not ready for this DBMS yet.")
 
+'''
+    Note: category_id query param is optional
+'''
+@router.get('/{dbms_id}/bug_search')
+async def get_bugs(dbms_id: int, request: Request) -> BugSearchResponseDto:
+    try: 
+        search = request.query_params.get("search", "")  
+        start = int(request.query_params.get("start", 0))
+        limit = int(request.query_params.get("limit", 10))
+        category_id = request.query_params.get("category_id", None)
 
+        bug_reports = DbmsService.bug_search(dbms_id, search, start, limit, [category_id] if category_id is not None else [])
+
+        return BugSearchResponseDto(bug_reports=bug_reports)
+    
+    except Exception as e:
+        print('e:', e)
+        return BugSearchResponseDto(bug_reports=[])
+    
+'''
+    Get an extension of bug reports for a specific category, when viewing the bug list 
+    on the main dashboard by clicking 'Load more...'. This is when no search/filter/sort 
+    is applied.
+
+    distribution values should be absolute counts
+'''
+@router.get('/{dbms_id}/bug_search_category')
+async def get_bugs_by_category(dbms_id: int, request: Request) -> BugSearchCategoryResponseDto:
+    try: 
+        category_id = int(request.query_params.get("category_id", None))
+        amount = int(request.query_params.get("amount", 0))
+        # passed as csv
+        distribution = request.query_params.get("distribution")
+        if distribution is None:
+            raise HTTPException(status_code=400, detail="Invalid request, please pass in distribution query param as comma-separated values.")
+        
+        distribution = [int(i) for i in distribution.split(',')]
+
+        if amount == 0 or category_id >= len(distribution) or category_id < 0:
+            raise HTTPException(status_code=400, detail="Invalid request, amount or distribution not passed or passed incorrectly.")
+
+        # parse distribution
+        
+        bug_reports_delta = DbmsService.bug_search_category(dbms_id, category_id, distribution[category_id], amount)
+        delta_count = len(bug_reports_delta)
+        distribution[category_id] += delta_count
+        return BugSearchCategoryResponseDto(bug_reports_delta=bug_reports_delta, new_bug_distr=distribution)
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Invalid request, amount or distribution not passed or passed incorrectly.")
 
 __all__ = ['router']
