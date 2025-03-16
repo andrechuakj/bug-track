@@ -55,7 +55,7 @@ class Runner:
                 )
             ),
             # Use parameters to prevent SQL injection
-            {"seed_file_name": filename},
+            params={"seed_file_name": filename},
         )
         self.tx.commit()
 
@@ -69,6 +69,7 @@ def scan_files():
         for f in os.listdir(folder_name)
         if os.path.isfile(os.path.join(folder_name, f))
     ]
+    seed_files.sort()
     return seed_files
 
 
