@@ -1,7 +1,9 @@
 {
   "recommendations": [
-    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
     "dbaeumer.vscode-eslint",
-    "bradlc.vscode-tailwindcss"
+    "esbenp.prettier-vscode",
+    "ms-python.black-formatter",
+    "ritwickdey.liveserver"
   ]
 }

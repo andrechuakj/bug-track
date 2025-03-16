@@ -3,10 +3,18 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always",
-    "source.fixAll.eslint": "always"
+    "source.fixAll.eslint": "always",
+    "source.unusedImports": "always"
   },
   "files.insertFinalNewline": true,
+  "python.analysis.extraPaths": ["apps/api/src"],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "liveServer.settings.root": "apps/bug-analysis-web/out/",
+  "liveServer.settings.file": "index.html",
+  "liveServer.settings.NoBrowser": true
 }
