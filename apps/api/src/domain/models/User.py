@@ -29,7 +29,7 @@ def save_user(tx: Session, user: User):
 
 
 def delete_user(tx: Session, user_id: int):
-    user = tx.get(User, user_id)
+    user = get_user(tx, user_id)
     if not user:
         raise NotFoundError(f"User {user_id} not found")
     tx.delete(user)
