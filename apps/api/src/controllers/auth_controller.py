@@ -5,12 +5,15 @@ from domain.config import get_db
 from domain.views.auth import LoginRequest, LoginResponse
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from services.auth_service import (ACCESS_TOKEN_EXPIRE_MINUTES,
-                                   create_access_token, verify_password)
+from services.auth_service import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    create_access_token,
+    verify_password,
+)
 from services.user_service import UserService
 from sqlmodel import Session
 
-router = APIRouter(prefix='/api/v1/auth', tags=['authentication'])
+router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 
@@ -41,9 +44,10 @@ async def login_with_token(request: Request, login_request: LoginRequest):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.email, "id": user.id, "name": user.name},
-        expires_delta=access_token_expires
+        expires_delta=access_token_expires,
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-__all__ = ['router']
+
+__all__ = ["router"]
