@@ -25,6 +25,14 @@ jobs:
       - name: Push to deployment branch
         uses: peaceiris/actions-gh-pages@v4
         with:
+          deploy_key: ${{ secrets.GH_ACTIONS_DEPLOY_PRIVATE_KEY }}
+          external_repository: ${{ secrets.GH_ACTIONS_DEPLOY_REPO }}
+          publish_dir: ./apps/api
+          publish_branch: deploy-backend
+          exclude_assets: 'client,package.json,tsconfig.json'
+      - name: Push to deployment branch (mirror)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./apps/api
           publish_branch: deploy-backend
