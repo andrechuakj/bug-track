@@ -14,7 +14,7 @@ class User(SQLModel, Timestampable, table=True):
 
 
 def get_users(tx: Session):
-    return tx.exec(select(User))
+    return tx.exec(select(User)).all()
 
 
 def get_user(tx: Session, user_id: int):
