@@ -1,10 +1,9 @@
 from datetime import timedelta
-from typing import Annotated
-
 from domain.config import get_db
 from domain.views.auth import LoginRequest, LoginResponse
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter, Request
+from fastapi.security import OAuth2PasswordBearer
+from internal.errors.client_errors import UnauthorizedError
 from services.auth_service import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     create_access_token,
@@ -23,9 +22,8 @@ def authenticate_user(tx: Session, email: str, password: str):
     user = next((u for u in users if u.email == email), None)
 
     if not user or not verify_password(password, user.password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+        raise UnauthorizedError(
+            "Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
