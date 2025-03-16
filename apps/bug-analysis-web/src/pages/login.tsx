@@ -7,9 +7,7 @@ import {
   message,
   Typography,
 } from 'antd';
-import { useRouter } from 'next/router';
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import authService from '../api/auth';
 import DatabaseDropdown from '../components/DatabaseDropdown';
 import { useAuth } from '../contexts/AuthContext';
 

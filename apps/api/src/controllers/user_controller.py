@@ -19,7 +19,7 @@ async def get_all_users(r: Request) -> Sequence[UserSummaryResponseDto]:
 @router.get("/{user_id}")
 async def get_single_user(user_id: int, r: Request) -> UserSummaryResponseDto:
     tx = get_db(r)
-    user = UserService.get_user(tx, user_id)
+    user = UserService.get_user(tx, tx, user_id)
     if user is None:
         raise NotFoundError("User not found")
     return user

@@ -24,7 +24,7 @@ class _UserService:
         return user
 
     def delete_user(self, user_id: int):
-        user = self.get_user(user_id)
+        user = self.get_user(tx, user_id)
         if user is None:
             raise NotFoundError("User not found")
         return delete_user(tx, user_id)

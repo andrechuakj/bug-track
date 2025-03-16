@@ -20,7 +20,9 @@
    source myenv/bin/activate
    pip install -r requirements.txt
    ```
+
    On Windows, run the following instead:
+
    ```bash
    python -m venv myenv
    myenv\Scripts\activate

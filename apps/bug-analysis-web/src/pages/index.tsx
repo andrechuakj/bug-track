@@ -75,8 +75,24 @@ const HomePage: React.FC = (): ReactNode => {
   }, [loading, isAuthenticated, router]);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (loading) return;
+    if (!isAuthenticated) {
       router.push('/login');
+    } else {
+      fetchBugExplore();
+      fetchDbmsData(1).then((res: DbmsResponseDto) => setDbmsData(res));
+      handleAiSummary();
+    }
+  }, [loading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated) {
+      router.push('/login');
+    } else {
+      fetchBugExplore();
+      fetchDbmsData(1).then((res: DbmsResponseDto) => setDbmsData(res));
+      handleAiSummary();
     }
   }, [loading, isAuthenticated, router]);
 
