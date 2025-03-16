@@ -12,21 +12,21 @@ from domain.models.Dbms import BugReport
 
 # Mock CategoryEnum (Simulating a table from the DB)
 class CategoryEnum(Enum):
-    CRASH = 1
-    ASSERTION_FAILURE = 2
-    USABILITY = 3
-    COMPATIBILITY = 4
-    INCORRECT_QUERY_RESULT = 5
-    PERFORMANCE_DEGRADATION = 6
-    CONSTRAINT_VIOLATION = 7
-    DEADLOCK = 8
-    DATA_CORRUPTION = 9
-    SQL_SYNTAX_ERROR = 10
-    PRIVILEGE_ESCALATION = 11
-    MEMORY_LEAK = 12
-    CONCURRENCY_ISSUE = 13
-    TRANSACTION_ANOMALY = 14
-    NON_ISSUES = 15
+    CRASH = 0
+    ASSERTION_FAILURE = 1
+    USABILITY = 2
+    COMPATIBILITY = 3
+    INCORRECT_QUERY_RESULT = 4
+    PERFORMANCE_DEGRADATION = 5
+    CONSTRAINT_VIOLATION = 6
+    DEADLOCK = 7
+    DATA_CORRUPTION = 8
+    SQL_SYNTAX_ERROR = 9
+    PRIVILEGE_ESCALATION = 10
+    MEMORY_LEAK = 11
+    CONCURRENCY_ISSUE = 12
+    TRANSACTION_ANOMALY = 13
+    NON_ISSUES = 14
 
 class _DbmsService:
     _mock_dbms: list[Dbms] = [
@@ -37,7 +37,7 @@ class _DbmsService:
     # Mock Bug Reports
     # Mock Bug Reports for All Categories
     _mock_bug_reports = [
-      BugReport(id=1, dbms_id=1, category_id=CategoryEnum.CRASH.value, description='''## Bug Report
+      BugReport(id=1, report_title=f"Title 1", dbms_id=1, category_id=CategoryEnum.CRASH.value, description='''## Bug Report
 
         Please answer these questions before submitting your issue. Thanks!
 
@@ -58,49 +58,49 @@ class _DbmsService:
         ### 4. What is your TiDB version? (Required)
 
         <!-- Paste the output of SELECT tidb_version() -->'''),
-      BugReport(id=2, dbms_id=1, category_id=CategoryEnum.CRASH.value, description=None),
+      BugReport(id=2, report_title=f"Title 2", dbms_id=1, category_id=CategoryEnum.CRASH.value, description=None),
 
-      BugReport(id=3, dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value, description=None),
-      BugReport(id=4, dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value, description='''
+      BugReport(id=3, report_title=f"Title 3", dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value, description=None),
+      BugReport(id=4, report_title=f"Title 4", dbms_id=1, category_id=CategoryEnum.ASSERTION_FAILURE.value, description='''
         In current code we don't fully make use of the prefetch buffer. There's a background goroutine (spawned in line 48) that uses the prefetch buffer to read data from reader (line 57)
 
         https://github.com/pingcap/tidb/blob/b7e97690b9feb019ab0bec9ea6814af432ae948d/pkg/util/prefetch/reader.go#L48-L63
 
         However if the reader only return partial data (like it's a socket and OS chooses to return only few bytes, naming `N`) this reading action is finished and the loop is waiting on sending to channel (line 62). If the caller of "prefetch reader" doesn't consume the channel quickly, we are wasting a large proportion of the prefetch buffer which is `buf[N:]` because they are not filled. We should let the background goroutine use `io.ReadFull` to fully use the prefetch buffer.'''),
 
-      BugReport(id=5, dbms_id=1, category_id=CategoryEnum.USABILITY.value, description=None),
-      BugReport(id=6, dbms_id=1, category_id=CategoryEnum.USABILITY.value, description=None),
+      BugReport(id=5, report_title=f"Title 5", dbms_id=1, category_id=CategoryEnum.USABILITY.value, description=None),
+      BugReport(id=6, report_title=f"Title 6", dbms_id=1, category_id=CategoryEnum.USABILITY.value, description=None),
 
-      BugReport(id=7, dbms_id=1, category_id=CategoryEnum.COMPATIBILITY.value, description=None),
+      BugReport(id=7, report_title=f"Title 7", dbms_id=1, category_id=CategoryEnum.COMPATIBILITY.value, description=None),
 
-      BugReport(id=8, dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value, description=None),
-      BugReport(id=9, dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value, description=None),
+      BugReport(id=8, report_title=f"Title 8", dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value, description=None),
+      BugReport(id=9, report_title=f"Title 9", dbms_id=1, category_id=CategoryEnum.INCORRECT_QUERY_RESULT.value, description=None),
 
-      BugReport(id=10, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
-      BugReport(id=11, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
-      BugReport(id=12, dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
+      BugReport(id=10, report_title=f"Title 10", dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
+      BugReport(id=11, report_title=f"Title 11", dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
+      BugReport(id=12, report_title=f"Title 12", dbms_id=1, category_id=CategoryEnum.PERFORMANCE_DEGRADATION.value, description=None),
 
-      BugReport(id=13, dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value, description=None),
-      BugReport(id=14, dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value, description=None),
+      BugReport(id=13, report_title=f"Title 13", dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value, description=None),
+      BugReport(id=14, report_title=f"Title 14", dbms_id=1, category_id=CategoryEnum.CONSTRAINT_VIOLATION.value, description=None),
 
-      BugReport(id=15, dbms_id=1, category_id=CategoryEnum.DEADLOCK.value, description=None),
+      BugReport(id=15, report_title=f"Title 15", dbms_id=1, category_id=CategoryEnum.DEADLOCK.value, description=None),
 
-      BugReport(id=16, dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value, description=None),
-      BugReport(id=17, dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value, description=None),
+      BugReport(id=16, report_title=f"Title 16", dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value, description=None),
+      BugReport(id=17, report_title=f"Title 17", dbms_id=1, category_id=CategoryEnum.DATA_CORRUPTION.value, description=None),
 
-      BugReport(id=18, dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value, description=None),
-      BugReport(id=19, dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value, description=None),
+      BugReport(id=18, report_title=f"Title 18", dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value, description=None),
+      BugReport(id=19, report_title=f"Title 19", dbms_id=1, category_id=CategoryEnum.SQL_SYNTAX_ERROR.value, description=None),
 
-      BugReport(id=20, dbms_id=1, category_id=CategoryEnum.PRIVILEGE_ESCALATION.value, description=None),
+      BugReport(id=20, report_title=f"Title 20", dbms_id=1, category_id=CategoryEnum.PRIVILEGE_ESCALATION.value, description=None),
 
-      BugReport(id=21, dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value, description=None),
-      BugReport(id=22, dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value, description=None),
+      BugReport(id=21, report_title=f"Title 21", dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value, description=None),
+      BugReport(id=22, report_title=f"Title 22", dbms_id=1, category_id=CategoryEnum.MEMORY_LEAK.value, description=None),
 
-      BugReport(id=23, dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value, description=None),
-      BugReport(id=24, dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value, description=None),
+      BugReport(id=23, report_title=f"Title 23", dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value, description=None),
+      BugReport(id=24, report_title=f"Title 24", dbms_id=1, category_id=CategoryEnum.CONCURRENCY_ISSUE.value, description=None),
 
-      BugReport(id=25, dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value, description=None),
-      BugReport(id=26, dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value, description='''## Bug Report
+      BugReport(id=25, report_title=f"Title 25", dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value, description=None),
+      BugReport(id=26, report_title=f"Title 26", dbms_id=1, category_id=CategoryEnum.TRANSACTION_ANOMALY.value, description='''## Bug Report
 
         Please answer these questions before submitting your issue. Thanks!
 
@@ -147,8 +147,8 @@ class _DbmsService:
 
         <!-- Paste the output of SELECT tidb_version() -->'''),
 
-      BugReport(id=27, dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value, description=None),
-      BugReport(id=28, dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value, description=None),
+      BugReport(id=27, report_title=f"Title 27", dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value, description=None),
+      BugReport(id=28, report_title=f"Title 28", dbms_id=1, category_id=CategoryEnum.NON_ISSUES.value, description=None),
     ]
 
 
@@ -219,5 +219,33 @@ class _DbmsService:
         descriptions_sample = [self._mock_bug_reports[i].description for i in sample_idx]
 
         return descriptions_sample
+    
+
+    '''
+        Params:
+            - categories: List[str]: The categories to filter by, if empty, no filter applied
+            - start should be 0-based
+    '''
+    def bug_search(self, dbms_id: int, search: str, start: int = 0, limit: int = 100, categories: List[int] = []) -> List[BugReport]:
+        # TODO: replace with correct SQL / ORM stmt, need to access correct tenant db/table as well
+        # TODO: Write it in a way that each category gets almost equal amount of bug reports
+        res = [rep for rep in self._mock_bug_reports if search.lower() in rep.report_title.lower() and (rep.category_id in categories or len(categories) == 0)]
+
+        return res[start:start+limit]
+    
+    '''
+        A specific endpoint for querying ADDITIONAL bug reports, based on the current
+        size distribution.
+        start should be 0-based
+    '''
+    def bug_search_category(self, dbms_id: int, category: int, start: int, amount: int = 5) -> List[BugReport]:
+        # TODO: replace with correct SQL / ORM stmt
+        category_bugs = [rep for rep in self._mock_bug_reports if rep.category_id == category]
+        sliced = category_bugs[start:start+amount]
+
+        return sliced
+
+
+
 
 DbmsService = _DbmsService()
