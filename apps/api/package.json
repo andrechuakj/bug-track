@@ -13,7 +13,10 @@
     "dev:api": "bun --watch client/main.ts",
     "lint": "run-p lint:backend lint:api",
     "lint:api": "prettier --check client",
-    "lint:backend": "black src --check"
+    "lint:backend": "black src --check",
+    "format": "run-p format:backend format:api",
+    "format:api": "prettier --write client",
+    "format:backend": "black src"
   },
   "dependencies": {
     "openapi-fetch": "^0.13.4"
