@@ -9,6 +9,7 @@ class _Constants(BaseSettings, frozen=True):
     model_config = SettingsConfigDict(env_file=".env.local")
     DATABASE_URL: str
     OPENAI_API_KEY: str
+    JWT_SECRET_KEY: str
     MODE: str = "production"
 
     @property
