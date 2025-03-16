@@ -11,7 +11,8 @@ def load_configurations(*configs: Callable[[FastAPI], Any]):
             for config in configs:
                 stack.enter_context(config(app))
             yield
+
     return combined_config
 
 
-__all__ = ['load_configurations']
+__all__ = ["load_configurations"]

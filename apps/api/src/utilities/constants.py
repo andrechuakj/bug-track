@@ -2,16 +2,16 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class _Constants(BaseSettings, frozen=True):
-    model_config = SettingsConfigDict(env_file='.env.local')
+    model_config = SettingsConfigDict(env_file=".env.local")
     DATABASE_URL: str
-    MODE: str = 'production'
+    MODE: str = "production"
     GITHUB_TOKEN: str
     OPENAI_API_KEY: str
     DATABASE_URL: str
 
     @property
     def IS_DEVELOPMENT(self) -> bool:
-        return self.MODE == 'development'
+        return self.MODE == "development"
 
 
 constants = _Constants()

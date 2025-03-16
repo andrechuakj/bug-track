@@ -30,18 +30,24 @@ with open(MODEL_DIR / "label_encoder.pkl", "rb") as encoder_file:
 with open(MODEL_DIR / "tfidf_vectorizer.pkl", "rb") as vectorizer_file:
     vectorizer: TfidfVectorizer = pickle.load(vectorizer_file)
 
+
 class _BugClassifierService:
     """Service for classifying bug reports."""
 
     def __init__(self):
         # Custom stopwords (keep useful words like 'error', 'failure', etc.)
-        self.custom_stopwords = nlp.Defaults.stop_words - {"error", "failure", "issue", "bug"}
+        self.custom_stopwords = nlp.Defaults.stop_words - {
+            "error",
+            "failure",
+            "issue",
+            "bug",
+        }
 
     def preprocess_text(self, text: str) -> str:
         """Preprocess text"""
         if not text:
             return ""
-        
+
         text = re.sub(r"!\[.*?\]\(.*?\)", "[IMAGE]", text)
         text = re.sub(r"https?://\S+", "[LINK]", text)
 
@@ -59,7 +65,13 @@ class _BugClassifierService:
         doc = nlp(text.lower())
 
         # Remove Stopwords, Lemmatize
-        return " ".join([token.lemma_ for token in doc if token.is_alpha and token.text not in self.custom_stopwords])
+        return " ".join(
+            [
+                token.lemma_
+                for token in doc
+                if token.is_alpha and token.text not in self.custom_stopwords
+            ]
+        )
 
     def get_category_by_keywords(self, issue_title: str) -> str | None:
         """Finds category using exact, fuzzy, and semantic similarity matching (title only)."""
@@ -76,22 +88,40 @@ class _BugClassifierService:
 
                 # Exact Match (Highest Priority)
                 if keyword_lower in issue_title:
-                    return category  
+                    return category
 
                 # Fuzzy Matching (Handles Typos & Variations)
-                fuzzy_score = fuzz.partial_ratio(issue_title, keyword_lower) / 100  # Normalize 0-1
+                fuzzy_score = (
+                    fuzz.partial_ratio(issue_title, keyword_lower) / 100
+                )  # Normalize 0-1
 
                 # Word Vector Similarity (SpaCy)
-                spacy_score = issue_doc.similarity(keyword_doc) if issue_doc.has_vector and keyword_doc.has_vector else 0.0
+                spacy_score = (
+                    issue_doc.similarity(keyword_doc)
+                    if issue_doc.has_vector and keyword_doc.has_vector
+                    else 0.0
+                )
 
                 # Common Token Overlap (Better Context Matching)
-                issue_tokens = set(token.text for token in issue_doc if not token.is_stop)
-                keyword_tokens = set(token.text for token in keyword_doc if not token.is_stop)
-                common_token_score = len(issue_tokens & keyword_tokens) / max(len(keyword_tokens), 1)
+                issue_tokens = set(
+                    token.text for token in issue_doc if not token.is_stop
+                )
+                keyword_tokens = set(
+                    token.text for token in keyword_doc if not token.is_stop
+                )
+                common_token_score = len(issue_tokens & keyword_tokens) / max(
+                    len(keyword_tokens), 1
+                )
 
                 # Dynamic Weighted Scoring
-                length_factor = min(len(issue_title) / 100, 1)  # Normalize length impact
-                combined_score = (FUZZY_WEIGHT * fuzzy_score) + (SPACY_WEIGHT * spacy_score) + (TOKEN_OVERLAP_WEIGHT * common_token_score * length_factor)
+                length_factor = min(
+                    len(issue_title) / 100, 1
+                )  # Normalize length impact
+                combined_score = (
+                    (FUZZY_WEIGHT * fuzzy_score)
+                    + (SPACY_WEIGHT * spacy_score)
+                    + (TOKEN_OVERLAP_WEIGHT * common_token_score * length_factor)
+                )
 
                 # Update best match
                 if combined_score > best_score and combined_score > 0.7:
@@ -123,6 +153,7 @@ class _BugClassifierService:
         confidence_threshold = np.percentile(probabilities, 10)
 
         return predicted_label if max_prob >= confidence_threshold else "Others"
+
 
 BugClassifierService = _BugClassifierService()
 

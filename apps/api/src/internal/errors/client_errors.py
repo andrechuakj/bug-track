@@ -42,10 +42,10 @@ class UnprocessableEntityError(BaseClientError):
 
 
 __all__ = [
-    'BadRequestError',
-    'UnauthorizedError',
-    'ForbiddenError',
-    'NotFoundError',
-    'MethodNotAllowedError',
-    'UnprocessableEntityError',
+    "BadRequestError",
+    "UnauthorizedError",
+    "ForbiddenError",
+    "NotFoundError",
+    "MethodNotAllowedError",
+    "UnprocessableEntityError",
 ]

@@ -6,7 +6,7 @@ from sqlmodel import Field, Session, SQLModel, select
 
 
 class User(SQLModel, Timestampable, table=True):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
     name: str
     email: str
@@ -31,7 +31,7 @@ def save_user(tx: Session, user: User):
 def delete_user(tx: Session, user_id: int):
     user = tx.get(User, user_id)
     if not user:
-        raise NotFoundError(f'User {user_id} not found')
+        raise NotFoundError(f"User {user_id} not found")
     tx.delete(user)
     tx.commit()
     return user

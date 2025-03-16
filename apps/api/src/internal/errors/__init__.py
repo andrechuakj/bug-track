@@ -19,12 +19,14 @@ def register_error_handler(app: FastAPI) -> None:
     @app.exception_handler(BaseClientError)
     async def client_error_handler(request: Request, exc: BaseClientError):
         return JSONResponse(
-            content=jsonable_encoder(ErrorModel(
-                timestamp=datetime.now(),
-                path=request.url.path,
-                status=exc.status_code,
-                error=exc.detail,
-            )),
+            content=jsonable_encoder(
+                ErrorModel(
+                    timestamp=datetime.now(),
+                    path=request.url.path,
+                    status=exc.status_code,
+                    error=exc.detail,
+                )
+            ),
             status_code=exc.status_code,
         )
 

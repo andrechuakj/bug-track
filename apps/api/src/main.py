@@ -10,14 +10,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from internal.errors import register_error_handler
 
 app = FastAPI(
-    title='bug-analysis-api',
+    title="bug-analysis-api",
     lifespan=load_configurations(
         configure_logger,
         configure_startup_info,
         configure_database,
     ),
     dependencies=[
-        Depends(db_txn_manager_generator)
+        Depends(db_txn_manager_generator),
     ],
 )
 app.add_middleware(

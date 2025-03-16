@@ -19,7 +19,8 @@ class _UserService:
         if user is None:
             raise NotFoundError("User not found")
         return delete_user(tx, user_id)
-        
+
+
 UserService = _UserService()
 
 __all__ = ["UserService"]
