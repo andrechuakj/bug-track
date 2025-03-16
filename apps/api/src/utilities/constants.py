@@ -4,10 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class _Constants(BaseSettings, frozen=True):
     model_config = SettingsConfigDict(env_file=".env.local")
     DATABASE_URL: str
-    MODE: str = "production"
-    GITHUB_TOKEN: str
     OPENAI_API_KEY: str
-    DATABASE_URL: str
+    MODE: str = "production"
 
     @property
     def IS_DEVELOPMENT(self) -> bool:
