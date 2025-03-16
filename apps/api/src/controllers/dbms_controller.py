@@ -1,4 +1,6 @@
 import openai
+from domain.config import get_db
+from internal.errors.client_errors import BadRequestError
 from utilities.prompts import get_dbms_ai_summary_prompt
 
 from typing import Sequence
@@ -12,39 +14,41 @@ from domain.views.dbms import (
     BugSearchResponseDto,
     BugSearchCategoryResponseDto,
 )
-from fastapi import HTTPException
 
 
 router = APIRouter(prefix="/api/v1/dbms", tags=["dbms"])
 
 
 @router.get("/")
-async def get_all_dbms() -> Sequence[DbmsListResponseDto]:
-    dbms_list = DbmsService.get_dbms()
-    return [DbmsListResponseDto(id=dbms.id, name=dbms.name) for dbms in dbms_list]
+async def get_all_dbms(r: Request) -> Sequence[DbmsListResponseDto]:
+    tx = get_db(r)
+    return DbmsService.get_dbms(tx)
 
 
 @router.get("/{dbms_id}")
-async def get_dbms_by_id(dbms_id: int, request: Request = None) -> DbmsResponseDto:
-    dbms = DbmsService.get_dbms_by_id(dbms_id)
-    bug_categories = DbmsService.get_dbms_bug_categories(dbms_id)
+async def get_dbms_by_id(dbms_id: int, r: Request) -> DbmsResponseDto:
+    tx = get_db(r)
+    dbms = DbmsService.get_dbms_by_id(tx, dbms_id)
+    bug_categories = DbmsService.get_dbms_bug_categories(tx, dbms_id)
     if dbms is None:
-        raise NotFoundError(f"DBMS of id {dbms_id} not found")
+        raise NotFoundError(f"DBMS with id {dbms_id} not found")
     return DbmsResponseDto(
         id=dbms_id,
         name=dbms.name,
-        bug_count=sum(category.count for category in bug_categories),
+        # TODO: Update this once implemented
+        bug_count=0,
         bug_categories=bug_categories,
     )
 
 
 @router.get("/{dbms_id}/ai_summary")
-async def get_ai_summary(dbms_id: int) -> AiSummaryResponseDto:
+async def get_ai_summary(dbms_id: int, r: Request) -> AiSummaryResponseDto:
+    tx = get_db(r)
+    dbms = DbmsService.get_dbms_by_id(tx, dbms_id)
+    if dbms is None:
+        raise NotFoundError(f"DBMS with id {dbms_id} not found")
+    sample_desc = DbmsService.get_random_bug_descriptions_sample(tx, dbms_id, 0.005)
     try:
-        dbms = DbmsService.get_dbms_by_id(dbms_id)
-
-        sample_desc = DbmsService.get_random_bug_descriptions_sample(dbms_id, 0.005)
-
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
             messages=[
@@ -56,9 +60,7 @@ async def get_ai_summary(dbms_id: int) -> AiSummaryResponseDto:
             max_tokens=100,
             temperature=0.2,
         )
-
         summary = response["choices"][0]["message"]["content"].strip()
-
         return AiSummaryResponseDto(summary=summary)
 
     except Exception as e:
@@ -66,64 +68,65 @@ async def get_ai_summary(dbms_id: int) -> AiSummaryResponseDto:
         return AiSummaryResponseDto(summary="Summary is not ready for this DBMS yet.")
 
 
-"""
-    Note: category_id query param is optional
-"""
-
-
 @router.get("/{dbms_id}/bug_search")
-async def get_bugs(dbms_id: int, request: Request) -> BugSearchResponseDto:
+async def get_bugs(dbms_id: int, r: Request) -> BugSearchResponseDto:
+    """
+    Note: category_id query param is optional
+    """
+    tx = get_db(r)
+    search = r.query_params.get("search", "")
     try:
-        search = request.query_params.get("search", "")
-        start = int(request.query_params.get("start", 0))
-        limit = int(request.query_params.get("limit", 10))
-        category_id = request.query_params.get("category_id", None)
+        start = int(r.query_params.get("start", 0))
+        limit = int(r.query_params.get("limit", 10))
+        category_id = r.query_params.get("category_id", None)
+        if category_id is not None:
+            category_id = int(category_id)
+    except ValueError as e:
+        raise BadRequestError("Invalid request, start and limit must be integers.")
 
-        bug_reports = DbmsService.bug_search(
-            dbms_id,
-            search,
-            start,
-            limit,
-            [category_id] if category_id is not None else [],
-        )
+    bug_reports = DbmsService.bug_search(
+        tx,
+        dbms_id,
+        search,
+        start,
+        limit,
+        [category_id] if category_id is not None else [],
+    )
 
-        return BugSearchResponseDto(bug_reports=bug_reports)
-
-    except Exception as e:
-        print("e:", e)
-        return BugSearchResponseDto(bug_reports=[])
-
-
-"""
-    Get an extension of bug reports for a specific category, when viewing the bug list 
-    on the main dashboard by clicking 'Load more...'. This is when no search/filter/sort 
-    is applied.
-
-    distribution values should be absolute counts
-"""
+    return BugSearchResponseDto(bug_reports=bug_reports)
 
 
 @router.get("/{dbms_id}/bug_search_category")
 async def get_bugs_by_category(
-    dbms_id: int, request: Request
+    dbms_id: int, r: Request
 ) -> BugSearchCategoryResponseDto:
+    """
+    Get an extension of bug reports for a specific category, when viewing the bug list
+    on the main dashboard by clicking 'Load more...'. This is when no search/filter/sort
+    is applied.
+
+    distribution values should be absolute counts
+    """
+    tx = get_db(r)
     try:
-        category_id = int(request.query_params.get("category_id", None))
-        amount = int(request.query_params.get("amount", 0))
-        # passed as csv
-        distribution = request.query_params.get("distribution")
-        if distribution is None:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid request, please pass in distribution query param as comma-separated values.",
-            )
+        category_id = int(r.query_params.get("category_id", None))
+        amount = int(r.query_params.get("amount", 0))
+    except ValueError as e:
+        raise BadRequestError(
+            "Invalid request, category_id and amount must be integers."
+        )
 
+    # passed as csv
+    distribution = r.query_params.get("distribution")
+    if distribution is None:
+        raise BadRequestError(
+            "Invalid request, please pass in distribution query param as comma-separated values."
+        )
+    try:
         distribution = [int(i) for i in distribution.split(",")]
-
         if amount == 0 or category_id >= len(distribution) or category_id < 0:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid request, amount or distribution not passed or passed incorrectly.",
+            raise BadRequestError(
+                "Invalid request, amount or distribution not passed or passed incorrectly.",
             )
 
         # parse distribution
@@ -138,9 +141,8 @@ async def get_bugs_by_category(
         )
 
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid request, amount or distribution not passed or passed incorrectly.",
+        raise BadRequestError(
+            "Invalid request, amount or distribution not passed or passed incorrectly.",
         )
 
 

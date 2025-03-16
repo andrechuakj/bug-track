@@ -1,7 +1,4 @@
 from pydantic import BaseModel
-from typing import List
-
-from domain.models.Dbms import BugReport
 
 
 class DbmsListResponseDto(BaseModel):
@@ -19,19 +16,27 @@ class DbmsResponseDto(BaseModel):
     id: int
     name: str
     bug_count: int
-    bug_categories: List[BugCategory]
+    bug_categories: list[BugCategory]
 
 
 class AiSummaryResponseDto(BaseModel):
     summary: str
 
 
+class BugReportResponseDto(BaseModel):
+    id: int
+    dbms_id: int
+    category_id: int
+    report_title: str
+    description: str | None
+
+
 class BugSearchResponseDto(BaseModel):
-    bug_reports: List[BugReport]
+    bug_reports: list[BugReportResponseDto]
 
 
 class BugSearchCategoryResponseDto(BaseModel):
     # Push this to the correct category on FE
-    bug_reports_delta: List[BugReport]
+    bug_reports_delta: list[BugReportResponseDto]
     # FE needs to update its bug_distr state (if any) with this
-    new_bug_distr: List[int]
+    new_bug_distr: list[int]
