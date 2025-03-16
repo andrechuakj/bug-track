@@ -1,4 +1,5 @@
 from configuration.config import load_configurations
+from configuration.db import configure_database
 from configuration.logger import configure_logger
 from configuration.startup_info import configure_startup_info
 from controllers.dbms_controller import router as dbms_router
@@ -13,6 +14,7 @@ app = FastAPI(
     lifespan=load_configurations(
         configure_logger,
         configure_startup_info,
+        configure_database,
     ),
     dependencies=[
         Depends(db_txn_manager_generator)
