@@ -12,5 +12,6 @@ class CategoryEnum(BaseModel):
 class BugReport(BaseModel):
     id: int
     dbms_id: int
+    report_title: str
     category_id: int
     description: Optional[str]
