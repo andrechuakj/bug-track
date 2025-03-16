@@ -1,21 +1,18 @@
-from domain.models.Dbms import Dbms
-
-
-from typing import List
 from collections import defaultdict
-from domain.views.dbms import BugCategory
 from domain.models.Dbms import BugReport
+from domain.models.Dbms import Dbms
+from domain.views.dbms import BugCategory
 
 
 class _DbmsService:
 
-    def get_dbms(self) -> List[Dbms]:
+    def get_dbms(self) -> list[Dbms]:
         return self._mock_dbms
 
     def get_dbms_by_id(self, dbms_id: int):
         return next((dbms for dbms in self._mock_dbms if dbms.id == dbms_id), None)
 
-    def get_dbms_bug_categories(self, dbms_id: int) -> List[BugCategory]:
+    def get_dbms_bug_categories(self, dbms_id: int) -> list[BugCategory]:
         # Count bugs per category for the given dbms_id
         bug_counts = defaultdict(int)
         for report in self._mock_bug_reports:
@@ -44,7 +41,7 @@ class _DbmsService:
     # TODO: Replace each step with the appropriate ORM query
     def get_random_bug_descriptions_sample(
         self, dbms_id: int, sample_percent: float
-    ) -> List[str]:
+    ) -> list[str]:
         # TODO: Establish connection to the correct DBMS-tenant table
         # Get the bug count
         bug_count = len(self._mock_bug_reports)
@@ -65,7 +62,7 @@ class _DbmsService:
 
     """
         Params:
-            - categories: List[str]: The categories to filter by, if empty, no filter applied
+            - categories: list[str]: The categories to filter by, if empty, no filter applied
             - start should be 0-based
     """
 
@@ -75,8 +72,8 @@ class _DbmsService:
         search: str,
         start: int = 0,
         limit: int = 100,
-        categories: List[int] = [],
-    ) -> List[BugReport]:
+        categories: list[int] = [],
+    ) -> list[BugReport]:
         # TODO: replace with correct SQL / ORM stmt, need to access correct tenant db/table as well
         # TODO: Write it in a way that each category gets almost equal amount of bug reports
         res = [
@@ -96,7 +93,7 @@ class _DbmsService:
 
     def bug_search_category(
         self, dbms_id: int, category: int, start: int, amount: int = 5
-    ) -> List[BugReport]:
+    ) -> list[BugReport]:
         # TODO: replace with correct SQL / ORM stmt
         category_bugs = [
             rep for rep in self._mock_bug_reports if rep.category_id == category
