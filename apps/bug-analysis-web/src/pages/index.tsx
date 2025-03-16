@@ -1,19 +1,60 @@
-import { ThunderboltTwoTone } from '@ant-design/icons';
-import { Button, Card, Col, Row, Skeleton, Typography } from 'antd';
+import {
+  FilterOutlined,
+  SortAscendingOutlined,
+  ThunderboltTwoTone,
+  UserOutlined,
+} from '@ant-design/icons';
+import {
+  AutoComplete,
+  Button,
+  Card,
+  Col,
+  Flex,
+  Form,
+  Input,
+  List,
+  Row,
+  SelectProps,
+  Skeleton,
+  Typography,
+} from 'antd';
+import clsx from 'clsx';
+import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   AiSummary,
   BugCategory,
+  BugExploreReports,
+  BugReports,
   DbmsResponseDto,
   fetchAiSummary,
   fetchDbmsData,
+  loadMoreBugsByCategory,
+  searchBugReports,
 } from '../api/dbms';
 import CategoryTag from '../components/CategoryTag';
+import DynamicModal from '../components/DynamicModal';
+import FilterSelection from '../components/FilterSelection';
+import SearchResultListItem from '../components/SearchResultListItem';
+import {
+  AcBugSearchResult,
+  AcBugSearchResultCategory,
+  AcBugSearchResultStruct,
+  BUG_CATEGORIES,
+  BugSearchResultStruct,
+  categoriseBugs,
+  setBugExplore,
+} from '../utils/bug';
 import { generateBugDistrBar, generateBugTrendChart } from '../utils/chart';
 import { useAppContext } from '../utils/context';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
-import { AppTheme } from '../utils/types';
+import {
+  AppTheme,
+  FilterBugCategory,
+  FilterBugPriority,
+  FilterSettings,
+} from '../utils/types';
 
 // Dynamically import ECharts for client-side rendering only
 const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
@@ -23,6 +64,126 @@ const HomePage: React.FC = (): ReactNode => {
   const [aiSummary, setAiSummary] = useState<AiSummary>();
   const [aiButtonLoading, setAiButtonLoading] = useState(false);
 
+  // Form logic (bug search)
+  const [redemptionForm] = Form.useForm();
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+
+  const [acBugReports, setAcBugReports] = useState<BugReports>({
+    bug_reports: [],
+  });
+
+  const handleSearch = useCallback(
+    debounce(async (searchStr: string) => {
+      if (searchStr.length >= 3) {
+        // TODO: edit this accordingly
+        const bugReports: BugReports = await searchBugReports(
+          1,
+          searchStr,
+          0,
+          100
+        );
+        if (bugReports) {
+          setAcBugReports(bugReports);
+        }
+      }
+    }, 500),
+    []
+  );
+
+  // Filter
+  const [filterSettings, setFilterSettings] = useState<FilterSettings>({
+    category: FilterBugCategory.NONE_SELECTED,
+    priority: FilterBugPriority.NONE_SELECTED,
+  });
+
+  const bugCategoryFilterOptions = Object.values(
+    FilterBugCategory
+  ) as FilterBugCategory[];
+
+  const bugPriorityFilterOptions = Object.values(
+    FilterBugPriority
+  ) as FilterBugPriority[];
+
+  const filterModalItems: React.JSX.Element[] = [
+    <FilterSelection
+      key="filter-sel-1"
+      filterPrefix={<p className="font-light">Category:</p>}
+      filterSetting={filterSettings.category}
+      filterOptions={bugCategoryFilterOptions}
+      filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
+        setFilterSettings((settings) => ({
+          ...settings,
+          category: val as FilterBugCategory,
+        }));
+      }}
+      filterPlaceholder="Select Bug Category"
+    />,
+    <FilterSelection
+      key="filter-sel-1"
+      filterPrefix={<p className="font-light">Priority:</p>}
+      filterSetting={filterSettings.priority}
+      filterOptions={bugPriorityFilterOptions}
+      filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
+        setFilterSettings((settings) => ({
+          ...settings,
+          priority: val as FilterBugPriority,
+        }));
+      }}
+      filterPlaceholder="Select Bug Priority"
+    />,
+  ];
+
+  // Category bug explore
+  // Note: The reason why we have separate data structures for autocomplete and bug explore
+  //       is because these are 2 separate components, and their needs are different. While
+  //       autocomplete (AC) results can be dumped as an array. We might prefer fast lookup
+  //       when trying to load more of a specific category.
+  const [bugExploreDistribution, setBugExploreDistribution] = useState<
+    number[]
+  >(Object.values(FilterBugCategory).map((_) => 0));
+  const [bugReports, setBugReports] = useState<BugSearchResultStruct>({});
+
+  const fetchBugExplore = useCallback(async () => {
+    const bugReports: BugReports = await searchBugReports(1, '', 0, 100);
+    if (bugReports) {
+      setBugExplore(
+        bugExploreDistribution,
+        setBugExploreDistribution,
+        setBugReports,
+        bugReports
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBugExplore();
+  }, []);
+
+  const handleBugExploreLoadMore = async (
+    categoryId: number
+  ): Promise<void> => {
+    const bugExploreReports: BugExploreReports = await loadMoreBugsByCategory(
+      1,
+      categoryId,
+      bugExploreDistribution,
+      5
+    );
+    const { bug_reports_delta, new_bug_distr } = bugExploreReports;
+    setBugExploreDistribution(new_bug_distr);
+    // Utilise setBugExplore function again
+
+    setBugExplore(
+      bugExploreDistribution,
+      setBugExploreDistribution,
+      setBugReports,
+      { bug_reports: bug_reports_delta },
+      BUG_CATEGORIES[categoryId],
+      categoryId
+    );
+  };
+
+  // AI logic
   const handleAiSummary = async () => {
     setAiSummary(undefined);
     setAiButtonLoading(true);
@@ -55,11 +216,109 @@ const HomePage: React.FC = (): ReactNode => {
     { label: 'Dec', count: 240 },
   ];
 
+  const Title: React.FC<Readonly<{ title?: string }>> = (props: {
+    title?: string;
+  }) => (
+    <Flex align="center" justify="space-between">
+      {props.title}
+      <a
+        href="https://www.google.com/search?q=antd"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        more
+      </a>
+    </Flex>
+  );
+
+  const renderItem = (title: string, count: number) => ({
+    value: title,
+    label: (
+      <Flex align="center" justify="space-between">
+        {title}
+        <span>
+          <UserOutlined /> {count}
+        </span>
+      </Flex>
+    ),
+  });
+
+  // Parse bugReports into options
+  const generateOptions = (result: AcBugSearchResultStruct) => {
+    return result.categories.map((cat: AcBugSearchResultCategory) => ({
+      label: <Title title={cat.title} />,
+      options:
+        cat.options?.map((opt: AcBugSearchResult) =>
+          renderItem(opt.display, 1000)
+        ) ?? [],
+    }));
+  };
+  const searchResultStruct: AcBugSearchResultStruct =
+    categoriseBugs(acBugReports);
+  const options = generateOptions(searchResultStruct);
+
   return (
     <>
       {!dbmsData && <Skeleton active round />}
       {dbmsData && (
         <div className="px-4">
+          <Form form={redemptionForm} onFinish={() => {}}>
+            <div className="flex flex-row flex-wrap">
+              <div className="w-3/4">
+                <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
+                  <AutoComplete
+                    options={options}
+                    onSearch={handleSearch}
+                    size="large"
+                    filterOption={
+                      ((inputValue, option) =>
+                        String(option?.value)
+                          .toUpperCase()
+                          .indexOf(inputValue.toUpperCase()) !==
+                        -1) as SelectProps['filterOption']
+                    }
+                  >
+                    <Input.Search size="large" placeholder="Search for bug" />
+                  </AutoComplete>
+                </Form.Item>
+              </div>
+              <div className="w-1/8 pl-2">
+                <Button
+                  icon={<FilterOutlined />}
+                  className="h-[40px] !w-[40px]"
+                  onClick={() => setIsFilterModalOpen(true)}
+                />
+              </div>
+              <div className="w-1/8 pl-2">
+                <Button
+                  icon={<SortAscendingOutlined />}
+                  className="h-[40px] !w-[40px]"
+                />
+              </div>
+            </div>
+          </Form>
+          <Card className="mb-4 ">
+            <Typography.Title
+              level={4}
+            >{`Explore bug reports`}</Typography.Title>
+            {bugReports && (
+              <List
+                size="large"
+                bordered
+                dataSource={Object.entries(bugReports)}
+                renderItem={([_, value]) => (
+                  <SearchResultListItem
+                    searchResultCategory={value}
+                    handleLoadMore={handleBugExploreLoadMore}
+                  />
+                )}
+                className={clsx(
+                  'h-[30vh] overflow-y-scroll',
+                  isDarkMode ? 'bg-black' : 'bg-white'
+                )}
+              />
+            )}
+          </Card>
           <Row gutter={[16, 16]}>
             <Col xs={24} md={14}>
               <Row>
@@ -257,6 +516,13 @@ const HomePage: React.FC = (): ReactNode => {
           </Row>
         </div>
       )}
+      <DynamicModal
+        modalTitle="Filter settings"
+        modalOkButtonText="Apply filters"
+        isModalOpen={isFilterModalOpen}
+        setIsModalOpen={setIsFilterModalOpen}
+        modalItems={filterModalItems}
+      />
     </>
   );
 };
