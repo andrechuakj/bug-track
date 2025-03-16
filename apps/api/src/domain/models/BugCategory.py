@@ -18,6 +18,12 @@ def get_bug_category_by_id(tx: Session, bug_category_id: int):
     return tx.get(BugCategory, bug_category_id)
 
 
+def get_bug_category_by_ids(tx: Session, bug_category_ids: list[int]):
+    return tx.exec(
+        select(BugCategory).where(BugCategory.id.in_(bug_category_ids))
+    ).all()
+
+
 def save_bug_category(tx: Session, bug_category: BugCategory):
     tx.add(bug_category)
     tx.commit()

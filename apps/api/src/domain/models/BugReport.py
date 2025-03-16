@@ -13,12 +13,34 @@ class BugReport(SQLModel, Timestampable, table=True):
     description: str | None = None
 
 
+def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):
+    return tx.exec(select(BugReport.id).where(BugReport.dbms_id == dbms_id))
+
+
 def get_bug_reports(tx: Session):
     return tx.exec(select(BugReport)).all()
 
 
 def get_bug_report_by_id(tx: Session, bug_report_id: int):
     return tx.get(BugReport, bug_report_id)
+
+
+def get_bug_report_by_ids(tx: Session, bug_report_ids: list[int]):
+    return tx.exec(select(BugReport).where(BugReport.id.in_(bug_report_ids))).all()
+
+
+def get_bug_categories_by_dbms_id(tx: Session, dbms_id: int):
+    return tx.exec(
+        select(BugReport.category_id).distinct().where(BugReport.dbms_id == dbms_id)
+    ).all()
+
+
+def get_bug_report_by_dbms_and_category(tx: Session, dbms_id: int, category_id: int):
+    return tx.exec(
+        select(BugReport).where(
+            BugReport.dbms_id == dbms_id, BugReport.category_id == category_id
+        )
+    ).all()
 
 
 def save_bug_report(tx: Session, bug_report: BugReport):
