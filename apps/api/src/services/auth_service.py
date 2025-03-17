@@ -3,11 +3,11 @@ import datetime
 import jwt
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
-
 from utilities.constants import constants
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60  # Token expiry time
+ACCESS_TOKEN_EXPIRE_MINUTES = 15  # Access token expiry time
+REFRESH_TOKEN_EXPIRE_DAYS = 1  # Refresh token expiry time
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -46,3 +46,14 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     """Hash password for storage"""
     return pwd_context.hash(password)
+
+
+def create_refresh_token(data: dict):
+    """Generate a refresh token with longer expiry"""
+    to_encode = data.copy()
+    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+        days=REFRESH_TOKEN_EXPIRE_DAYS
+    )
+    to_encode.update({"exp": expire, "token_type": "refresh"})
+    encoded_jwt = jwt.encode(to_encode, constants.JWT_SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
