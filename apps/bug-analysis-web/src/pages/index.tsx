@@ -479,7 +479,7 @@ const HomePage: React.FC = (): ReactNode => {
                   style={{ height: '20vh' }}
                 />
                 <div className="h-[calc(15vh-48px)] overflow-y-scroll p-1 flex flex-wrap">
-                  {dbmsData.bug_categories.map(
+                  {dbmsData?.bug_categories?.map(
                     (cat: BugCategory, idx: number) =>
                       cat.count > 0 ? (
                         <CategoryTag

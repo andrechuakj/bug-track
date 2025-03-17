@@ -14,7 +14,7 @@ export const generateBugDistrBar = (
   const color = isDark ? '#ffffff' : '#000000';
 
   // Filter categories with counts
-  const filteredDistr = distr.filter((b: BugCategory) => b.count > 0);
+  const filteredDistr = distr?.filter((b: BugCategory) => b.count > 0) ?? [];
 
   // Show 'No Bugs' if no data
   if (filteredDistr.length === 0) {
