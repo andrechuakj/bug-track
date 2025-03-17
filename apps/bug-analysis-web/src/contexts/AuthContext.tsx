@@ -6,6 +6,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  refreshToken: () => Promise<boolean>;
   loading: boolean;
 }
 
@@ -54,6 +55,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      const success = await authService.refreshToken();
+      if (success) {
+        setIsAuthenticated(true);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      setIsAuthenticated(false);
+      return false;
+    }
+  };
+
   const logout = () => {
     authService.logout();
     setIsAuthenticated(false);
@@ -61,7 +77,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, refreshToken, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

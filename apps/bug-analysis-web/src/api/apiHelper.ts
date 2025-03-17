@@ -19,10 +19,28 @@ export async function fetchWithAuth(
 
   // Handle 401 Unauthorized errors
   if (response.status === 401) {
-    authService.logout();
-    // Redirect to login page if we're in the browser
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
+    // Try to refresh the token
+    const refreshSuccess = await authService.refreshToken();
+
+    if (refreshSuccess) {
+      // If refresh successful, retry the original request with new token
+      const newToken = authService.getCurrentToken();
+      const newHeaders = {
+        ...options.headers,
+        Authorization: `Bearer ${newToken}`,
+      };
+
+      return fetch(url, {
+        ...options,
+        headers: newHeaders,
+        credentials: 'include',
+      });
+    } else {
+      // If refresh failed, logout and redirect
+      authService.logout();
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     }
   }
 
