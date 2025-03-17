@@ -71,7 +71,17 @@ async def get_ai_summary(dbms_id: int, r: Request) -> AiSummaryResponseDto:
 @router.get("/{dbms_id}/bug_search")
 async def get_bugs(dbms_id: int, r: Request) -> BugSearchResponseDto:
     """
-    Note: category_id query param is optional
+    Searches for bug reports from either all categories, while allocating
+    as equal amounts of reports to each category as possible, or from a
+    single category if category_id is specified.
+
+    Query parameters:
+        Required:
+            - search: the search string, which must match part of bug report titles
+            - start: 0-based index representing the number of records to skip
+            - limit: absolute value representing the max. num. of reports to return
+        Optional
+            - category_id: 0-based category_id which corresponds to that in db
     """
     tx = get_db(r)
     search = r.query_params.get("search", "")
@@ -101,11 +111,17 @@ async def get_bugs_by_category(
     dbms_id: int, r: Request
 ) -> BugSearchCategoryResponseDto:
     """
-    Get an extension of bug reports for a specific category, when viewing the bug list
-    on the main dashboard by clicking 'Load more...'. This is when no search/filter/sort
-    is applied.
+    Searches for bug reports in a category from a certain offset as given from a
+    distribution. On the FE, this corresponds to a load more feature for each bug
+    category in the bug explore.
 
-    distribution values should be absolute counts
+    Query parameters:
+        Required:
+            - category_id: 0-based category_id which corresponds to that in db
+            - amount: number of additional reports to add
+            - distribution: comma-separated values representing number of bugs present for
+                            each category, starting from the 0th category, this convenintely
+                            corresponds to the offset from which we should fetch our bugs
     """
     tx = get_db(r)
     try:

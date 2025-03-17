@@ -11,7 +11,6 @@ import random
 
 
 class _DbmsService:
-
     def get_dbms(self, tx: Session):
         return get_dbms_systems(tx)
 
@@ -55,9 +54,14 @@ class _DbmsService:
         categories: list[int] = [],
     ):
         """
-        Params:
-            - categories: list[str]: The categories to filter by, if empty, no filter applied
-            - start should be 0-based
+        Parameters:
+            - tx: the ORM session
+            - dbms_id: the ID of the DBMS to query from
+            - search: the search string for which our bug report titles should contain
+            - start: 0-based starting index to offset our queries from
+            - limit: maximum number of bug reports to fetch
+            - categories: a list of categories from which our bug reports should come from'
+                          if empty; query from all categories.
         """
         # TODO: replace with correct SQL / ORM stmt, need to access correct tenant db/table as well
         # TODO: Write it in a way that each category gets almost equal amount of bug reports
@@ -67,9 +71,12 @@ class _DbmsService:
         self, tx: Session, dbms_id: int, category: int, start: int, amount: int = 5
     ):
         """
-        A specific endpoint for querying ADDITIONAL bug reports, based on the current
-        size distribution.
-        start should be 0-based
+        Parameters:
+            - tx: the ORM session
+            - dbms_id: the ID of the DBMS to query from
+            - category: 0-based index of the category as per DB
+            - start: 0-based starting index to offset our queries from
+            - amount: number of bug reports to fetch
         """
         category_bugs = get_bug_report_by_dbms_and_category(tx, dbms_id, category)
         # TODO: Use limit and offset in SQL query directly
