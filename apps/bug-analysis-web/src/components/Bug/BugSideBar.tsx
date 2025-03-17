@@ -2,10 +2,12 @@ import { EditOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Divider, Dropdown, Tag, Typography } from 'antd';
 import React, { useEffect } from 'react';
+import {
+  BugCategoryResponseDto,
+  fetchAllCategories,
+} from '../../api/bug_report';
 import { useBugDetail } from '../../contexts/BugDetailContext';
 import CategoryTag from '../CategoryTag';
-
-const MockCategories = ['Category 1', 'Category 2', 'Category 3', 'Category 4'];
 
 const BugSideBar: React.FC = () => {
   const { bugDetail } = useBugDetail();
@@ -21,12 +23,12 @@ const BugSideBar: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = MockCategories;
+        const res = await fetchAllCategories();
 
-        const items = response.map((category, index) => ({
-          label: category,
-          key: index.toString(),
-          onClick: handleUpdateCategory,
+        const items = res.map((categoryResponse: BugCategoryResponseDto) => ({
+          label: categoryResponse.name,
+          key: categoryResponse.id.toString(),
+          onClick: () => handleUpdateCategory(categoryResponse.index),
         }));
 
         setCategoryMenuItems(items);
