@@ -4,11 +4,12 @@ from configuration.logger import configure_logger
 from configuration.openai import configure_openai
 from configuration.startup_info import configure_startup_info
 from controllers.auth_controller import router as auth_router
+from controllers.bug_category_controller import router as bug_category_router
+from controllers.bug_report_controller import router as bug_report_router
 from controllers.dbms_controller import router as dbms_router
 from controllers.discussion_controller import router as discussions_router
 from controllers.public_auth_controller import router as public_auth_router
 from controllers.user_controller import router as user_router
-from controllers.bug_report_controller import router as bug_report_router
 from domain.config import db_txn_manager_generator
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -47,3 +48,4 @@ app.include_router(discussions_router)
 app.include_router(user_router)
 app.include_router(dbms_router)
 app.include_router(bug_report_router)
+app.include_router(bug_category_router)
