@@ -13,7 +13,7 @@ export interface BugDetail {
 
 export const mockBugData: BugDetail[] = [
   {
-    id: 1,
+    id: 0,
     title: 'The `COERCIBILITY` of variables are different from MySQL',
     bugDescription: `
   ## Bug Report
@@ -45,7 +45,7 @@ export const mockBugData: BugDetail[] = [
     versionsAffected: ['1.0.0', '1.1.0'],
   },
   {
-    id: 2,
+    id: 1,
     title: 'Concurrency issue during data updates',
     bugDescription: `
 The CI test \`idc-jenkins-ci-tidb/check_dev_2 \` may fail when checking safepoint.
