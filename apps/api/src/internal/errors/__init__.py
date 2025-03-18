@@ -18,17 +18,25 @@ class ErrorModel(BaseModel):
 def register_error_handler(app: FastAPI) -> None:
     @app.exception_handler(BaseClientError)
     async def client_error_handler(request: Request, exc: BaseClientError):
-        return JSONResponse(
-            content=jsonable_encoder(
-                ErrorModel(
-                    timestamp=datetime.now(),
-                    path=request.url.path,
-                    status=exc.status_code,
-                    error=exc.detail,
-                )
-            ),
-            status_code=exc.status_code,
-        )
+        return create_client_error_response(request, exc)
+
+
+def create_client_error_response(request: Request, exc: BaseClientError):
+    """
+    Create a JSON response for a client error.
+    Only use inside custom middleware for type safety.
+    """
+    return JSONResponse(
+        content=jsonable_encoder(
+            ErrorModel(
+                timestamp=datetime.now(),
+                path=request.url.path,
+                status=exc.status_code,
+                error=exc.detail,
+            )
+        ),
+        status_code=exc.status_code,
+    )
 
 
 # Reexport the various error classes
