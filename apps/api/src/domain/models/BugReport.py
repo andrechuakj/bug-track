@@ -1,7 +1,6 @@
-from sqlmodel import Field, SQLModel, Session, select
-
 from domain.helpers.Timestampable import Timestampable
 from internal.errors.client_errors import NotFoundError
+from sqlmodel import Field, Session, SQLModel, select
 
 
 class BugReport(SQLModel, Timestampable, table=True):

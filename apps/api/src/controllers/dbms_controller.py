@@ -1,20 +1,19 @@
+from typing import Sequence
+
 import openai
 from domain.config import get_db
-from internal.errors.client_errors import BadRequestError
-from utilities.prompts import get_dbms_ai_summary_prompt
-
-from typing import Sequence
+from domain.views.dbms import (
+    AiSummaryResponseDto,
+    BugSearchCategoryResponseDto,
+    BugSearchResponseDto,
+    DbmsListResponseDto,
+    DbmsResponseDto,
+)
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
+from internal.errors.client_errors import BadRequestError
 from services.dbms_service import DbmsService
-from domain.views.dbms import (
-    DbmsResponseDto,
-    DbmsListResponseDto,
-    AiSummaryResponseDto,
-    BugSearchResponseDto,
-    BugSearchCategoryResponseDto,
-)
-
+from utilities.prompts import get_dbms_ai_summary_prompt
 
 router = APIRouter(prefix="/api/v1/dbms", tags=["dbms"])
 

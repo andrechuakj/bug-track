@@ -1,7 +1,7 @@
-import openai
-
-from configuration.logger import get_logger
 from contextlib import contextmanager
+
+import openai
+from configuration.logger import get_logger
 from fastapi import FastAPI
 from utilities.constants import constants
 

@@ -1,13 +1,14 @@
-from sqlmodel import Session
+import random
+
 from domain.models.BugCategory import get_bug_category_by_ids
 from domain.models.BugReport import (
+    get_bug_categories_by_dbms_id,
     get_bug_report_by_dbms_and_category,
     get_bug_report_by_ids,
     get_bug_report_ids_by_dbms_id,
-    get_bug_categories_by_dbms_id,
 )
 from domain.models.DBMSSystem import *
-import random
+from sqlmodel import Session
 
 
 class _DbmsService:

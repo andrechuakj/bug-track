@@ -2,7 +2,7 @@ import os
 from textwrap import dedent
 
 from domain.config import engine
-from sqlmodel import SQLModel, Session, text
+from sqlmodel import Session, SQLModel, text
 
 
 class Runner:

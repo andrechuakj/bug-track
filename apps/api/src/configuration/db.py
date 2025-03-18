@@ -1,10 +1,8 @@
 from contextlib import contextmanager
 
 from configuration.logger import get_logger
-
 from domain.config import engine
 from fastapi import FastAPI
-
 from sqlmodel import SQLModel
 
 
