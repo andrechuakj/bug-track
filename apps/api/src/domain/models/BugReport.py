@@ -1,4 +1,6 @@
 from domain.helpers.Timestampable import Timestampable
+from domain.models.DBMSSystem import DBMSSystem
+from domain.models.BugCategory import BugCategory
 from internal.errors.client_errors import NotFoundError
 from sqlmodel import Field, Session, select
 
@@ -24,6 +26,28 @@ def get_bug_reports(tx: Session):
 def get_bug_report_by_id(tx: Session, bug_report_id: int):
     return tx.get(BugReport, bug_report_id)
 
+
+def get_joined_bug_report_by_id(tx: Session, bug_report_id: int):
+    statement = (
+        select(BugReport, DBMSSystem, BugCategory)
+        .join(DBMSSystem, BugReport.dbms_id == DBMSSystem.id)
+        .join(BugCategory, BugReport.category_id == BugCategory.id)
+        .where(BugReport.id == bug_report_id)
+    )
+    result = tx.exec(statement).first()
+    if not result:
+        raise NotFoundError(f"Bug report {bug_report_id} not found")
+    
+    bug_report, dbms_system, bug_category = result
+    return {
+        "id": bug_report.id,
+        "dbms_id": dbms_system.id,
+        "dbms": dbms_system.name,
+        "category_id": bug_category.id,
+        "category": bug_category.name,
+        "title": bug_report.title,
+        "description": bug_report.description,
+    }
 
 def get_bug_report_by_ids(tx: Session, bug_report_ids: list[int]):
     return tx.exec(select(BugReport).where(BugReport.id.in_(bug_report_ids))).all()

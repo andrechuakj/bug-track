@@ -31,7 +31,9 @@ class AiSummaryResponseDto(BaseResponseModel):
 class BugReportResponseDto(BaseResponseModel):
     id: int
     dbms_id: int
+    dbms: str
     category_id: int
+    category: str
     title: str
     description: str | None
     url: str | None
