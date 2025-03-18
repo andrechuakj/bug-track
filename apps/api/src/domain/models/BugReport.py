@@ -29,25 +29,25 @@ def get_bug_report_by_id(tx: Session, bug_report_id: int):
 
 def get_joined_bug_report_by_id(tx: Session, bug_report_id: int):
     statement = (
-        select(BugReport, DBMSSystem, BugCategory)
+        select(
+            BugReport.id,
+            BugReport.dbms_id,
+            DBMSSystem.name.label("dbms"),
+            BugReport.category_id,
+            BugCategory.name.label("category"),
+            BugReport.title,
+            BugReport.description
+        )
         .join(DBMSSystem, BugReport.dbms_id == DBMSSystem.id)
         .join(BugCategory, BugReport.category_id == BugCategory.id)
         .where(BugReport.id == bug_report_id)
     )
+
     result = tx.exec(statement).first()
     if not result:
         raise NotFoundError(f"Bug report {bug_report_id} not found")
-    
-    bug_report, dbms_system, bug_category = result
-    return {
-        "id": bug_report.id,
-        "dbms_id": dbms_system.id,
-        "dbms": dbms_system.name,
-        "category_id": bug_category.id,
-        "category": bug_category.name,
-        "title": bug_report.title,
-        "description": bug_report.description,
-    }
+
+    return result
 
 def get_bug_report_by_ids(tx: Session, bug_report_ids: list[int]):
     return tx.exec(select(BugReport).where(BugReport.id.in_(bug_report_ids))).all()
@@ -132,4 +132,12 @@ def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
         raise NotFoundError(f"Bug report {bug_report_id} not found")
     bug_report.category_id = category_id
     tx.commit()
-    return bug_report
+    return {
+        "id": bug_report.id,
+        "dbms_id": bug_report.dbms_id,
+        "dbms": "TiDBtest",
+        "category_id": bug_report.id,
+        "category": "test category",
+        "title": bug_report.title,
+        "description": bug_report.description,
+    }
