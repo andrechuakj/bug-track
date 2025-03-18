@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from domain.config import get_db
-from domain.views.auth import LoginRequest, LoginResponse
+from domain.views.auth import LoginRequestDto, LoginResponseDto
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from internal.errors.client_errors import UnauthorizedError
@@ -33,7 +33,7 @@ def authenticate_user(tx: Session, email: str, password: str):
 
 
 @router.post("/token")
-async def login_with_token(r: Request, body: LoginRequest) -> LoginResponse:
+async def login_with_token(r: Request, body: LoginRequestDto) -> LoginResponseDto:
     """
     Authenticate a user with email/password and return a JWT token
     """
@@ -50,7 +50,7 @@ async def login_with_token(r: Request, body: LoginRequest) -> LoginResponse:
 
     # Create refresh token
     refresh_token = create_refresh_token(data=user_data)
-    return LoginResponse(
+    return LoginResponseDto(
         access_token=access_token,
         refresh_token=refresh_token,
         token_type="bearer",
