@@ -69,23 +69,6 @@ const HomePage: React.FC = (): ReactNode => {
   const [aiButtonLoading, setAiButtonLoading] = useState(false);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [loading, isAuthenticated, router]);
-
-  useEffect(() => {
-    if (loading) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-    } else {
-      fetchBugExplore();
-      fetchDbmsData(1).then((res: DbmsResponseDto) => setDbmsData(res));
-      handleAiSummary();
-    }
-  }, [loading, isAuthenticated, router]);
-
-  useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
       router.push('/login');
@@ -188,10 +171,6 @@ const HomePage: React.FC = (): ReactNode => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchBugExplore();
-  }, []);
-
   const handleBugExploreLoadMore = async (
     categoryId: number
   ): Promise<void> => {
@@ -222,11 +201,6 @@ const HomePage: React.FC = (): ReactNode => {
     await fetchAiSummary(1).then((res: AiSummary) => setAiSummary(res));
     setAiButtonLoading(false);
   };
-
-  useEffect(() => {
-    fetchDbmsData(1).then((res: DbmsResponseDto) => setDbmsData(res));
-    handleAiSummary();
-  }, []);
 
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
