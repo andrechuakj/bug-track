@@ -6,7 +6,7 @@ class LoginRequestDto(BaseModel):
     password: str = Field(min_length=10)
 
 
-class LoginResponseDto(BaseModel):
+class LoginResponseDto(BaseResponseModel):
     access_token: str
     refresh_token: str
     token_type: str
