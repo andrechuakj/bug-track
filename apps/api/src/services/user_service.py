@@ -17,6 +17,9 @@ class _UserService:
     def get_user(self, user_id: int):
         return next((user for user in self._mock_users if user.id == user_id), None)
 
+    def get_user_by_email(self, tx: Session, email: str):
+        return get_user_by_email(tx, email)
+
     def save_user(self, user: User):
         user.id = self._next_id
         self._next_id += 1
