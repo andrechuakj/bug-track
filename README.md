@@ -22,15 +22,15 @@
    pip install -r requirements.txt
    ```
 
-   On Windows, run the following instead:
+   On Windows, use WSL or run the following instead:
 
    ```bash
    python -m venv myenv
    myenv\Scripts\activate
    pip install -r win_requirements.txt
    ```
+1. Create a `.env.local` file in the current directory and populate `MODE`, `OPENAI_API_KEY` and `DATABASE_URL` environment variables, with `MODE` set to `development`
+1. Install dependencies and start the backend with `yarn && yarn dev`
 
-1. Navigate to `src` with `cd src/`
-1. Start the backend with `uvicorn main:app --reload`
 
-> To check that the environment is set up, run both FE & BE, and ensure that the API is fetching correctly.
+> To check that the environment is set up, run both frontend & backend, and ensure that the API is fetching correctly.
