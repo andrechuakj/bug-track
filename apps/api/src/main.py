@@ -10,6 +10,8 @@ from domain.config import db_txn_manager_generator
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from internal.errors import register_error_handler
+from internal.middleware.middleware import register_custom_middleware
+from internal.middleware.secured_endpoints import secured_endpoints_middleware
 
 app = FastAPI(
     title="bug-analysis-api",
@@ -32,6 +34,10 @@ app.add_middleware(
 )
 
 register_error_handler(app)
+register_custom_middleware(
+    app,
+    secured_endpoints_middleware,
+)
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(dbms_router)
