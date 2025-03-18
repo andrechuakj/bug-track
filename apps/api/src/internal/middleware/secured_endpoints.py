@@ -6,12 +6,12 @@ from internal.errors import create_client_error_response as error
 from internal.errors.client_errors import ForbiddenError, UnauthorizedError
 from services.auth_service import AuthService
 
-unsecured_endpoints_regex = re.compile(r"^/public/.*")
+secured_endpoints_regex = re.compile(r"^/api/v1/.*")
 
 
 async def secured_endpoints_middleware(request: Request, call_next):
     logger = get_logger()
-    if re.match(unsecured_endpoints_regex, request.url.path):
+    if not re.match(secured_endpoints_regex, request.url.path):
         logger.info(f"Public Endpoint: {request.url.path}")
         return await call_next(request)
     logger.info(f"Secured Endpoint: {request.url.path}")
