@@ -2,12 +2,32 @@ import { components } from '../../../api/client/api';
 
 export type BugCategoryResponseDto =
   components['schemas']['BugCategoryResponseDto'];
-export type BugReportResponseDto =
-  components['schemas']['BugReportResponseDto'];
+export type BugReport = components['schemas']['BugReportResponseDto'];
 
 const getBaseUrl = () => {
   return `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 };
+
+export async function fetchBugById(bug_id: number): Promise<BugReport> {
+  const url: string = `${getBaseUrl()}/bug/${bug_id}`;
+
+  try {
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(
+        `Failed to fetch bug: ${res.status} ${res.statusText} - ${errorData?.detail || ''}`
+      );
+    }
+
+    const data: BugReport = await res.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching bug:', error);
+    throw error;
+  }
+}
 
 export async function fetchAllCategories(): Promise<BugCategoryResponseDto[]> {
   const url: string = `${getBaseUrl()}/category/`;
@@ -50,7 +70,7 @@ export async function updateBugCategory(bug_id: number, category_id: number) {
       );
     }
 
-    const data: BugReportResponseDto = await res.json();
+    const data: BugReport = await res.json();
     return data;
   } catch (error) {
     console.error('Error updating category:', error);
