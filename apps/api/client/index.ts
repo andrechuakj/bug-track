@@ -7,3 +7,5 @@ export type ApiClient = typeof client;
 type ApiClientOptions = Pick<ClientOptions, 'baseUrl'>;
 export const createClient = (options: ApiClientOptions): ApiClient =>
   _createClient(options);
+
+export { type Middleware } from 'openapi-fetch';
