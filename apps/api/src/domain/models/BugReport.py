@@ -132,12 +132,4 @@ def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
         raise NotFoundError(f"Bug report {bug_report_id} not found")
     bug_report.category_id = category_id
     tx.commit()
-    return {
-        "id": bug_report.id,
-        "dbms_id": bug_report.dbms_id,
-        "dbms": "TiDBtest",
-        "category_id": bug_report.id,
-        "category": "test category",
-        "title": bug_report.title,
-        "description": bug_report.description,
-    }
+    return get_joined_bug_report_by_id(tx, bug_report_id)

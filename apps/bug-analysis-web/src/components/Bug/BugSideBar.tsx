@@ -4,6 +4,7 @@ import { Divider, Dropdown, Tag, Typography } from 'antd';
 import React, { useEffect } from 'react';
 import {
   BugCategoryResponseDto,
+  BugReport,
   fetchAllCategories,
   updateBugCategory,
 } from '../../api/bug_report';
@@ -11,7 +12,7 @@ import { useBugReport } from '../../contexts/BugReportContext';
 import CategoryTag from '../CategoryTag';
 
 const BugSideBar: React.FC = () => {
-  const { bugReport } = useBugReport();
+  const { bugReport, setBugReport } = useBugReport();
   const [isCategoryUpdating, setIsCategoryUpdating] = React.useState(false);
   const [categoryMenuItems, setCategoryMenuItems] = React.useState<
     MenuProps['items']
@@ -19,8 +20,18 @@ const BugSideBar: React.FC = () => {
 
   const handleUpdateCategory = async (bug_id: number, category_id: number) => {
     setIsCategoryUpdating(true);
-    await updateBugCategory(bug_id, category_id);
-    setIsCategoryUpdating(false);
+    try {
+      const updatedReport = await updateBugCategory(bug_id, category_id);
+      setBugReport((prev: BugReport) => ({
+        ...prev,
+        category: updatedReport.category,
+        category_id: updatedReport.category_id,
+      }));
+    } catch (error) {
+      console.error('Failed to update category:', error);
+    } finally {
+      setIsCategoryUpdating(false);
+    }
   };
 
   useEffect(() => {
