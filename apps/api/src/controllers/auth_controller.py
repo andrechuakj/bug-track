@@ -1,3 +1,4 @@
+from domain.views.auth import LoginResponseDto
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from internal.errors.client_errors import ForbiddenError
@@ -8,7 +9,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="public/api/v1/auth/login")
 
 
 @router.post("/refresh")
-async def refresh_access_token(request: Request, token: str = Depends(oauth2_scheme)):
+async def refresh_access_token(
+    request: Request,
+    token: str = Depends(oauth2_scheme),
+) -> LoginResponseDto:
     """
     Use a refresh token to generate a new access token.
     """
