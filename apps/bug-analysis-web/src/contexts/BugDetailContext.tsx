@@ -1,9 +1,11 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-import { BugDetail } from '../pages/bug/mockdata';
+import { BugReport, fetchBugById } from '../api/bug_report';
 
 interface BugDetailContextType {
-  bugDetail: BugDetail | null;
-  setBugDetail: (bugDetail: BugDetail) => void;
+  bugDetail: BugReport | null;
+  setBugDetail: (bugDetail: BugReport) => void;
+  useFetchBugDetail: (bug_id: number) => Promise<void>;
+  isBugLoading: boolean;
 }
 
 const BugDetailContext = createContext<BugDetailContextType | undefined>(
@@ -17,10 +19,25 @@ interface BugDetailProviderProps {
 export const BugDetailProvider: React.FC<BugDetailProviderProps> = ({
   children,
 }: BugDetailProviderProps) => {
-  const [bugDetail, setBugDetail] = useState<BugDetail | null>(null);
+  const [bugDetail, setBugDetail] = useState<BugReport | null>(null);
+  const [isBugLoading, setIsBugLoading] = useState(false);
+
+  const useFetchBugDetail = async (bug_id: number) => {
+    setIsBugLoading(true);
+    try {
+      const data = await fetchBugById(bug_id);
+      setBugDetail(data);
+    } catch (error) {
+      console.error('Error fetching bug detail:', error);
+    } finally {
+      setIsBugLoading(false);
+    }
+  };
 
   return (
-    <BugDetailContext.Provider value={{ bugDetail, setBugDetail }}>
+    <BugDetailContext.Provider
+      value={{ bugDetail, setBugDetail, useFetchBugDetail, isBugLoading }}
+    >
       {children}
     </BugDetailContext.Provider>
   );
