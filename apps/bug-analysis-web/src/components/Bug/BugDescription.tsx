@@ -15,7 +15,7 @@ const BugDescription: React.FC = () => {
     >
       <div className="markdown overflow-y-auto">
         <Markdown remarkPlugins={[remarkGfm]} skipHtml>
-          {bugReport?.bugDescription || 'No description found'}
+          {bugReport?.description || 'No description found'}
         </Markdown>
       </div>
 

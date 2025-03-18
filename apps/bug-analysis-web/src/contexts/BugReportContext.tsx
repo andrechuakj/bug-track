@@ -4,7 +4,7 @@ import { BugReport, fetchBugById } from '../api/bug_report';
 interface BugReportContextType {
   bugReport: BugReport | null;
   setBugReport: (bugReport: BugReport) => void;
-  useFetchBugReport: (bug_id: number) => Promise<void>;
+  fetchBugReport: (bug_id: number) => Promise<void>;
   isBugLoading: boolean;
 }
 
@@ -22,7 +22,7 @@ export const BugReportProvider: React.FC<BugReportProviderProps> = ({
   const [bugReport, setBugReport] = useState<BugReport | null>(null);
   const [isBugLoading, setIsBugLoading] = useState(false);
 
-  const useFetchBugReport = async (bug_id: number) => {
+  const fetchBugReport = async (bug_id: number) => {
     setIsBugLoading(true);
     try {
       const data = await fetchBugById(bug_id);
@@ -36,7 +36,7 @@ export const BugReportProvider: React.FC<BugReportProviderProps> = ({
 
   return (
     <BugReportContext.Provider
-      value={{ bugReport, setBugReport, useFetchBugReport, isBugLoading }}
+      value={{ bugReport, setBugReport, fetchBugReport, isBugLoading }}
     >
       {children}
     </BugReportContext.Provider>

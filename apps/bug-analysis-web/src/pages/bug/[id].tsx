@@ -8,16 +8,16 @@ import {
   BugReportProvider,
   useBugReport,
 } from '../../contexts/BugReportContext';
-import { mockBugData } from './mockdata';
 
 const BugReportPage: React.FC = () => {
-  const { setBugReport } = useBugReport();
+  const { fetchBugReport } = useBugReport();
   const router = useRouter();
-  const { id } = router.query;
+const { id } = router.query;
 
   useEffect(() => {
-    setBugReport(mockBugData[Number(id)]);
-  });
+    if (!id) return;
+    fetchBugReport(Number(id));
+  }, [id]);
 
   return (
     <div className="min-h-screen p-4 max-w-7xl mx-auto">

@@ -48,9 +48,13 @@ const BugSideBar: React.FC = () => {
     <div className="w-full">
       <div className="flex flex-col gap-1">
         <Typography.Title level={5}>DBMS</Typography.Title>
-        <Tag color="red" className="w-fit">
-          TiDB
-        </Tag>
+        {bugReport?.dbms ? (
+          <Tag color="red" className="w-fit">
+            {bugReport?.dbms}
+          </Tag>
+        ) : (
+          'Not specified'
+        )}
       </div>
 
       <Divider />
@@ -64,7 +68,7 @@ const BugSideBar: React.FC = () => {
                 items: categoryMenuItems,
                 selectable: true,
                 defaultSelectedKeys: [
-                  bugReport ? bugReport.categoryId.toString() : '',
+                  bugReport ? bugReport.category_id.toString() : '',
                 ],
               }}
               trigger={['click']}
@@ -93,7 +97,8 @@ const BugSideBar: React.FC = () => {
         <Typography.Title level={5}>Versions affected</Typography.Title>
         {bugReport?.versionsAffected ? (
           <Typography.Text>
-            {bugReport.versionsAffected.join(', ')}
+            {/* TODO: Update dynamically */}
+            1.0.1
           </Typography.Text>
         ) : (
           'Not specified'
