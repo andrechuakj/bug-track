@@ -92,17 +92,6 @@ class _AuthService:
         )
 
 
-# TODO: Move to user service
-# def verify_password(plain_password, hashed_password):
-#     """Verify password against the stored hash"""
-#     return pwd_context.verify(plain_password, hashed_password)
-
-
-# def get_password_hash(password):
-#     """Hash password for storage"""
-#     return pwd_context.hash(password)
-
-
 AuthService = _AuthService()
 
 __all__ = ["AuthService"]

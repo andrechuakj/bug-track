@@ -2,10 +2,12 @@ from typing import Sequence
 
 from domain.models.User import *
 from internal.errors import NotFoundError
-from services.auth_service import get_password_hash
+from passlib.context import CryptContext
 
 
 class _UserService:
+    _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
     def get_users(self, tx: Session) -> Sequence[User]:
         return get_users(tx)
 
@@ -15,8 +17,8 @@ class _UserService:
     def get_user_by_email(self, tx: Session, email: str):
         return get_user_by_email(tx, email)
 
-    def save_user(self, tx: Session, user: User):
-        user.password = get_password_hash(user.password)
+    def save_new_user(self, tx: Session, user: User):
+        user.password = _UserService._pwd_context.hash(user.password)
         return save_user(tx, user)
 
     def delete_user(self, tx: Session, user_id: int):
@@ -24,6 +26,9 @@ class _UserService:
         if user is None:
             raise NotFoundError("User not found")
         return delete_user(tx, user_id)
+
+    def validate_user_password(self, user: User, password: str) -> bool:
+        return _UserService._pwd_context.verify(password, user.password)
 
 
 UserService = _UserService()
