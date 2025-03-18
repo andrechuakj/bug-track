@@ -15,7 +15,10 @@ class AuthService {
         return false;
       }
 
-      saveTokens({ ...data });
+      saveTokens({
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      });
       return true;
     } catch (error) {
       console.error('Login failed:', error);
@@ -38,7 +41,10 @@ class AuthService {
         return false;
       }
 
-      saveTokens({ ...data });
+      saveTokens({
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      });
       return true;
     } catch (error) {
       console.error('Token refresh failed:', error);
