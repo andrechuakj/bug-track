@@ -1,90 +1,23 @@
-from datetime import timedelta
-
-from domain.config import get_db
-from domain.views.auth import LoginRequestDto, LoginResponseDto
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordBearer
-from internal.errors.client_errors import UnauthorizedError
-from services.auth_service import (
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    create_access_token,
-    create_refresh_token,
-    verify_access_token,
-    verify_password,
-)
-from services.user_service import UserService
-from sqlmodel import Session
+from internal.errors.client_errors import ForbiddenError
+from services.auth_service import AuthService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 
-def authenticate_user(tx: Session, email: str, password: str):
-    """Helper function to authenticate a user."""
-    user = UserService.get_user_by_email(tx, email)
-
-    if not user or not verify_password(password, user.password):
-        raise UnauthorizedError(
-            "Incorrect email or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    return user
-
-
-@router.post("/token")
-async def login_with_token(r: Request, body: LoginRequestDto) -> LoginResponseDto:
-    """
-    Authenticate a user with email/password and return a JWT token
-    """
-    tx: Session = get_db(r)
-    user = authenticate_user(tx, body.email, body.password)
-
-    # Create access token
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    user_data = {"sub": user.email, "id": user.id, "name": user.name}
-    access_token = create_access_token(
-        data=user_data,
-        expires_delta=access_token_expires,
-    )
-
-    # Create refresh token
-    refresh_token = create_refresh_token(data=user_data)
-    return LoginResponseDto(
-        access_token=access_token,
-        refresh_token=refresh_token,
-        token_type="bearer",
-    )
-
-
 @router.post("/refresh")
 async def refresh_access_token(request: Request, token: str = Depends(oauth2_scheme)):
     """
-    Use a refresh token to generate a new access token
+    Use a refresh token to generate a new access token.
     """
-    try:
-        payload = verify_access_token(token)
-
-        # Verify this is a refresh token
-        if payload.get("token_type") != "refresh":
-            raise UnauthorizedError(
-                "Invalid token type", headers={"WWW-Authenticate": "Bearer"}
-            )
-
-        # Create new access token only
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"sub": payload["sub"], "id": payload["id"], "name": payload["name"]},
-            expires_delta=access_token_expires,
+    if not AuthService.is_refresh_token(token):
+        raise ForbiddenError(
+            "Invalid token type", headers={"WWW-Authenticate": "Bearer"}
         )
 
-        # TODO: Define the contract for the response
-        return {"access_token": access_token, "token_type": "bearer"}
-    except Exception as e:
-        raise UnauthorizedError(
-            "Invalid refresh token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    return AuthService.refresh_user_tokens(token)
 
 
 __all__ = ["router"]
