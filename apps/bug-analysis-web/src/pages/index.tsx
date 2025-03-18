@@ -82,7 +82,8 @@ const HomePage: React.FC = (): ReactNode => {
   // Form logic (bug search)
   const [redemptionForm] = Form.useForm();
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+  // TODO: Implement sort modal
+  // const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
   const [acBugReports, setAcBugReports] = useState<BugReports>({
     bug_reports: [],
