@@ -4,7 +4,7 @@ from internal.errors.client_errors import ForbiddenError
 from services.auth_service import AuthService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["authentication"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="public/api/v1/auth/login")
 
 
 @router.post("/refresh")

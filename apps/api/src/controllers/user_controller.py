@@ -4,13 +4,11 @@ from domain.config import get_db
 from domain.models.User import User
 from domain.views.user import UserCreateRequestDto, UserSummaryResponseDto
 from fastapi import APIRouter, Request
-from fastapi.security import OAuth2PasswordBearer
 from internal.errors import NotFoundError
 from internal.errors.client_errors import ConflictError
 from services.user_service import UserService
 
 router = APIRouter(prefix="/api/v1/users", tags=["users"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 
 @router.get("/")
