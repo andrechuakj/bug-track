@@ -1,23 +1,26 @@
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Divider, Dropdown, Tag, Typography } from 'antd';
 import React, { useEffect } from 'react';
 import {
   BugCategoryResponseDto,
   fetchAllCategories,
+  updateBugCategory,
 } from '../../api/bug_report';
 import { useBugDetail } from '../../contexts/BugDetailContext';
 import CategoryTag from '../CategoryTag';
 
 const BugSideBar: React.FC = () => {
   const { bugDetail } = useBugDetail();
+  const [isCategoryUpdating, setIsCategoryUpdating] = React.useState(false);
   const [categoryMenuItems, setCategoryMenuItems] = React.useState<
     MenuProps['items']
   >([]);
 
-  const handleUpdateCategory = (key: string) => {
-    // TODO
-    console.log('Category updated to', key);
+  const handleUpdateCategory = async (bug_id: number, category_id: number) => {
+    setIsCategoryUpdating(true);
+    await updateBugCategory(bug_id, category_id);
+    setIsCategoryUpdating(false);
   };
 
   useEffect(() => {
@@ -28,7 +31,8 @@ const BugSideBar: React.FC = () => {
         const items = res.map((categoryResponse: BugCategoryResponseDto) => ({
           label: categoryResponse.name,
           key: categoryResponse.id.toString(),
-          onClick: () => handleUpdateCategory(categoryResponse.id.toString()),
+          onClick: () =>
+            handleUpdateCategory(bugDetail!.id, categoryResponse.id),
         }));
 
         setCategoryMenuItems(items);
@@ -38,7 +42,7 @@ const BugSideBar: React.FC = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [bugDetail]);
 
   return (
     <div className="w-full">
@@ -54,21 +58,23 @@ const BugSideBar: React.FC = () => {
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <Typography.Title level={5}>Category</Typography.Title>
-          <Dropdown
-            menu={{
-              items: categoryMenuItems,
-              selectable: true,
-              defaultSelectedKeys: [
-                bugDetail ? bugDetail.categoryId.toString() : '',
-              ],
-            }}
-            trigger={['click']}
-            placement="bottomRight"
-          >
-            <a onClick={(e) => e.preventDefault()}>
-              <EditOutlined />
-            </a>
-          </Dropdown>
+          {categoryMenuItems && categoryMenuItems.length > 0 && (
+            <Dropdown
+              menu={{
+                items: categoryMenuItems,
+                selectable: true,
+                defaultSelectedKeys: [
+                  bugDetail ? bugDetail.categoryId.toString() : '',
+                ],
+              }}
+              trigger={['click']}
+              placement="bottomRight"
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                {isCategoryUpdating ? <LoadingOutlined /> : <EditOutlined />}
+              </a>
+            </Dropdown>
+          )}
         </div>
         {bugDetail?.category ? (
           <CategoryTag
