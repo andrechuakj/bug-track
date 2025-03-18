@@ -5,7 +5,7 @@ import AppLayout from '../components/AppLayout';
 import { AppProvider } from '../utils/context';
 import './globals.css';
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
@@ -21,4 +21,4 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   );
 };
 
-export default MyApp;
+export default App;
