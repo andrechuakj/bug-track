@@ -26,9 +26,13 @@ class _AuthService:
             raise UnauthorizedError("Invalid token.")
 
     def is_access_token(self, token: str) -> bool:
-        """Check if the token is an access token"""
+        """Check if the token is an access OR refresh token"""
         payload = self._verify_token(token)
-        return payload.get("token_type") == "access"
+        match payload.get("token_type"):
+            case "access", "refresh":
+                return True
+            case _:
+                return False
 
     def is_refresh_token(self, token: str) -> bool:
         """Check if the token is a refresh token"""
