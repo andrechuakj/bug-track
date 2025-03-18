@@ -1,59 +1,106 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 
 import jwt
-from fastapi import HTTPException, status
-from passlib.context import CryptContext
+from domain.models.User import User
+from internal.errors.client_errors import ForbiddenError, UnauthorizedError
+from pydantic import BaseModel
 from utilities.constants import constants
 
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15  # Access token expiry time
-REFRESH_TOKEN_EXPIRE_DAYS = 1  # Refresh token expiry time
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+class _AuthService:
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_VALID_DURATION = timedelta(minutes=15)
+    REFRESH_TOKEN_VALID_DURATION = timedelta(days=1)
 
+    def _verify_token(self, token: str) -> dict:
+        """Verify the JWT token and return the payload"""
+        try:
+            return jwt.decode(
+                token,
+                constants.JWT_SECRET_KEY,
+                algorithms=[_AuthService.ALGORITHM],
+            )
+        except jwt.ExpiredSignatureError:
+            raise ForbiddenError("Token expired.")
+        except jwt.InvalidTokenError:
+            raise UnauthorizedError("Invalid token.")
 
-def create_access_token(data: dict, expires_delta: datetime.timedelta | None = None):
-    """Generate a JWT token"""
-    to_encode = data.copy()
-    expire = datetime.datetime.now(datetime.timezone.utc) + (
-        expires_delta or datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, constants.JWT_SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    def is_access_token(self, token: str) -> bool:
+        """Check if the token is an access token"""
+        payload = self._verify_token(token)
+        return payload.get("token_type") == "access"
 
+    def is_refresh_token(self, token: str) -> bool:
+        """Check if the token is a refresh token"""
+        payload = self._verify_token(token)
+        return payload.get("token_type") == "refresh"
 
-def verify_access_token(token: str):
-    """Verify the JWT token and return the payload"""
-    try:
-        payload = jwt.decode(token, constants.JWT_SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
+    class TokensViewModel(BaseModel):
+        access_token: str
+        refresh_token: str
+
+    def create_user_tokens(self, user: User) -> TokensViewModel:
+        """Generate a JWT token"""
+        data = {
+            "sub": user.email,
+            "id": user.id,
+            "name": user.name,
+        }
+        access_token = {
+            **data,
+            "exp": datetime.now(timezone.utc)
+            + _AuthService.ACCESS_TOKEN_VALID_DURATION,
+            "token_type": "access",
+        }
+        refresh_token = {
+            **data,
+            "exp": datetime.now(timezone.utc)
+            + _AuthService.REFRESH_TOKEN_VALID_DURATION,
+            "token_type": "refresh",
+        }
+        return _AuthService.TokensViewModel(
+            access_token=jwt.encode(
+                access_token, constants.JWT_SECRET_KEY, algorithm=_AuthService.ALGORITHM
+            ),
+            refresh_token=jwt.encode(
+                refresh_token,
+                constants.JWT_SECRET_KEY,
+                algorithm=_AuthService.ALGORITHM,
+            ),
         )
-    except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+
+    def refresh_user_tokens(self, refresh_token_str: str) -> TokensViewModel:
+        """Refresh the user's access token"""
+        if not self.is_refresh_token(refresh_token):
+            raise ForbiddenError("Invalid token type.")
+        refresh_token = self._verify_token(refresh_token_str)
+        new_access_token = {
+            **refresh_token,
+            "exp": datetime.now(timezone.utc)
+            + _AuthService.ACCESS_TOKEN_VALID_DURATION,
+            "token_type": "access",
+        }
+        return _AuthService.TokensViewModel(
+            access_token=jwt.encode(
+                new_access_token,
+                constants.JWT_SECRET_KEY,
+                algorithm=_AuthService.ALGORITHM,
+            ),
+            refresh_token=refresh_token_str,
         )
 
 
-def verify_password(plain_password, hashed_password):
-    """Verify password against the stored hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+# TODO: Move to user service
+# def verify_password(plain_password, hashed_password):
+#     """Verify password against the stored hash"""
+#     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_password_hash(password):
-    """Hash password for storage"""
-    return pwd_context.hash(password)
+# def get_password_hash(password):
+#     """Hash password for storage"""
+#     return pwd_context.hash(password)
 
 
-def create_refresh_token(data: dict):
-    """Generate a refresh token with longer expiry"""
-    to_encode = data.copy()
-    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
-        days=REFRESH_TOKEN_EXPIRE_DAYS
-    )
-    to_encode.update({"exp": expire, "token_type": "refresh"})
-    encoded_jwt = jwt.encode(to_encode, constants.JWT_SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+AuthService = _AuthService()
+
+__all__ = ["AuthService"]
