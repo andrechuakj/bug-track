@@ -24,7 +24,7 @@ const BugSideBar: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const loadCategories = async () => {
       try {
         const res = await fetchAllCategories();
 
@@ -41,7 +41,7 @@ const BugSideBar: React.FC = () => {
       }
     };
 
-    fetchCategories();
+    loadCategories();
   }, [bugDetail]);
 
   return (
