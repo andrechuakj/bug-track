@@ -36,6 +36,11 @@ class MethodNotAllowedError(BaseClientError):
         super().__init__(405, detail, **kwargs)
 
 
+class ConflictError(BaseClientError):
+    def __init__(self, detail: str, /, **kwargs):
+        super().__init__(409, detail, **kwargs)
+
+
 class UnprocessableEntityError(BaseClientError):
     def __init__(self, detail: str, /, **kwargs):
         super().__init__(422, detail, **kwargs)
@@ -47,5 +52,6 @@ __all__ = [
     "ForbiddenError",
     "NotFoundError",
     "MethodNotAllowedError",
+    "ConflictError",
     "UnprocessableEntityError",
 ]
