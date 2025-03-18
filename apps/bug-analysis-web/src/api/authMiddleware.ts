@@ -1,7 +1,7 @@
 import { Middleware } from '~api';
 import { getTokens } from '../utils/auth';
 
-const unsecuredEnpointsRegex = /^\/public/;
+const unsecuredEnpointsRegex = /^\/public.*/;
 
 const authMiddleware: Middleware = {
   onRequest: ({ request }) => {
