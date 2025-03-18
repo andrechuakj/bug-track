@@ -8,9 +8,9 @@ from utilities.constants import constants
 
 
 class _AuthService:
-    ALGORITHM = "HS256"
-    ACCESS_TOKEN_VALID_DURATION = timedelta(minutes=15)
-    REFRESH_TOKEN_VALID_DURATION = timedelta(days=1)
+    _ALGORITHM = "HS256"
+    _ACCESS_TOKEN_VALID_DURATION = timedelta(minutes=15)
+    _REFRESH_TOKEN_VALID_DURATION = timedelta(days=1)
 
     def _verify_token(self, token: str) -> dict:
         """Verify the JWT token and return the payload"""
@@ -18,7 +18,7 @@ class _AuthService:
             return jwt.decode(
                 token,
                 constants.JWT_SECRET_KEY,
-                algorithms=[_AuthService.ALGORITHM],
+                algorithms=[_AuthService._ALGORITHM],
             )
         except jwt.ExpiredSignatureError:
             raise ForbiddenError("Token expired.")
@@ -49,23 +49,25 @@ class _AuthService:
         access_token = {
             **data,
             "exp": datetime.now(timezone.utc)
-            + _AuthService.ACCESS_TOKEN_VALID_DURATION,
+            + _AuthService._ACCESS_TOKEN_VALID_DURATION,
             "token_type": "access",
         }
         refresh_token = {
             **data,
             "exp": datetime.now(timezone.utc)
-            + _AuthService.REFRESH_TOKEN_VALID_DURATION,
+            + _AuthService._REFRESH_TOKEN_VALID_DURATION,
             "token_type": "refresh",
         }
         return _AuthService.TokensViewModel(
             access_token=jwt.encode(
-                access_token, constants.JWT_SECRET_KEY, algorithm=_AuthService.ALGORITHM
+                access_token,
+                constants.JWT_SECRET_KEY,
+                algorithm=_AuthService._ALGORITHM,
             ),
             refresh_token=jwt.encode(
                 refresh_token,
                 constants.JWT_SECRET_KEY,
-                algorithm=_AuthService.ALGORITHM,
+                algorithm=_AuthService._ALGORITHM,
             ),
         )
 
@@ -77,14 +79,14 @@ class _AuthService:
         new_access_token = {
             **refresh_token,
             "exp": datetime.now(timezone.utc)
-            + _AuthService.ACCESS_TOKEN_VALID_DURATION,
+            + _AuthService._ACCESS_TOKEN_VALID_DURATION,
             "token_type": "access",
         }
         return _AuthService.TokensViewModel(
             access_token=jwt.encode(
                 new_access_token,
                 constants.JWT_SECRET_KEY,
-                algorithm=_AuthService.ALGORITHM,
+                algorithm=_AuthService._ALGORITHM,
             ),
             refresh_token=refresh_token_str,
         )
