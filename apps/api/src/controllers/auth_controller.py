@@ -50,12 +50,11 @@ async def login_with_token(r: Request, body: LoginRequest) -> LoginResponse:
 
     # Create refresh token
     refresh_token = create_refresh_token(data=user_data)
-
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-    }
+    return LoginResponse(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        token_type="bearer",
+    )
 
 
 @router.post("/refresh")
@@ -79,6 +78,7 @@ async def refresh_access_token(request: Request, token: str = Depends(oauth2_sch
             expires_delta=access_token_expires,
         )
 
+        # TODO: Define the contract for the response
         return {"access_token": access_token, "token_type": "bearer"}
     except Exception as e:
         raise UnauthorizedError(
