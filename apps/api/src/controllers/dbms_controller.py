@@ -68,7 +68,15 @@ async def get_ai_summary(dbms_id: int, r: Request) -> AiSummaryResponseDto:
 
 
 @router.get("/{dbms_id}/bug_search")
-async def get_bugs(dbms_id: int, r: Request) -> BugSearchResponseDto:
+async def get_bugs(
+    dbms_id: int,
+    r: Request,
+    # Query parameters
+    start: int = 0,
+    limit: int = 10,
+    search: str | None = None,
+    category_id: int | None = None,
+) -> BugSearchResponseDto:
     """
     Searches for bug reports from either all categories, while allocating
     as equal amounts of reports to each category as possible, or from a
@@ -83,16 +91,6 @@ async def get_bugs(dbms_id: int, r: Request) -> BugSearchResponseDto:
             - category_id: 0-based category_id which corresponds to that in db
     """
     tx = get_db(r)
-    search = r.query_params.get("search", "")
-    try:
-        start = int(r.query_params.get("start", 0))
-        limit = int(r.query_params.get("limit", 10))
-        category_id = r.query_params.get("category_id", None)
-        if category_id is not None:
-            category_id = int(category_id)
-    except ValueError as e:
-        raise BadRequestError("Invalid request, start and limit must be integers.")
-
     bug_reports = DbmsService.bug_search(
         tx,
         dbms_id,
@@ -101,13 +99,17 @@ async def get_bugs(dbms_id: int, r: Request) -> BugSearchResponseDto:
         limit,
         [category_id] if category_id is not None else [],
     )
-
     return BugSearchResponseDto(bug_reports=bug_reports)
 
 
 @router.get("/{dbms_id}/bug_search_category")
 async def get_bugs_by_category(
-    dbms_id: int, r: Request
+    dbms_id: int,
+    r: Request,
+    # Query parameters
+    category_id: int,
+    distribution: str,  # passed as csv
+    amount: int,
 ) -> BugSearchCategoryResponseDto:
     """
     Searches for bug reports in a category from a certain offset as given from a
@@ -124,21 +126,8 @@ async def get_bugs_by_category(
     """
     tx = get_db(r)
     try:
-        category_id = int(r.query_params.get("category_id", None))
-        amount = int(r.query_params.get("amount", 0))
-    except ValueError as e:
-        raise BadRequestError(
-            "Invalid request, category_id and amount must be integers."
-        )
-
-    # passed as csv
-    distribution = r.query_params.get("distribution")
-    if distribution is None:
-        raise BadRequestError(
-            "Invalid request, please pass in distribution query param as comma-separated values."
-        )
-    try:
         distribution = [int(i) for i in distribution.split(",")]
+        # TODO: Don't do this
         if amount == 0 or category_id >= len(distribution) or category_id < 0:
             raise BadRequestError(
                 "Invalid request, amount or distribution not passed or passed incorrectly.",
