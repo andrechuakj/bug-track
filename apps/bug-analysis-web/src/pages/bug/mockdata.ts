@@ -1,4 +1,4 @@
-export interface BugDetail {
+export interface BugReport {
   id: number;
   title: string;
   bugDescription: string;
@@ -11,7 +11,7 @@ export interface BugDetail {
   versionsAffected?: string[];
 }
 
-export const mockBugData: BugDetail[] = [
+export const mockBugData: BugReport[] = [
   {
     id: 0,
     title: 'The `COERCIBILITY` of variables are different from MySQL',

@@ -1,12 +1,12 @@
 import { Divider, Typography } from 'antd';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useBugDetail } from '../../contexts/BugDetailContext';
+import { useBugReport } from '../../contexts/BugReportContext';
 import { useAppContext } from '../../utils/context';
 import { formatDate } from '../../utils/dateUtils';
 
 const BugDescription: React.FC = () => {
-  const { bugDetail } = useBugDetail();
+  const { bugReport } = useBugReport();
   const { theme } = useAppContext();
 
   return (
@@ -15,15 +15,15 @@ const BugDescription: React.FC = () => {
     >
       <div className="markdown overflow-y-auto">
         <Markdown remarkPlugins={[remarkGfm]} skipHtml>
-          {bugDetail?.bugDescription || 'No description found'}
+          {bugReport?.bugDescription || 'No description found'}
         </Markdown>
       </div>
 
       <Divider className="mt-4 mb-1" />
       <Typography.Text className="text-xs">
         Created at:{' '}
-        {bugDetail?.createdAt
-          ? formatDate(bugDetail.createdAt)
+        {bugReport?.createdAt
+          ? formatDate(bugReport.createdAt)
           : 'No date found'}
       </Typography.Text>
     </div>

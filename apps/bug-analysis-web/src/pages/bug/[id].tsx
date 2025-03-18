@@ -5,18 +5,18 @@ import BugContentContainer from '../../components/Bug/BugContentContainer';
 import BugHeader from '../../components/Bug/BugHeader';
 import BugSideBar from '../../components/Bug/BugSideBar';
 import {
-  BugDetailProvider,
-  useBugDetail,
-} from '../../contexts/BugDetailContext';
+  BugReportProvider,
+  useBugReport,
+} from '../../contexts/BugReportContext';
 import { mockBugData } from './mockdata';
 
-const BugDetailPage: React.FC = () => {
-  const { setBugDetail } = useBugDetail();
+const BugReportPage: React.FC = () => {
+  const { setBugReport } = useBugReport();
   const router = useRouter();
   const { id } = router.query;
 
   useEffect(() => {
-    setBugDetail(mockBugData[Number(id)]);
+    setBugReport(mockBugData[Number(id)]);
   });
 
   return (
@@ -35,12 +35,12 @@ const BugDetailPage: React.FC = () => {
   );
 };
 
-const BugDetailPageWrapper: React.FC = () => {
+const BugReportPageWrapper: React.FC = () => {
   return (
-    <BugDetailProvider>
-      <BugDetailPage />
-    </BugDetailProvider>
+    <BugReportProvider>
+      <BugReportPage />
+    </BugReportProvider>
   );
 };
 
-export default BugDetailPageWrapper;
+export default BugReportPageWrapper;

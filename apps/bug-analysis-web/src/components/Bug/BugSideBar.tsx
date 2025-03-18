@@ -7,11 +7,11 @@ import {
   fetchAllCategories,
   updateBugCategory,
 } from '../../api/bug_report';
-import { useBugDetail } from '../../contexts/BugDetailContext';
+import { useBugReport } from '../../contexts/BugReportContext';
 import CategoryTag from '../CategoryTag';
 
 const BugSideBar: React.FC = () => {
-  const { bugDetail } = useBugDetail();
+  const { bugReport } = useBugReport();
   const [isCategoryUpdating, setIsCategoryUpdating] = React.useState(false);
   const [categoryMenuItems, setCategoryMenuItems] = React.useState<
     MenuProps['items']
@@ -32,7 +32,7 @@ const BugSideBar: React.FC = () => {
           label: categoryResponse.name,
           key: categoryResponse.id.toString(),
           onClick: () =>
-            handleUpdateCategory(bugDetail!.id, categoryResponse.id),
+            handleUpdateCategory(bugReport!.id, categoryResponse.id),
         }));
 
         setCategoryMenuItems(items);
@@ -42,7 +42,7 @@ const BugSideBar: React.FC = () => {
     };
 
     loadCategories();
-  }, [bugDetail]);
+  }, [bugReport]);
 
   return (
     <div className="w-full">
@@ -64,7 +64,7 @@ const BugSideBar: React.FC = () => {
                 items: categoryMenuItems,
                 selectable: true,
                 defaultSelectedKeys: [
-                  bugDetail ? bugDetail.categoryId.toString() : '',
+                  bugReport ? bugReport.categoryId.toString() : '',
                 ],
               }}
               trigger={['click']}
@@ -76,10 +76,10 @@ const BugSideBar: React.FC = () => {
             </Dropdown>
           )}
         </div>
-        {bugDetail?.category ? (
+        {bugReport?.category ? (
           <CategoryTag
             color="blue"
-            text={bugDetail.category}
+            text={bugReport.category}
             className="w-fit"
           />
         ) : (
@@ -91,9 +91,9 @@ const BugSideBar: React.FC = () => {
 
       <div className="flex flex-col gap-1">
         <Typography.Title level={5}>Versions affected</Typography.Title>
-        {bugDetail?.versionsAffected ? (
+        {bugReport?.versionsAffected ? (
           <Typography.Text>
-            {bugDetail.versionsAffected.join(', ')}
+            {bugReport.versionsAffected.join(', ')}
           </Typography.Text>
         ) : (
           'Not specified'

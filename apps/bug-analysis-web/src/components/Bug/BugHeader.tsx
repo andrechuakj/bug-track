@@ -1,32 +1,32 @@
 import { Button, Skeleton, Typography } from 'antd';
-import { useBugDetail } from '../../contexts/BugDetailContext';
+import { useBugReport } from '../../contexts/BugReportContext';
 import BugStatusIcon from './BugStatusIcon';
 
 const BugHeader: React.FC = () => {
-  const { bugDetail } = useBugDetail();
+  const { bugReport } = useBugReport();
 
   return (
     <>
-      {!bugDetail && <Skeleton active paragraph={{ rows: 1 }} />}
-      {bugDetail && (
+      {!bugReport && <Skeleton active paragraph={{ rows: 1 }} />}
+      {bugReport && (
         <div className="w-full flex gap-4">
           <div className="w-3/4">
             <Typography.Title level={2}>
-              {bugDetail.title} #{bugDetail.id}
+              {bugReport.title} #{bugReport.id}
             </Typography.Title>
-            <BugStatusIcon status={bugDetail.status} />
+            <BugStatusIcon status={bugReport.status} />
           </div>
           <div className="w-1/4 flex flex-col xl:flex-row xl:justify-end gap-4">
             <Button
               type="primary"
-              href={bugDetail.githubIssueURL}
+              href={bugReport.githubIssueURL}
               target="_blank"
             >
               View on GitHub
             </Button>
             <Button
               type="default"
-              href={bugDetail.githubRepoURL}
+              href={bugReport.githubRepoURL}
               target="_blank"
             >
               View Repository
