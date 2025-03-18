@@ -1,6 +1,4 @@
-from typing import Dict
-
-CATEGORY_KEYWORDS: Dict[str, list[str]] = {
+CATEGORY_KEYWORDS: dict[str, list[str]] = {
     "Crash / Segmentation Fault": [
         "segmentation fault",
         "crash",
