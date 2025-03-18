@@ -21,8 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/token")
 
 def authenticate_user(tx: Session, email: str, password: str):
     """Helper function to authenticate a user."""
-    users = UserService.get_users(tx)
-    user = next((u for u in users if u.email == email), None)
+    user = UserService.get_user_by_email(tx, email)
 
     if not user or not verify_password(password, user.password):
         raise UnauthorizedError(
@@ -33,13 +32,13 @@ def authenticate_user(tx: Session, email: str, password: str):
     return user
 
 
-@router.post("/token", response_model=LoginResponse)
-async def login_with_token(request: Request, login_request: LoginRequest):
+@router.post("/token")
+async def login_with_token(r: Request, body: LoginRequest) -> LoginResponse:
     """
     Authenticate a user with email/password and return a JWT token
     """
-    tx: Session = get_db(request)
-    user = authenticate_user(tx, login_request.email, login_request.password)
+    tx: Session = get_db(r)
+    user = authenticate_user(tx, body.email, body.password)
 
     # Create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
