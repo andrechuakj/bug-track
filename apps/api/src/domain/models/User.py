@@ -21,6 +21,10 @@ def get_user_by_id(tx: Session, user_id: int):
     return tx.get(User, user_id)
 
 
+def get_user_by_email(tx: Session, email: str):
+    return tx.exec(select(User).where(User.email == email)).first()
+
+
 def save_user(tx: Session, user: User):
     user.updated_at = datetime.now()
     tx.add(user)
