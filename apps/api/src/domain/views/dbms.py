@@ -1,29 +1,29 @@
-from pydantic import BaseModel
+from utilities.views import BaseResponseModel
 
 
-class DbmsListResponseDto(BaseModel):
+class DbmsListResponseDto(BaseResponseModel):
     id: int
     name: str
 
 
-class BugCategory(BaseModel):
+class BugCategory(BaseResponseModel):
     id: int
     name: str
     count: int
 
 
-class DbmsResponseDto(BaseModel):
+class DbmsResponseDto(BaseResponseModel):
     id: int
     name: str
     bug_count: int
     bug_categories: list[BugCategory]
 
 
-class AiSummaryResponseDto(BaseModel):
+class AiSummaryResponseDto(BaseResponseModel):
     summary: str
 
 
-class BugReportResponseDto(BaseModel):
+class BugReportResponseDto(BaseResponseModel):
     id: int
     dbms_id: int
     category_id: int
@@ -31,11 +31,11 @@ class BugReportResponseDto(BaseModel):
     description: str | None
 
 
-class BugSearchResponseDto(BaseModel):
+class BugSearchResponseDto(BaseResponseModel):
     bug_reports: list[BugReportResponseDto]
 
 
-class BugSearchCategoryResponseDto(BaseModel):
+class BugSearchCategoryResponseDto(BaseResponseModel):
     # Push this to the correct category on FE
     bug_reports_delta: list[BugReportResponseDto]
     # FE needs to update its bug_distr state (if any) with this

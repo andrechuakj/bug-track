@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from utilities.views import BaseResponseModel
 
 
 class UserCreateRequestDto(BaseModel):
@@ -7,7 +8,7 @@ class UserCreateRequestDto(BaseModel):
     password: str
 
 
-class UserSummaryResponseDto(BaseModel):
+class UserSummaryResponseDto(BaseResponseModel):
     id: int
     name: str
     email: str
