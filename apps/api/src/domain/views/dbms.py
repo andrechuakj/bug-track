@@ -14,6 +14,8 @@ class BugCategoryResponseDto(BaseResponseModel):
     name: str
     count: int
 
+class BugCategoryUpdateDto(BaseModel):
+    category_id: int
 
 class DbmsResponseDto(BaseResponseModel):
     id: int

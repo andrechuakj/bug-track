@@ -15,7 +15,7 @@ const BugSideBar: React.FC = () => {
     MenuProps['items']
   >([]);
 
-  const handleUpdateCategory = ({ key }: { key: string }) => {
+  const handleUpdateCategory = (key: string) => {
     // TODO
     console.log('Category updated to', key);
   };
@@ -28,7 +28,7 @@ const BugSideBar: React.FC = () => {
         const items = res.map((categoryResponse: BugCategoryResponseDto) => ({
           label: categoryResponse.name,
           key: categoryResponse.id.toString(),
-          onClick: () => handleUpdateCategory(categoryResponse.index),
+          onClick: () => handleUpdateCategory(categoryResponse.id.toString()),
         }));
 
         setCategoryMenuItems(items);

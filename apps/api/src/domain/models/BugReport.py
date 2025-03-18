@@ -100,3 +100,12 @@ def delete_bug_report(tx: Session, bug_report_id: int):
     tx.delete(bug_report)
     tx.commit()
     return bug_report
+
+
+def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
+    bug_report = get_bug_report_by_id(tx, bug_report_id)
+    if not bug_report:
+        raise NotFoundError(f"Bug report {bug_report_id} not found")
+    bug_report.category_id = category_id
+    tx.commit()
+    return bug_report
