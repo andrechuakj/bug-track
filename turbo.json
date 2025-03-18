@@ -10,6 +10,7 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "format": {},
     "generate": {
       "dependsOn": ["^generate"],
       "cache": false
