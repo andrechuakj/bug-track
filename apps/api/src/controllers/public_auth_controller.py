@@ -1,7 +1,7 @@
 from domain.config import get_db
 from domain.views.auth import LoginRequestDto, LoginResponseDto
 from fastapi import APIRouter, Request
-from internal.errors.client_errors import UnauthorizedError
+from internal.errors.client_errors import ForbiddenError, UnauthorizedError
 from services.auth_service import AuthService
 from services.user_service import UserService
 
@@ -18,6 +18,11 @@ async def login(r: Request, dto: LoginRequestDto) -> LoginResponseDto:
     user = UserService.get_user_by_email(tx, dto.email)
     if not user:
         raise UnauthorizedError(
+            "Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not UserService.validate_user_password(user, dto.password):
+        raise ForbiddenError(
             "Invalid email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
