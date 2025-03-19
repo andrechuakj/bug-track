@@ -1,6 +1,6 @@
 import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Divider, Dropdown, Tag, Typography } from 'antd';
+import { Divider, Dropdown, Skeleton, Tag, Typography } from 'antd';
 import React, { useEffect } from 'react';
 import {
   BugCategoryResponseDto,
@@ -12,7 +12,7 @@ import { useBugReport } from '../../contexts/BugReportContext';
 import CategoryTag from '../CategoryTag';
 
 const BugSideBar: React.FC = () => {
-  const { bugReport, setBugReport } = useBugReport();
+  const { bugReport, setBugReport, isBugLoading } = useBugReport();
   const [isCategoryUpdating, setIsCategoryUpdating] = React.useState(false);
   const [categoryMenuItems, setCategoryMenuItems] = React.useState<
     MenuProps['items']
@@ -59,13 +59,15 @@ const BugSideBar: React.FC = () => {
     <div className="w-full">
       <div className="flex flex-col gap-1">
         <Typography.Title level={5}>DBMS</Typography.Title>
-        {bugReport?.dbms ? (
-          <Tag color="red" className="w-fit">
-            {bugReport?.dbms}
-          </Tag>
-        ) : (
-          'Not specified'
-        )}
+        {isBugLoading && <Skeleton.Input active size="small" />}
+        {!isBugLoading &&
+          (bugReport?.dbms ? (
+            <Tag color="red" className="w-fit">
+              {bugReport?.dbms}
+            </Tag>
+          ) : (
+            'Not specified'
+          ))}
       </div>
 
       <Divider />
@@ -73,47 +75,53 @@ const BugSideBar: React.FC = () => {
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <Typography.Title level={5}>Category</Typography.Title>
-          {categoryMenuItems && categoryMenuItems.length > 0 && (
-            <Dropdown
-              menu={{
-                items: categoryMenuItems,
-                selectable: true,
-                defaultSelectedKeys: [
-                  bugReport ? bugReport.category_id.toString() : '',
-                ],
-              }}
-              trigger={['click']}
-              placement="bottomRight"
-            >
-              <a onClick={(e) => e.preventDefault()}>
-                {isCategoryUpdating ? <LoadingOutlined /> : <EditOutlined />}
-              </a>
-            </Dropdown>
-          )}
+          {!isBugLoading &&
+            categoryMenuItems &&
+            categoryMenuItems.length > 0 && (
+              <Dropdown
+                menu={{
+                  items: categoryMenuItems,
+                  selectable: true,
+                  defaultSelectedKeys: [
+                    bugReport ? bugReport.category_id.toString() : '',
+                  ],
+                }}
+                trigger={['click']}
+                placement="bottomRight"
+              >
+                <a onClick={(e) => e.preventDefault()}>
+                  {isCategoryUpdating ? <LoadingOutlined /> : <EditOutlined />}
+                </a>
+              </Dropdown>
+            )}
         </div>
-        {bugReport?.category ? (
-          <CategoryTag
-            color="blue"
-            text={bugReport.category}
-            className="w-fit"
-          />
-        ) : (
-          'Not categorised'
-        )}
+        {isBugLoading && <Skeleton.Input active size="small" />}
+        {!isBugLoading &&
+          (bugReport?.category ? (
+            <CategoryTag
+              color="blue"
+              text={bugReport.category}
+              className="w-fit"
+            />
+          ) : (
+            'Not categorised'
+          ))}
       </div>
 
       <Divider />
 
       <div className="flex flex-col gap-1">
         <Typography.Title level={5}>Versions affected</Typography.Title>
-        {bugReport?.versionsAffected ? (
-          <Typography.Text>
-            {/* TODO: Update dynamically */}
-            1.0.1
-          </Typography.Text>
-        ) : (
-          'Not specified'
-        )}
+        {isBugLoading && <Skeleton.Input active size="small" />}
+        {!isBugLoading &&
+          (bugReport?.versionsAffected ? (
+            <Typography.Text>
+              {/* TODO: Update dynamically */}
+              1.0.1
+            </Typography.Text>
+          ) : (
+            'Not specified'
+          ))}
       </div>
 
       <Divider />
