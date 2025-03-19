@@ -24,4 +24,39 @@ async def refresh_access_token(
     return AuthService.refresh_user_tokens(token)
 
 
+@router.post("/signup")
+async def signup_user(r: Request, body: SignupRequest) -> AuthResponse:
+    """
+    Create a new user if email has not been used, and return a JWT token
+    """
+    tx: Session = get_db(r)
+
+    # Check if user already exists
+    existing_user = UserService.get_user_by_email(tx, body.email)
+    if existing_user:
+        raise ConflictError(
+            "Email is already in use.",
+        )
+
+    # create new user
+    new_user = User(email=body.email, password=body.password, name=body.name)
+    user = UserService.create_user(tx, new_user)
+
+    # Prepare token payload information
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    user_data = {"sub": user.email, "id": user.id, "name": user.name}
+    access_token = create_access_token(
+        data=user_data,
+        expires_delta=access_token_expires,
+    )
+
+    # Create refresh token
+    refresh_token = create_refresh_token(data=user_data)
+    return AuthResponse(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        token_type="bearer",
+    )
+
+
 __all__ = ["router"]

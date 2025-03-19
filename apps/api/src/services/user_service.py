@@ -21,6 +21,10 @@ class _UserService:
         user.password = _UserService._pwd_context.hash(user.password)
         return save_user(tx, user)
 
+    def create_user(self, tx: Session, user: User):
+        user.password = get_password_hash(user.password)
+        return create_user(tx, user)
+
     def delete_user(self, tx: Session, user_id: int):
         user = self.get_user(tx, user_id)
         if user is None:

@@ -32,6 +32,14 @@ def save_user(tx: Session, user: User):
     return user
 
 
+def create_user(tx: Session, user: User) -> User:
+    user.created_at = datetime.now()
+    user.updated_at = datetime.now()
+    tx.add(user)
+    tx.commit()
+    return user
+
+
 def delete_user(tx: Session, user_id: int):
     user = get_user_by_id(tx, user_id)
     if not user:
