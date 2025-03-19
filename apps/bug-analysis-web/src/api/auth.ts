@@ -43,6 +43,38 @@ class AuthService {
     }
   }
 
+  async signup(details: LoginValues): Promise<boolean> {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/signup`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(details),
+          credentials: 'include',
+        }
+      );
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const data: AuthResponse = await response.json();
+
+      if (data.access_token && data.refresh_token) {
+        localStorage.setItem('user_token', data.access_token);
+        localStorage.setItem('refresh_token', data.refresh_token);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Signup failed:', error);
+      return false;
+    }
+  }
+
   async refreshToken(): Promise<boolean> {
     try {
       const refreshToken = getTokens()?.refreshToken;
