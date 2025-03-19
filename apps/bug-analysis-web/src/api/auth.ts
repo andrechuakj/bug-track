@@ -1,8 +1,25 @@
 import { clearTokens, getTokens, saveTokens } from '../utils/auth';
 import { api } from './client';
 
+export interface LoginValues {
+  email: string;
+  password: string;
+}
+
+export interface SignupValues {
+  email: string;
+  name: string;
+  password: string;
+}
+
+interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+}
+
 class AuthService {
-  async login(email: string, password: string): Promise<boolean> {
+  async login(details: LoginValues): Promise<boolean> {
     try {
       const { data, error, response } = await api.POST(
         '/public/api/v1/auth/login',

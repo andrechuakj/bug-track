@@ -10,10 +10,11 @@ import {
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import DatabaseDropdown from '../components/DatabaseDropdown';
 import { useAuth } from '../contexts/AuthContext';
+import { LoginValues } from '../api/auth';
 
 interface LoginFormValues {
   database: string;
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -27,7 +28,8 @@ const Login: React.FC = () => {
     console.log('onFormSubmit | values:', values);
     setLoginError(null);
     try {
-      const success = await login(values.username, values.password);
+      const authValues: LoginValues = {email: values.email, password: values.password};
+      const success = await login(authValues);
       if (success) {
         message.success('Login successful!');
       } else {
@@ -49,7 +51,7 @@ const Login: React.FC = () => {
   };
 
   const formIsValid = (form: FormInstance) => {
-    const requiredFields = ['database', 'username', 'password'];
+    const requiredFields = ['database', 'email', 'password'];
 
     const values = form.getFieldsValue(requiredFields);
     const allFieldsFilled = Object.values(values).every((value) => value);
@@ -80,7 +82,7 @@ const Login: React.FC = () => {
       <img
         src="/bug_track_logo.png"
         alt="Logo"
-        className={`w-full lg:w-1/2 max-w-xl mb-6 lg:-translate-y-[24px] transition-transform ${animation}`}
+        className={`w-full lg:w-1/2 max-w-xl mb-6 lg:-translate-y-[24px]`}
       />
       <Form<LoginFormValues>
         name="login_form"
@@ -97,14 +99,14 @@ const Login: React.FC = () => {
           label="Database"
           name="database"
           rules={[{ required: true, message: 'Please select a database!' }]}
-          className={`w-full max-w-xs md:max-w-md transition-all ${animation}`}
+          className={`w-full max-w-xs md:max-w-md`}
         >
           <DatabaseDropdown />
         </Form.Item>
         <div // for setting boundaries for visible children in transition, and resizing
-          className={`w-full max-w-xs md:max-w-md overflow-hidden flex items-end transition-all ${animation} 
-          ${selectedDb ? `h-[${fieldsHeight}px]` : 'h-0'}
+          className={`w-full max-w-xs md:max-w-md overflow-hidden flex items-end transition-all ${animation}
           `}
+          style={{ height: selectedDb ? `${fieldsHeight}px` : '0px' }} // tailwind doesn't animate this transition properly
         >
           <div // for moving vertically for small and large screens
             ref={fieldsRef}
@@ -114,10 +116,10 @@ const Login: React.FC = () => {
           `}
           >
             <Form.Item
-              label="Username"
-              name="username"
+              label="Email"
+              name="email"
               rules={[
-                { required: true, message: 'Please enter your username!' },
+                { required: true, message: 'Please enter your email!' },
               ]}
             >
               <Input placeholder="Enter your Username" />
@@ -139,7 +141,7 @@ const Login: React.FC = () => {
           </Typography.Text>
         )}
         <Form.Item
-          className={'text-center w-full max-w-xs mt-4'}
+          className={'text-center w-full max-w-xs mt-4 transition-none'}
           wrapperCol={screens.md ? { offset: 0, span: 24 } : undefined}
           shouldUpdate
         >
@@ -149,7 +151,7 @@ const Login: React.FC = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className={`w-1/2 transition-transform ${animation}`}
+                className={`w-1/2 transition-none`}
                 disabled={isDisabled}
                 loading={loading}
               >

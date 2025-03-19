@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import authService from '../api/auth';
+import authService, { LoginValues } from '../api/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (details: LoginValues) => Promise<boolean>;
   logout: () => void;
   refreshToken: () => Promise<boolean>;
   loading: boolean;
@@ -36,12 +36,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (
-    username: string,
-    password: string
+    details: LoginValues,
   ): Promise<boolean> => {
     setLoading(true);
     try {
-      const success = await authService.login(username, password);
+      const success = await authService.login(details);
       if (success) {
         setIsAuthenticated(true);
         router.push('/');
