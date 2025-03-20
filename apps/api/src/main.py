@@ -5,6 +5,7 @@ from configuration.openai import configure_openai
 from configuration.startup_info import configure_startup_info
 from controllers.auth_controller import router as auth_router
 from controllers.dbms_controller import router as dbms_router
+from controllers.discussion_controller import router as discussions_router
 from controllers.public_auth_controller import router as public_auth_router
 from controllers.user_controller import router as user_router
 from domain.config import db_txn_manager_generator
@@ -41,5 +42,6 @@ app.add_middleware(
 
 app.include_router(public_auth_router)
 app.include_router(auth_router)
+app.include_router(discussions_router)
 app.include_router(user_router)
 app.include_router(dbms_router)
