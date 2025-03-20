@@ -26,6 +26,11 @@ app = FastAPI(
         Depends(db_txn_manager_generator),
     ],
 )
+register_error_handler(app)
+register_custom_middleware(
+    app,
+    secured_endpoints_middleware,
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -34,11 +39,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-register_error_handler(app)
-register_custom_middleware(
-    app,
-    secured_endpoints_middleware,
-)
 app.include_router(public_auth_router)
 app.include_router(auth_router)
 app.include_router(user_router)
