@@ -14,6 +14,7 @@ export default tseslint.config([
   pluginReact.configs.flat.recommended,
   {
     rules: {
+      'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       'import/no-commonjs': 'off',
