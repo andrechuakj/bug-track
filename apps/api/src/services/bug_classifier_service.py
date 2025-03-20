@@ -10,6 +10,7 @@ from fuzzywuzzy import fuzz
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from utilities.category_keywords import CATEGORY_KEYWORDS
+from utilities.classes import Service
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_lg")
@@ -31,7 +32,7 @@ with open(MODEL_DIR / "tfidf_vectorizer.pkl", "rb") as vectorizer_file:
     vectorizer: TfidfVectorizer = pickle.load(vectorizer_file)
 
 
-class _BugClassifierService:
+class _BugClassifierService(Service):
     """Service for classifying bug reports."""
 
     def __init__(self):

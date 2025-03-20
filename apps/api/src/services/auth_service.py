@@ -1,27 +1,17 @@
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from configuration.logger import get_logger
 from domain.models.User import User
 from internal.errors.client_errors import ForbiddenError, UnauthorizedError
 from pydantic import BaseModel
+from utilities.classes import Service
 from utilities.constants import constants
 
 
-class _AuthService:
+class _AuthService(Service):
     _ALGORITHM = "HS256"
     _ACCESS_TOKEN_VALID_DURATION = timedelta(minutes=15)
     _REFRESH_TOKEN_VALID_DURATION = timedelta(days=1)
-
-    _logger_initialized = False
-    _logger = None
-
-    @property
-    def logger(self):
-        if not self._logger_initialized:
-            self._logger = get_logger()
-            self._logger_initialized = True
-        return self._logger
 
     def _verify_token(self, token: str) -> dict:
         """Verify the JWT token and return the payload"""
@@ -38,7 +28,7 @@ class _AuthService:
 
     def is_access_token(self, token: str) -> bool:
         """Check if the token is an access OR refresh token"""
-        self.logger.info(f"Verifying token: {token}")
+        self.logger.info("Verifying token...")
         payload = self._verify_token(token)
         match payload.get("token_type"):
             case "access" | "refresh":

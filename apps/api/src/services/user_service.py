@@ -3,9 +3,10 @@ from typing import Sequence
 from domain.models.User import *
 from internal.errors import NotFoundError
 from passlib.context import CryptContext
+from utilities.classes import Service
 
 
-class _UserService:
+class _UserService(Service):
     _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def get_users(self, tx: Session) -> Sequence[User]:

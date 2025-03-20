@@ -9,9 +9,10 @@ from domain.models.BugReport import (
 )
 from domain.models.DBMSSystem import *
 from sqlmodel import Session
+from utilities.classes import Service
 
 
-class _DbmsService:
+class _DbmsService(Service):
     def get_dbms(self, tx: Session):
         return get_dbms_systems(tx)
 
