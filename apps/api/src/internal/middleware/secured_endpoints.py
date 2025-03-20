@@ -11,6 +11,9 @@ secured_endpoints_regex = re.compile(r"^/api/v1/.*")
 
 async def secured_endpoints_middleware(request: Request, call_next):
     logger = get_logger()
+    # Don't check OPTIONS preflight requests
+    if request.method == "OPTIONS":
+        return await call_next(request)
     if not re.match(secured_endpoints_regex, request.url.path):
         logger.info(f"Public Endpoint: {request.url.path}")
         return await call_next(request)
