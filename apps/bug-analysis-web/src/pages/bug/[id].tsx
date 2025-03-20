@@ -12,7 +12,7 @@ import {
 const BugReportPage: React.FC = () => {
   const { fetchBugReport } = useBugReport();
   const router = useRouter();
-const { id } = router.query;
+  const { id } = router.query;
 
   useEffect(() => {
     if (!id) return;

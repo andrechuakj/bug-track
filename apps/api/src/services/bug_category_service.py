@@ -3,6 +3,7 @@ from domain.models.BugCategory import (
     get_bug_categories,
 )
 
+
 class _BugCategoryService:
 
     def get_bug_categories(self, tx: Session):

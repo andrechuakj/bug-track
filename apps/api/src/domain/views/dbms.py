@@ -5,17 +5,16 @@ class DbmsListResponseDto(BaseResponseModel):
     id: int
     name: str
 
-class BugCategoryResponseDto(BaseResponseModel):
-    id: int
-    name: str
 
 class BugCategoryResponseDto(BaseResponseModel):
     id: int
     name: str
     count: int
 
+
 class BugCategoryUpdateDto(BaseResponseModel):
     category_id: int
+
 
 class DbmsResponseDto(BaseResponseModel):
     id: int

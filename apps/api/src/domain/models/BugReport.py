@@ -36,7 +36,7 @@ def get_joined_bug_report_by_id(tx: Session, bug_report_id: int):
             BugReport.category_id,
             BugCategory.name.label("category"),
             BugReport.title,
-            BugReport.description
+            BugReport.description,
         )
         .join(DBMSSystem, BugReport.dbms_id == DBMSSystem.id)
         .join(BugCategory, BugReport.category_id == BugCategory.id)
@@ -48,6 +48,7 @@ def get_joined_bug_report_by_id(tx: Session, bug_report_id: int):
         raise NotFoundError(f"Bug report {bug_report_id} not found")
 
     return result
+
 
 def get_bug_report_by_ids(tx: Session, bug_report_ids: list[int]):
     return tx.exec(select(BugReport).where(BugReport.id.in_(bug_report_ids))).all()

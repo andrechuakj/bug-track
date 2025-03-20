@@ -3,8 +3,9 @@ from domain.models.BugReport import (
     get_bug_reports,
     get_bug_report_by_id,
     get_joined_bug_report_by_id,
-    update_bug_category
+    update_bug_category,
 )
+
 
 class _BugReportService:
 

@@ -26,11 +26,16 @@ async def get_single_bug(bug_id: int, r: Request) -> BugReportResponseDto:
 
 
 @router.patch("/{bug_id}/category")
-async def update_bug_category(bug_id: int, update_data: BugCategoryUpdateDto, r: Request) -> BugReportResponseDto:
+async def update_bug_category(
+    bug_id: int, update_data: BugCategoryUpdateDto, r: Request
+) -> BugReportResponseDto:
     tx = get_db(r)
-    bug_report = BugReportService.update_bug_category(tx, bug_id, update_data.category_id)
+    bug_report = BugReportService.update_bug_category(
+        tx, bug_id, update_data.category_id
+    )
     if bug_report is None:
         raise NotFoundError("Bug report not found")
     return bug_report
+
 
 __all__ = ["router"]
