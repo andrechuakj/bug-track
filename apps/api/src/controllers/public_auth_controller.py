@@ -47,6 +47,6 @@ async def signup(r: Request, dto: SignupRequestDto) -> AuthResponseDto:
         raise ConflictError("Email is already in use.")
 
     new_user = User(email=dto.email, password=dto.password, name=dto.name)
-    user = UserService.create_user(tx, new_user)
+    user = UserService.save_new_user(tx, new_user)
     # TODO: Invalidate old refresh tokens
     return AuthService.create_user_tokens(user)
