@@ -1,9 +1,11 @@
+from collections import defaultdict
 from typing import Sequence
 
 import openai
 from domain.config import get_db
 from domain.views.dbms import (
     AiSummaryResponseDto,
+    BugCategoryResponseDto,
     BugSearchCategoryResponseDto,
     BugSearchResponseDto,
     DbmsListResponseDto,
@@ -29,14 +31,19 @@ async def get_dbms_by_id(dbms_id: int, r: Request) -> DbmsResponseDto:
     tx = get_db(r)
     dbms = DbmsService.get_dbms_by_id(tx, dbms_id)
     bug_categories = DbmsService.get_dbms_bug_categories(tx, dbms_id)
+    bug_category_counts = defaultdict(int)
+    for bug_category in bug_categories:
+        bug_category_counts[(bug_category.id, bug_category.name)] += 1
     if dbms is None:
         raise NotFoundError(f"DBMS with id {dbms_id} not found")
     return DbmsResponseDto(
         id=dbms_id,
         name=dbms.name,
-        # TODO: Update this once implemented
-        bug_count=0,
-        bug_categories=bug_categories,
+        bug_count=sum(bug_category_counts.values()),
+        bug_categories=[
+            BugCategoryResponseDto(id=id, name=name, count=count)
+            for (id, name), count in bug_category_counts.items()
+        ],
     )
 
 

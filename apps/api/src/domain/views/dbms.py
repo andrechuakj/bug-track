@@ -6,7 +6,7 @@ class DbmsListResponseDto(BaseResponseModel):
     name: str
 
 
-class BugCategory(BaseResponseModel):
+class BugCategoryResponseDto(BaseResponseModel):
     id: int
     name: str
     count: int
@@ -16,7 +16,7 @@ class DbmsResponseDto(BaseResponseModel):
     id: int
     name: str
     bug_count: int
-    bug_categories: list[BugCategory]
+    bug_categories: list[BugCategoryResponseDto]
 
 
 class AiSummaryResponseDto(BaseResponseModel):
