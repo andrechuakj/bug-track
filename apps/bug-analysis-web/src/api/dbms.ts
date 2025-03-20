@@ -1,12 +1,22 @@
 import { components } from '../../../api/client/api';
 import { api } from './client';
 
+export type DbmsListResponseDto = components['schemas']['DbmsListResponseDto'];
 export type DbmsResponseDto = components['schemas']['DbmsResponseDto'];
 export type BugCategory = components['schemas']['BugCategory'];
 export type AiSummary = components['schemas']['AiSummaryResponseDto'];
 export type BugReports = components['schemas']['BugSearchResponseDto'];
 export type BugExploreReports =
   components['schemas']['BugSearchCategoryResponseDto'];
+
+export async function fetchDbmsList(): Promise<DbmsListResponseDto[]> {
+  const { data, response } = await api.GET('/api/v1/dbms/');
+  if (!data) {
+    console.error('Error fetching DBMS list!', response);
+    throw new Error('Error fetching DBMS list!');
+  }
+  return data;
+}
 
 export async function fetchDbmsData(dbms_id: number): Promise<DbmsResponseDto> {
   const { data, response } = await api.GET('/api/v1/dbms/{dbms_id}', {
