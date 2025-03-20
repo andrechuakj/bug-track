@@ -26,17 +26,6 @@ async def get_single_user(user_id: int, r: Request) -> UserSummaryResponseDto:
     return user
 
 
-@router.post("/")
-async def create_user(dto: UserCreateRequestDto, r: Request) -> UserSummaryResponseDto:
-    tx = get_db(r)
-    user = UserService.get_user_by_email(tx, dto.email)
-    if user:
-        raise ConflictError("User with this email already exists")
-
-    user_to_create = User(**dto.model_dump())
-    return UserService.save_new_user(tx, user_to_create)
-
-
 @router.delete("/{user_id}")
 async def delete_user(user_id: int, r: Request) -> UserSummaryResponseDto:
     tx = get_db(r)
