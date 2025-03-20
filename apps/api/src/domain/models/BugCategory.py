@@ -3,7 +3,7 @@ from internal.errors.client_errors import NotFoundError
 from sqlmodel import Field, Session, SQLModel, select
 
 
-class BugCategory(SQLModel, Timestampable, table=True):
+class BugCategory(Timestampable, table=True):
     __tablename__ = "bug_categories"
     id: int | None = Field(default=None, primary_key=True)
     name: str

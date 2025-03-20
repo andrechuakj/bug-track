@@ -3,7 +3,7 @@ from internal.errors.client_errors import NotFoundError
 from sqlmodel import Field, Session, SQLModel, select
 
 
-class DBMSSystem(SQLModel, Timestampable, table=True):
+class DBMSSystem(Timestampable, table=True):
     __tablename__ = "dbms_systems"
     id: int | None = Field(default=None, primary_key=True)
     name: str

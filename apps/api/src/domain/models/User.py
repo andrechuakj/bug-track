@@ -3,7 +3,7 @@ from internal.errors import NotFoundError
 from sqlmodel import Field, Session, SQLModel, select
 
 
-class User(SQLModel, Timestampable, table=True):
+class User(Timestampable, table=True):
     __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
     name: str

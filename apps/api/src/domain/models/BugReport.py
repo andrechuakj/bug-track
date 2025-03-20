@@ -3,7 +3,7 @@ from internal.errors.client_errors import NotFoundError
 from sqlmodel import Field, Session, SQLModel, select
 
 
-class BugReport(SQLModel, Timestampable, table=True):
+class BugReport(Timestampable, table=True):
     __tablename__ = "bug_reports"
     id: int | None = Field(default=None, primary_key=True)
     dbms_id: int = Field(foreign_key="dbms_systems.id")
