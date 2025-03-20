@@ -13,7 +13,7 @@ class BugReport(SQLModel, Timestampable, table=True):
 
 
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):
-    return tx.exec(select(BugReport.id).where(BugReport.dbms_id == dbms_id))
+    return tx.exec(select(BugReport.id).where(BugReport.dbms_id == dbms_id)).all()
 
 
 def get_bug_reports(tx: Session):
