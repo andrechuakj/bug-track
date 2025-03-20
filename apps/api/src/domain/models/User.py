@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from domain.helpers.Timestampable import Timestampable
 from internal.errors import NotFoundError
 from sqlmodel import Field, Session, SQLModel, select
@@ -26,15 +24,6 @@ def get_user_by_email(tx: Session, email: str):
 
 
 def save_user(tx: Session, user: User):
-    user.updated_at = datetime.now()
-    tx.add(user)
-    tx.commit()
-    return user
-
-
-def create_user(tx: Session, user: User) -> User:
-    user.created_at = datetime.now()
-    user.updated_at = datetime.now()
     tx.add(user)
     tx.commit()
     return user
