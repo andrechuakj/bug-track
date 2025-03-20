@@ -27,7 +27,11 @@ const Signup: React.FC = () => {
       return;
     }
     try {
-      const authValues: SignupValues = {email: values.email, name:values.name, password: values.password};
+      const authValues: SignupValues = {
+        email: values.email,
+        name: values.name,
+        password: values.password,
+      };
       const success = await signup(authValues);
       if (success) {
         message.success('Signup successful!');
@@ -40,20 +44,19 @@ const Signup: React.FC = () => {
     }
   };
 
-  const onFinishFailed = (errorInfo: any): void => {
+  const onFinishFailed = (_errorInfo: any): void => {
     message.error('Please check the form for errors.');
   };
 
   return (
-    <div className={`flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center`}>
-      <div className={`flex flex-col w-full lg:w-1/2 max-w-xl mb-6 items-center lg:-translate-y-[24px]`}>
-        <h1 className={`text-5xl font-bold mb-4`}
-        >Welcome to</h1>
-        <img
-          src="/bug_track_logo.png"
-          alt="Logo"
-          className={`w-full `}
-        />
+    <div
+      className={`flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center`}
+    >
+      <div
+        className={`flex flex-col w-full lg:w-1/2 max-w-xl mb-6 items-center lg:-translate-y-[24px]`}
+      >
+        <h1 className={`text-5xl font-bold mb-4`}>Welcome to</h1>
+        <img src="/bug_track_logo.png" alt="Logo" className={`w-full `} />
       </div>
       <Form
         form={form}
@@ -113,7 +116,9 @@ const Signup: React.FC = () => {
                 if (!value || getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error('The two passwords do not match!'));
+                return Promise.reject(
+                  new Error('The two passwords do not match!')
+                );
               },
             }),
           ]}

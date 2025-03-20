@@ -12,19 +12,13 @@ export interface SignupValues {
   password: string;
 }
 
-interface AuthResponse {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-}
-
 class AuthService {
-  async login(details: LoginValues): Promise<boolean> {
+  async login(user: LoginValues): Promise<boolean> {
     try {
       const { data, error, response } = await api.POST(
         '/public/api/v1/auth/login',
         {
-          body: { email, password },
+          body: user,
         }
       );
 
@@ -43,32 +37,24 @@ class AuthService {
     }
   }
 
-  async signup(details: LoginValues): Promise<boolean> {
+  async signup(user: SignupValues): Promise<boolean> {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/signup`,
+      const { data, error, response } = await api.POST(
+        '/public/api/v1/auth/signup',
         {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(details),
-          credentials: 'include',
+          body: user,
         }
       );
 
-      if (!response.ok) {
+      if (!response.ok || error) {
         return false;
       }
 
-      const data: AuthResponse = await response.json();
-
-      if (data.access_token && data.refresh_token) {
-        localStorage.setItem('user_token', data.access_token);
-        localStorage.setItem('refresh_token', data.refresh_token);
-        return true;
-      }
-      return false;
+      saveTokens({
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      });
+      return true;
     } catch (error) {
       console.error('Signup failed:', error);
       return false;

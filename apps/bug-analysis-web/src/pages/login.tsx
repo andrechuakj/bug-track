@@ -28,7 +28,10 @@ const Login: React.FC = () => {
     console.log('onFormSubmit | values:', values);
     setLoginError(null);
     try {
-      const authValues: LoginValues = {email: values.email, password: values.password};
+      const authValues: LoginValues = {
+        email: values.email,
+        password: values.password,
+      };
       const success = await login(authValues);
       if (success) {
         message.success('Login successful!');
@@ -118,9 +121,7 @@ const Login: React.FC = () => {
             <Form.Item
               label="Email"
               name="email"
-              rules={[
-                { required: true, message: 'Please enter your email!' },
-              ]}
+              rules={[{ required: true, message: 'Please enter your email!' }]}
             >
               <Input placeholder="Enter your Username" />
             </Form.Item>

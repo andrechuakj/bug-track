@@ -36,9 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const login = async (
-    details: LoginValues,
-  ): Promise<boolean> => {
+  const login = async (details: LoginValues): Promise<boolean> => {
     setLoading(true);
     try {
       const success = await authService.login(details);
@@ -55,9 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const signup = async (
-    details: SignupValues,
-  ): Promise<boolean> => {
+  const signup = async (details: SignupValues): Promise<boolean> => {
     setLoading(true);
     try {
       const success = await authService.signup(details);

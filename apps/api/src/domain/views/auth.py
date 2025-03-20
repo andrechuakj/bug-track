@@ -4,21 +4,15 @@ from utilities.views import BaseResponseModel
 
 class LoginRequestDto(BaseModel):
     email: EmailStr
+    password: str = Field(min_length=6)
+
+
+class SignupRequestDto(BaseModel):
+    email: EmailStr
+    name: str
     password: str = Field(min_length=10)
 
 
-class AuthResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str
-
-
-class SignupRequest(BaseModel):
-    email: str
-    name: str
-    password: str
-
-
-class LoginResponseDto(BaseResponseModel):
+class AuthResponseDto(BaseResponseModel):
     access_token: str
     refresh_token: str
