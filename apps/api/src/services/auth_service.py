@@ -38,11 +38,13 @@ class _AuthService:
 
     def is_access_token(self, token: str) -> bool:
         """Check if the token is an access OR refresh token"""
+        self.logger.info(f"Verifying token: {token}")
         payload = self._verify_token(token)
         match payload.get("token_type"):
-            case "access", "refresh":
+            case "access" | "refresh":
                 return True
-            case _:
+            case x:
+                self.logger.warning(f"Invalid token type: {x}")
                 return False
 
     def is_refresh_token(self, token: str) -> bool:
