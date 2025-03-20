@@ -23,15 +23,16 @@ import Sider from 'antd/es/layout/Sider';
 import { Content, Header } from 'antd/es/layout/layout';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { useAppContext } from '../../utils/context';
 import { APP_THEME } from '../../utils/theme';
 import { AppTheme } from '../../utils/types';
+import DatabaseDropdown from '../DatabaseDropdown';
 import styles from './index.module.css';
 
-const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
-  children,
-}: PropsWithChildren<unknown>) => {
+const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [siderCollapse, setSiderCollapse] = useState<boolean>(false);
+  const { isAuthenticated } = useAuth();
 
   const router = useRouter();
 
@@ -85,6 +86,8 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({
             <div role="img" className="flex justify-center h-16 items-center">
               <img src={logo} className={logoStyle} alt={'BugTrack logo'} />
             </div>
+
+            {isAuthenticated && <DatabaseDropdown />}
 
             <Menu
               theme="dark"

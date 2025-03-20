@@ -1,33 +1,19 @@
 import { Select } from 'antd';
-import React from 'react';
+import { useSession } from '../../contexts/SessionContext';
 
-const categories = ['TiDB', 'Some Other DB'];
+const DatabaseDropdown: React.FC = () => {
+  const { tenantList, setCurrentTenant } = useSession();
 
-interface DatabaseDropdownProps {
-  value?: string;
-  onChange?: (value: string) => void;
-}
-
-const DatabaseDropdown: React.FC<DatabaseDropdownProps> = ({
-  value,
-  onChange,
-}: DatabaseDropdownProps) => {
-  if (process.env.NODE_ENV !== 'production' && typeof onChange !== 'function') {
-    console.error(
-      "DatabaseDropdown: Missing onChange. Are you sure you're using this component inside an antd Form? It appears the Form isn't injecting the onChange prop."
-    );
-  }
   return (
-    <div className={'width-full'}>
+    <div className={'w-full'}>
       <Select
         placeholder="Select a Database"
-        onChange={onChange}
+        onChange={setCurrentTenant}
         className={'text-center'}
-        value={value || undefined}
       >
-        {categories.map((category) => (
-          <Select.Option key={category} value={category}>
-            {category}
+        {tenantList.map(({ id, name }) => (
+          <Select.Option key={id} value={id}>
+            {name}
           </Select.Option>
         ))}
       </Select>
