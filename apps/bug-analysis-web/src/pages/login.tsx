@@ -7,9 +7,11 @@ import {
   message,
   Typography,
 } from 'antd';
+import { useRouter } from 'next/router';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { LoginValues } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
+import { BugTrackColors } from '../utils/theme';
 
 interface LoginFormValues {
   email: string;
@@ -17,6 +19,7 @@ interface LoginFormValues {
 }
 
 const Login: React.FC = () => {
+  const router = useRouter();
   const [form] = Form.useForm();
   const { login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -76,6 +79,8 @@ const Login: React.FC = () => {
     }
   }, [screens.md]);
 
+  const handleSignUpOnClick = () => router.push('/signup');
+
   return (
     <div className="flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center">
       <img
@@ -126,22 +131,36 @@ const Login: React.FC = () => {
           </Typography.Text>
         )}
         <Form.Item
-          className={'text-center w-full max-w-xs mt-4 transition-none'}
+          className="w-full max-w-xs mt-4 transition-none"
           wrapperCol={screens.md ? { offset: 0, span: 24 } : undefined}
           shouldUpdate
         >
           {() => {
             const isDisabled: boolean = !formIsValid(form) || loading;
             return (
-              <Button
-                type="primary"
-                htmlType="submit"
-                className={`w-1/2 transition-none`}
-                disabled={isDisabled}
-                loading={loading}
-              >
-                Log In
-              </Button>
+              <div className="flex justify-center">
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="transition-none w-[256px]"
+                    disabled={isDisabled}
+                    loading={loading}
+                    style={{ background: BugTrackColors.GREEN }}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    type="primary"
+                    className="transition-none"
+                    loading={loading}
+                    style={{ background: BugTrackColors.ORANGE }}
+                    onClick={handleSignUpOnClick}
+                  >
+                    Sign up
+                  </Button>
+                </div>
+              </div>
             );
           }}
         </Form.Item>

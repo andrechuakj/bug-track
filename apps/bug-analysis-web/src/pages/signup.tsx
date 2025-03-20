@@ -1,4 +1,6 @@
+import { LeftCircleFilled } from '@ant-design/icons';
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { SignupValues } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,6 +13,7 @@ interface SignupFormValues {
 }
 
 const Signup: React.FC = () => {
+  const router = useRouter();
   const [form] = Form.useForm();
   const { signup, loading } = useAuth();
   const [signupError, setSignupError] = useState<string | null>(null);
@@ -45,6 +48,8 @@ const Signup: React.FC = () => {
     message.error('Please check the form for errors.');
   };
 
+  const onBackLogin = () => router.push('/login');
+
   return (
     <div
       className={`flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center`}
@@ -55,6 +60,7 @@ const Signup: React.FC = () => {
         <h1 className={`text-5xl font-bold mb-4`}>Welcome to</h1>
         <img src="/bug_track_logo.png" alt="Logo" className={`w-full `} />
       </div>
+      <div></div>
       <Form
         form={form}
         name="signup_form"
@@ -65,6 +71,10 @@ const Signup: React.FC = () => {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
+        <div className="mb-2 cursor-pointer" onClick={onBackLogin}>
+          <LeftCircleFilled />
+          <span className="ml-2">Back to login</span>
+        </div>
         <Form.Item
           label="Email"
           name="email"
