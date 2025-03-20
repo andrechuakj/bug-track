@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app';
 
 import Head from 'next/head';
 import AppLayout from '../components/AppLayout';
+import SessionProvider from '../contexts/SessionContext';
 import { AppProvider } from '../utils/context';
 import './globals.css';
 
@@ -13,9 +14,11 @@ const App = ({ Component, pageProps }: AppProps) => {
         <link rel="icon" href="/favicon.ico?v=2" />
       </Head>
       <AppProvider>
-        <AppLayout>
-          <Component {...pageProps} />
-        </AppLayout>
+        <SessionProvider>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
+        </SessionProvider>
       </AppProvider>
     </>
   );
