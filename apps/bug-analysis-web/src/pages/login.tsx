@@ -8,9 +8,9 @@ import {
   Typography,
 } from 'antd';
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import { LoginValues } from '../api/auth';
 import DatabaseDropdown from '../components/DatabaseDropdown';
 import { useAuth } from '../contexts/AuthContext';
-import { LoginValues } from '../api/auth';
 
 interface LoginFormValues {
   database: string;

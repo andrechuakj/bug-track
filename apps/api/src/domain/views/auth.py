@@ -4,12 +4,12 @@ from utilities.views import BaseResponseModel
 
 class LoginRequestDto(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=6)
+    password: str = Field(min_length=10)
 
 
 class SignupRequestDto(BaseModel):
-    email: EmailStr
     name: str
+    email: EmailStr
     password: str = Field(min_length=10)
 
 

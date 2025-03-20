@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
+import React, { useState } from 'react';
+import { SignupValues } from '../api/auth';
 import DatabaseDropdown from '../components/DatabaseDropdown';
 import { useAuth } from '../contexts/AuthContext';
-import { SignupValues } from '../api/auth';
 
 interface SignupFormValues {
   database: string;
