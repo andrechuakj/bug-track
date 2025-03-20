@@ -32,9 +32,9 @@ class _AuthService:
                 algorithms=[_AuthService._ALGORITHM],
             )
         except jwt.ExpiredSignatureError:
-            raise ForbiddenError("Token expired.")
+            raise UnauthorizedError("Token expired.")
         except jwt.InvalidTokenError:
-            raise UnauthorizedError("Invalid token.")
+            raise ForbiddenError("Invalid token.")
 
     def is_access_token(self, token: str) -> bool:
         """Check if the token is an access OR refresh token"""
@@ -90,7 +90,7 @@ class _AuthService:
 
     def refresh_user_tokens(self, refresh_token_str: str) -> TokensViewModel:
         """Refresh the user's access token"""
-        if not self.is_refresh_token(refresh_token):
+        if not self.is_refresh_token(refresh_token_str):
             raise ForbiddenError("Invalid token type.")
         refresh_token = self._verify_token(refresh_token_str)
         new_access_token = {
