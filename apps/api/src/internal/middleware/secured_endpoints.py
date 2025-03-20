@@ -9,12 +9,16 @@ from internal.errors.client_errors import (
     UnauthorizedError,
 )
 from services.auth_service import AuthService
+from utilities.constants import constants
 
 secured_endpoints_regex = re.compile(r"^/api/v1/.*")
 
 
 async def secured_endpoints_middleware(request: Request, call_next):
     logger = get_logger()
+    if constants.IS_DEVELOPMENT:
+        logger.debug("Development mode: skipping token validation")
+        return await call_next(request)
     # Don't check OPTIONS preflight requests
     if request.method == "OPTIONS":
         return await call_next(request)
