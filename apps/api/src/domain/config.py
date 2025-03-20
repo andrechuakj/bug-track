@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import Session, create_engine
 from utilities.constants import constants
 
-engine = create_engine(constants.DATABASE_URL, echo=True)
+engine = create_engine(constants.DATABASE_URL, echo=constants.IS_DEVELOPMENT)
 session = sessionmaker(
     bind=engine,
     class_=Session,
