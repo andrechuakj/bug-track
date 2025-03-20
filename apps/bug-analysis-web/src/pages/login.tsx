@@ -9,18 +9,15 @@ import {
 } from 'antd';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { LoginValues } from '../api/auth';
-import DatabaseDropdown from '../components/DatabaseDropdown';
 import { useAuth } from '../contexts/AuthContext';
 
 interface LoginFormValues {
-  database: string;
   email: string;
   password: string;
 }
 
 const Login: React.FC = () => {
   const [form] = Form.useForm();
-  const selectedDb = Form.useWatch('database', form);
   const { login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -54,7 +51,7 @@ const Login: React.FC = () => {
   };
 
   const formIsValid = (form: FormInstance) => {
-    const requiredFields = ['database', 'email', 'password'];
+    const requiredFields = ['email', 'password'];
 
     const values = form.getFieldsValue(requiredFields);
     const allFieldsFilled = Object.values(values).every((value) => value);
@@ -65,7 +62,6 @@ const Login: React.FC = () => {
     return allFieldsFilled && !hasErrors;
   };
 
-  const animation = 'duration-1000 ease-in-out';
   const screens = Grid.useBreakpoint();
 
   const [fieldsHeight, setFieldsHeight]: [
@@ -98,25 +94,13 @@ const Login: React.FC = () => {
         onFinish={onFormSubmit}
         onFinishFailed={onLoginFail}
       >
-        <Form.Item
-          label="Database"
-          name="database"
-          rules={[{ required: true, message: 'Please select a database!' }]}
-          className={`w-full max-w-xs md:max-w-md`}
-        >
-          <DatabaseDropdown />
-        </Form.Item>
         <div // for setting boundaries for visible children in transition, and resizing
-          className={`w-full max-w-xs md:max-w-md overflow-hidden flex items-end transition-all ${animation}
-          `}
-          style={{ height: selectedDb ? `${fieldsHeight}px` : '0px' }} // tailwind doesn't animate this transition properly
+          className={`w-full max-w-xs md:max-w-md overflow-hidden flex items-end`}
+          style={{ height: fieldsHeight }}
         >
           <div // for moving vertically for small and large screens
             ref={fieldsRef}
-            className={`w-full transition-opacity ${animation} 
-          ${selectedDb ? 'opacity-100' : 'opacity-0'}
-          ${selectedDb ? 'pointer-events-auto' : 'pointer-events-none'}
-          `}
+            className="w-full pointer-events-auto"
           >
             <Form.Item
               label="Email"

@@ -1,11 +1,9 @@
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import React, { useState } from 'react';
 import { SignupValues } from '../api/auth';
-import DatabaseDropdown from '../components/DatabaseDropdown';
 import { useAuth } from '../contexts/AuthContext';
 
 interface SignupFormValues {
-  database: string;
   email: string;
   name: string;
   password: string;
@@ -20,7 +18,6 @@ const Signup: React.FC = () => {
   const screens = Grid.useBreakpoint();
 
   const onFinish = async (values: SignupFormValues): Promise<void> => {
-    console.log('onFormSubmit | values:', values);
     setSignupError(null);
     if (values.password !== values.confirmPassword) {
       setSignupError('Passwords do not match.');
@@ -68,14 +65,6 @@ const Signup: React.FC = () => {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
-        <Form.Item
-          label="Database"
-          name="database"
-          rules={[{ required: true, message: 'Please select a database!' }]}
-          className={`w-full max-w-xs md:max-w-xl`}
-        >
-          <DatabaseDropdown />
-        </Form.Item>
         <Form.Item
           label="Email"
           name="email"
