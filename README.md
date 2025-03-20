@@ -22,15 +22,9 @@
    pip install -r requirements.txt
    ```
 
-   On Windows, use WSL or run the following instead:
+   > On Windows, use WSL to run the commands above.
 
-   ```bash
-   python -m venv myenv
-   myenv\Scripts\activate
-   pip install -r win_requirements.txt
-   ```
 1. Create a `.env.local` file in the current directory and populate `MODE`, `OPENAI_API_KEY` and `DATABASE_URL` environment variables, with `MODE` set to `development`
 1. Install dependencies and start the backend with `yarn && yarn dev`
-
 
 > To check that the environment is set up, run both frontend & backend, and ensure that the API is fetching correctly.
