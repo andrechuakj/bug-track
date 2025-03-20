@@ -2,7 +2,7 @@ import { Select } from 'antd';
 import { useSession } from '../../contexts/SessionContext';
 
 const DatabaseDropdown: React.FC = () => {
-  const { tenantList, setCurrentTenant } = useSession();
+  const { currentTenant, tenantList, setCurrentTenant } = useSession();
 
   return (
     <div className={'w-full'}>
@@ -10,6 +10,7 @@ const DatabaseDropdown: React.FC = () => {
         placeholder="Select a Database"
         onChange={setCurrentTenant}
         className={'text-center'}
+        value={currentTenant?.id}
       >
         {tenantList.map(({ id, name }) => (
           <Select.Option key={id} value={id}>
