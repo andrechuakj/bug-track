@@ -39,6 +39,7 @@ import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
 import SearchResultListItem from '../components/SearchResultListItem';
 import { useAuth } from '../contexts/AuthContext';
+import { useSession } from '../contexts/SessionContext';
 import {
   AcBugSearchResult,
   AcBugSearchResultCategory,
@@ -63,6 +64,7 @@ const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 const HomePage: React.FC = (): ReactNode => {
   const { isAuthenticated, loading } = useAuth();
+  const { currentTenant } = useSession();
   const router = useRouter();
   const [dbmsData, setDbmsData] = useState<DbmsResponseDto>();
   const [aiSummary, setAiSummary] = useState<AiSummary>();
@@ -73,12 +75,15 @@ const HomePage: React.FC = (): ReactNode => {
     if (!isAuthenticated) {
       console.log('User not authenticated, redirecting to login page');
       router.push('/login');
-    } else {
-      fetchBugExplore();
-      fetchDbmsData(1).then((res: DbmsResponseDto) => setDbmsData(res));
-      handleAiSummary();
     }
   }, [loading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (!currentTenant) return;
+    fetchBugExplore();
+    fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res));
+    handleAiSummary();
+  }, [currentTenant]);
 
   // Form logic (bug search)
   const [redemptionForm] = Form.useForm();
@@ -92,10 +97,11 @@ const HomePage: React.FC = (): ReactNode => {
 
   const handleSearch = useCallback(
     debounce(async (searchStr: string) => {
+      if (!currentTenant) return;
       if (searchStr.length >= 3) {
         // TODO: edit this accordingly
         const bugReports: BugReports = await searchBugReports(
-          1,
+          currentTenant.id,
           searchStr,
           0,
           100
@@ -162,7 +168,13 @@ const HomePage: React.FC = (): ReactNode => {
   const [bugReports, setBugReports] = useState<BugSearchResultStruct>({});
 
   const fetchBugExplore = useCallback(async () => {
-    const bugReports: BugReports = await searchBugReports(1, '', 0, 100);
+    if (!currentTenant) return;
+    const bugReports: BugReports = await searchBugReports(
+      currentTenant.id,
+      '',
+      0,
+      100
+    );
     if (bugReports) {
       setBugExplore(
         bugExploreDistribution,
@@ -198,9 +210,12 @@ const HomePage: React.FC = (): ReactNode => {
 
   // AI logic
   const handleAiSummary = async () => {
+    if (!currentTenant) return;
     setAiSummary(undefined);
     setAiButtonLoading(true);
-    await fetchAiSummary(1).then((res: AiSummary) => setAiSummary(res));
+    await fetchAiSummary(currentTenant.id).then((res: AiSummary) =>
+      setAiSummary(res)
+    );
     setAiButtonLoading(false);
   };
 
