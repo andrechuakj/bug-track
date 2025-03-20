@@ -71,6 +71,7 @@ const HomePage: React.FC = (): ReactNode => {
   useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
+      console.log('User not authenticated, redirecting to login page');
       router.push('/login');
     } else {
       fetchBugExplore();
