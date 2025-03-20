@@ -3,7 +3,11 @@ import re
 from configuration.logger import get_logger
 from fastapi import Request
 from internal.errors import create_client_error_response as error
-from internal.errors.client_errors import ForbiddenError, UnauthorizedError
+from internal.errors.client_errors import (
+    BaseClientError,
+    ForbiddenError,
+    UnauthorizedError,
+)
 from services.auth_service import AuthService
 
 secured_endpoints_regex = re.compile(r"^/api/v1/.*")
@@ -30,7 +34,11 @@ async def secured_endpoints_middleware(request: Request, call_next):
         if not AuthService.is_access_token(token):
             logger.warning("Invalid token type")
             return error(request, ForbiddenError("Invalid token"))
+    except BaseClientError as e:
+        logger.error(f"Error validating token: {e}")
+        return error(request, e)
     except Exception as e:
+        # Don't expose internal errors to the client
         logger.error(f"Error validating token: {e}")
         return error(request, ForbiddenError("Invalid token"))
     return await call_next(request)
