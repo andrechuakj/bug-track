@@ -20,10 +20,10 @@ const BugReportPage: React.FC = () => {
   }, [id]);
 
   return (
-    <div className="min-h-screen p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto">
       <BugHeader />
       <Divider />
-      <div className="min-h-screen flex gap-4">
+      <div className="flex gap-4">
         <div className="w-full lg:w-3/4">
           <BugContentContainer />
         </div>

@@ -85,6 +85,10 @@ const BugSideBar: React.FC = () => {
                   defaultSelectedKeys: [
                     bugReport ? bugReport.category_id.toString() : '',
                   ],
+                  style: {
+                    overflowY: 'scroll',
+                    maxHeight: '200px',
+                  },
                 }}
                 trigger={['click']}
                 placement="bottomRight"
