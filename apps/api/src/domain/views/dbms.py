@@ -9,7 +9,7 @@ class DbmsListResponseDto(BaseResponseModel):
 class BugCategoryResponseDto(BaseResponseModel):
     id: int
     name: str
-    count: int
+    count: int = 0
 
 
 class BugCategoryUpdateDto(BaseResponseModel):

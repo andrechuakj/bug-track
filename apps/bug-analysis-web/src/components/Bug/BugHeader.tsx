@@ -2,6 +2,9 @@ import { Button, Skeleton, Typography } from 'antd';
 import { useBugReport } from '../../contexts/BugReportContext';
 import BugStatusIcon from './BugStatusIcon';
 
+const MOCK_URL = 'https://www.github.com';
+const MOCK_STATUS = 'Closed';
+
 const BugHeader: React.FC = () => {
   const { bugReport, isBugLoading } = useBugReport();
 
@@ -16,21 +19,13 @@ const BugHeader: React.FC = () => {
                 ? `${bugReport.title} #${bugReport.id}`
                 : 'No title found'}
             </Typography.Title>
-            <BugStatusIcon status={'Closed'} />
+            <BugStatusIcon status={MOCK_STATUS} />
           </div>
           <div className="w-1/4 flex flex-col xl:flex-row xl:justify-end gap-4">
-            <Button
-              type="primary"
-              href={'https://www.github.com'}
-              target="_blank"
-            >
+            <Button type="primary" href={MOCK_URL} target="_blank">
               View on GitHub
             </Button>
-            <Button
-              type="default"
-              href={'https://www.github.com'}
-              target="_blank"
-            >
+            <Button type="default" href={MOCK_URL} target="_blank">
               View Repository
             </Button>
           </div>

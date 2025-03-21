@@ -24,10 +24,6 @@ def get_bug_reports(tx: Session):
 
 
 def get_bug_report_by_id(tx: Session, bug_report_id: int):
-    return tx.get(BugReport, bug_report_id)
-
-
-def get_joined_bug_report_by_id(tx: Session, bug_report_id: int):
     statement = (
         select(
             BugReport.id,
@@ -128,9 +124,16 @@ def delete_bug_report(tx: Session, bug_report_id: int):
 
 
 def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
-    bug_report = get_bug_report_by_id(tx, bug_report_id)
-    if not bug_report:
+    statement = select(BugReport).where(BugReport.id == bug_report_id)
+    result = tx.exec(statement).first()
+
+    if not result:
         raise NotFoundError(f"Bug report {bug_report_id} not found")
-    bug_report.category_id = category_id
+
+    result.category_id = category_id
+    tx.add(result)
     tx.commit()
-    return get_joined_bug_report_by_id(tx, bug_report_id)
+    tx.refresh(result)
+
+    updated_bug_report = get_bug_report_by_id(tx, bug_report_id)
+    return updated_bug_report
