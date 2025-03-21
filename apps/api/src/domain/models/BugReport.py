@@ -26,11 +26,10 @@ def get_bug_reports(tx: Session):
 
 
 def get_bug_report_by_id(tx: Session, bug_report_id: int):
-    statement = select(BugReport).where(BugReport.id == bug_report_id)
-
-    bug_report = tx.exec(statement).first()
+    stmt = select(BugReport).where(BugReport.id == bug_report_id)
+    bug_report = tx.exec(stmt).first()
     if not bug_report:
-        raise ValueError(f"Bug report {bug_report_id} not found")
+        raise NotFoundError(f"Bug report {bug_report_id} not found")
 
     result = {
         "id": bug_report.id,
