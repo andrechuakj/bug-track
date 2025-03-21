@@ -8,7 +8,7 @@ import {
   Typography,
 } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { LoginValues } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { BugTrackColors } from '../utils/theme';
@@ -79,7 +79,7 @@ const Login: React.FC = () => {
     }
   }, [screens.md]);
 
-  const handleSignUpOnClick = () => router.push('/signup');
+  const handleSignUpOnClick = useCallback(() => router.push('/signup'), []);
 
   return (
     <div className="flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center">

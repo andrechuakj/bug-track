@@ -1,18 +1,10 @@
-from datetime import datetime, timezone, timedelta
-from sqlmodel import Field
 from datetime import datetime
-from typing import Annotated
 
-SINGAPORE_TZ = timezone(timedelta(hours=8))
-
-
-def now_sgt():
-    return datetime.now(SINGAPORE_TZ)
-
+from sqlmodel import TIMESTAMP, Column
 
 class Timestampable:
-    created_at: Annotated[datetime, Field(default_factory=now_sgt)]
-    updated_at: Annotated[datetime, Field(default_factory=now_sgt)]
+    created_at: datetime | None = Column(TIMESTAMP(timezone=True), default=None)
+    updated_at: datetime | None = Column(TIMESTAMP(timezone=True), default=None)
 
 
 __all__ = ["Timestampable"]
