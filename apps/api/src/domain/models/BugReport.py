@@ -2,7 +2,7 @@ from domain.helpers.Timestampable import Timestampable
 from domain.models.DBMSSystem import DBMSSystem
 from domain.models.BugCategory import BugCategory
 from internal.errors.client_errors import NotFoundError
-from sqlmodel import Field, Session, select
+from sqlmodel import Field, Session, select, Relationship
 
 
 class BugReport(Timestampable, table=True):
@@ -14,6 +14,9 @@ class BugReport(Timestampable, table=True):
     description: str | None = None
     url: str | None = None
 
+    dbms: "DBMSSystem" = Relationship()
+    category: "BugCategory" = Relationship()
+
 
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):
     return tx.exec(select(BugReport.id).where(BugReport.dbms_id == dbms_id)).all()
@@ -24,24 +27,21 @@ def get_bug_reports(tx: Session):
 
 
 def get_bug_report_by_id(tx: Session, bug_report_id: int):
-    statement = (
-        select(
-            BugReport.id,
-            BugReport.dbms_id,
-            DBMSSystem.name.label("dbms"),
-            BugReport.category_id,
-            BugCategory.name.label("category"),
-            BugReport.title,
-            BugReport.description,
-        )
-        .join(DBMSSystem, BugReport.dbms_id == DBMSSystem.id)
-        .join(BugCategory, BugReport.category_id == BugCategory.id)
-        .where(BugReport.id == bug_report_id)
-    )
+    statement = select(BugReport).where(BugReport.id == bug_report_id)
 
-    result = tx.exec(statement).first()
-    if not result:
-        raise NotFoundError(f"Bug report {bug_report_id} not found")
+    bug_report = tx.exec(statement).first()
+    if not bug_report:
+        raise ValueError(f"Bug report {bug_report_id} not found")
+
+    result = {
+        "id": bug_report.id,
+        "dbms_id": bug_report.dbms.id,
+        "dbms": bug_report.dbms.name if bug_report.dbms else None,
+        "category_id": bug_report.category.id,
+        "category": bug_report.category.name if bug_report.category else None,
+        "title": bug_report.title,
+        "description": bug_report.description,
+    }
 
     return result
 
@@ -124,16 +124,23 @@ def delete_bug_report(tx: Session, bug_report_id: int):
 
 
 def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
-    statement = select(BugReport).where(BugReport.id == bug_report_id)
-    result = tx.exec(statement).first()
+    bug_report = tx.exec(
+        select(BugReport).where(BugReport.id == bug_report_id)
+    ).one_or_none()
 
-    if not result:
-        raise NotFoundError(f"Bug report {bug_report_id} not found")
+    if not bug_report:
+        raise ValueError(f"BugReport with id {bug_report_id} not found")
 
-    result.category_id = category_id
-    tx.add(result)
+    new_category = tx.exec(
+        select(BugCategory).where(BugCategory.id == category_id)
+    ).one_or_none()
+
+    if not new_category:
+        raise ValueError(f"BugCategory with id {category_id} not found")
+
+    bug_report.category = new_category
+
+    tx.add(bug_report)
     tx.commit()
-    tx.refresh(result)
 
-    updated_bug_report = get_bug_report_by_id(tx, bug_report_id)
-    return updated_bug_report
+    return get_bug_report_by_id(tx, bug_report.id)
