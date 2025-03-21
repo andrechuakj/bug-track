@@ -1,5 +1,5 @@
-from sqlmodel import Session
 from domain.models.BugCategory import get_bug_categories
+from sqlmodel import Session
 
 
 class _BugCategoryService:

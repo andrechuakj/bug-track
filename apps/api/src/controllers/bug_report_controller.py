@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from domain.config import get_db
-from domain.views.dbms import BugReportResponseDto, BugCategoryUpdateDto
+from domain.views.dbms import BugCategoryUpdateDto, BugReportResponseDto
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
 from services.bug_report_service import BugReportService
@@ -26,11 +26,15 @@ async def get_single_bug(bug_id: int, r: Request) -> BugReportResponseDto:
 
 @router.patch("/{bug_id}/category")
 async def update_bug_category(
-    bug_id: int, update_data: BugCategoryUpdateDto, r: Request
+    bug_id: int,
+    dto: BugCategoryUpdateDto,
+    r: Request,
 ) -> BugReportResponseDto:
     tx = get_db(r)
     bug_report = BugReportService.update_bug_category(
-        tx, bug_id, update_data.category_id
+        tx,
+        bug_id,
+        dto.category_id,
     )
     return bug_report
 

@@ -1,8 +1,8 @@
 from domain.helpers.Timestampable import Timestampable
-from domain.models.DBMSSystem import DBMSSystem
 from domain.models.BugCategory import BugCategory
+from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
-from sqlmodel import Field, Session, select, Relationship
+from sqlmodel import Field, Relationship, Session, select
 
 
 class BugReport(Timestampable, table=True):

@@ -3,7 +3,6 @@ from typing import Sequence
 from domain.config import get_db
 from domain.views.dbms import BugCategoryResponseDto
 from fastapi import APIRouter, Request
-from internal.errors import NotFoundError
 from services.bug_category_service import BugCategoryService
 
 router = APIRouter(prefix="/api/v1/categories", tags=["bug_category"])

@@ -1,9 +1,9 @@
-from sqlmodel import Session
 from domain.models.BugReport import (
-    get_bug_reports,
     get_bug_report_by_id,
+    get_bug_reports,
     update_bug_category,
 )
+from sqlmodel import Session
 
 
 class _BugReportService:
