@@ -18,7 +18,7 @@ export async function fetchBugById(bug_id: number): Promise<BugReport> {
 }
 
 export async function fetchAllCategories(): Promise<BugCategoryResponseDto[]> {
-  const { data, response } = await api.GET('/api/v1/categories');
+  const { data, response } = await api.GET('/api/v1/categories/');
 
   if (!data) {
     console.error('Error fetching bug categories!', response);
