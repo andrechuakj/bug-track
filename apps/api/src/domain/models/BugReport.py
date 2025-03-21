@@ -30,18 +30,7 @@ def get_bug_report_by_id(tx: Session, bug_report_id: int):
     bug_report = tx.exec(stmt).first()
     if not bug_report:
         raise NotFoundError(f"Bug report {bug_report_id} not found")
-
-    result = {
-        "id": bug_report.id,
-        "dbms_id": bug_report.dbms.id,
-        "dbms": bug_report.dbms.name if bug_report.dbms else None,
-        "category_id": bug_report.category.id,
-        "category": bug_report.category.name if bug_report.category else None,
-        "title": bug_report.title,
-        "description": bug_report.description,
-    }
-
-    return result
+    return bug_report
 
 
 def get_bug_report_by_ids(tx: Session, bug_report_ids: list[int]):
