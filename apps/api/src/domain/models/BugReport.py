@@ -9,13 +9,12 @@ class BugReport(Timestampable, table=True):
     __tablename__ = "bug_reports"
     id: int | None = Field(default=None, primary_key=True)
     dbms_id: int = Field(foreign_key="dbms_systems.id")
+    dbms: DBMSSystem = Relationship()
     category_id: int = Field(foreign_key="bug_categories.id")
+    category: BugCategory = Relationship()
     title: str
     description: str | None = None
     url: str | None = None
-
-    dbms: "DBMSSystem" = Relationship()
-    category: "BugCategory" = Relationship()
 
 
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):
