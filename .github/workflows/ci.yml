@@ -45,3 +45,5 @@ jobs:
         run: pip install -r requirements.txt
       - name: Check lint
         run: yarn lint
+      - name: Run tests
+        run: yarn test
