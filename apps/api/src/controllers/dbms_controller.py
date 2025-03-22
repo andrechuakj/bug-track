@@ -91,6 +91,8 @@ async def get_bugs(
     as equal amounts of reports to each category as possible, or from a
     single category if category_id is specified.
 
+    \f
+
     :param search:
         The search string, which must match part of bug report titles.
     :param start:
@@ -135,6 +137,8 @@ async def get_bugs_by_category(
     Searches for bug reports in a category from a certain offset as given from a
     distribution. On the FE, this corresponds to a load more feature for each bug
     category in the bug explore.
+
+    \f
 
     :param category_id:
         0-based category_id which corresponds to that in db
