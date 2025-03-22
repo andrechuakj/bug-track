@@ -11,6 +11,7 @@
       "dependsOn": ["^lint"]
     },
     "format": {},
+    "test": {},
     "generate": {
       "dependsOn": ["^generate"],
       "cache": false
