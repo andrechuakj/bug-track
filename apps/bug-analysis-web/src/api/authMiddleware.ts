@@ -1,4 +1,4 @@
-import { Middleware } from '~api';
+import type { Middleware } from '~api';
 import { getTokens } from '../utils/auth';
 import authService from './auth';
 
@@ -6,7 +6,7 @@ const retryCache: Record<string, boolean> = {};
 
 const unsecuredEnpointsRegex = /^\/public.*/;
 
-const authMiddleware: Middleware = {
+const authMiddleware = {
   onRequest: ({ request }) => {
     const url = new URL(request.url);
     console.debug(request.method, url.pathname);
@@ -57,6 +57,6 @@ const authMiddleware: Middleware = {
     retryCache[requestId] = false;
     return await fetch(newRequest);
   },
-};
+} satisfies Middleware;
 
 export default authMiddleware;
