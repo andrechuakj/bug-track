@@ -91,13 +91,14 @@ async def get_bugs(
     as equal amounts of reports to each category as possible, or from a
     single category if category_id is specified.
 
-    Query parameters:
-        Required:
-            - search: the search string, which must match part of bug report titles
-            - start: 0-based index representing the number of records to skip
-            - limit: absolute value representing the max. num. of reports to return
-        Optional
-            - category_id: 0-based category_id which corresponds to that in db
+    :param search:
+        The search string, which must match part of bug report titles.
+    :param start:
+        0-based index representing the number of records to skip.
+    :param limit:
+        Absolute value representing the maximum number of reports to return.
+    :param category_id:
+        0-based category_id which corresponds to that in the database.
     """
     tx = get_db(r)
     reports = DbmsService.bug_search(
@@ -135,13 +136,14 @@ async def get_bugs_by_category(
     distribution. On the FE, this corresponds to a load more feature for each bug
     category in the bug explore.
 
-    Query parameters:
-        Required:
-            - category_id: 0-based category_id which corresponds to that in db
-            - amount: number of additional reports to add
-            - distribution: comma-separated values representing number of bugs present for
-                            each category, starting from the 0th category, this convenintely
-                            corresponds to the offset from which we should fetch our bugs
+    :param category_id:
+        0-based category_id which corresponds to that in db
+    :param amount:
+        Number of additional reports to add
+    :param distribution:
+        Comma-separated values representing number of bugs present for
+        each category, starting from the 0th category, this convenintely
+        corresponds to the offset from which we should fetch our bugs
     """
     tx = get_db(r)
 

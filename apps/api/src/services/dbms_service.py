@@ -37,8 +37,11 @@ class _DbmsService(Service):
         """
         Sample a random set of bug descriptions.
 
-        dbms_id: dbms from which we will sample the bug descriptions
-        sample_percent: proportion (number between 0-1) of bug descriptions to sample
+        :param dbms_id:
+            DBMS from which we will sample the bug descriptions.
+
+        :param sample_percent:
+            Proportion (number between 0-1) of bug descriptions to sample.
         """
         bug_reports = get_bug_report_ids_by_dbms_id(tx, dbms_id)
         print(f"Found bug reports: {bug_reports} for dbms_id: {dbms_id}")
@@ -58,14 +61,19 @@ class _DbmsService(Service):
         categories: list[int] = [],
     ):
         """
-        Parameters:
-            - tx: the ORM session
-            - dbms_id: the ID of the DBMS to query from
-            - search: the search string for which our bug report titles should contain
-            - start: 0-based starting index to offset our queries from
-            - limit: maximum number of bug reports to fetch
-            - categories: a list of categories from which our bug reports should come from'
-                          if empty; query from all categories.
+        :param tx:
+            The ORM session.
+        :param dbms_id:
+            The ID of the DBMS to query from.
+        :param search:
+            The search string for which our bug report titles should contain.
+        :param start:
+            0-based starting index to offset our queries from.
+        :param limit:
+            Maximum number of bug reports to fetch.
+        :param categories:
+            A list of categories from which our bug reports should come from.
+            If empty, query from all categories.
         """
 
         per_category_limit = None
@@ -89,12 +97,16 @@ class _DbmsService(Service):
         self, tx: Session, dbms_id: int, category: int, start: int, amount: int = 5
     ):
         """
-        Parameters:
-            - tx: the ORM session
-            - dbms_id: the ID of the DBMS to query from
-            - category: 0-based index of the category as per DB
-            - start: 0-based starting index to offset our queries from
-            - amount: number of bug reports to fetch
+        :param tx:
+            The ORM session.
+        :param dbms_id:
+            The ID of the DBMS to query from.
+        :param category:
+            0-based index of the category as per DB.
+        :param start:
+            0-based starting index to offset our queries from.
+        :param amount:
+            Number of bug reports to fetch.
         """
         reports = get_bug_report_by_search_and_cat(
             tx, dbms_id, "", [category], start, amount
