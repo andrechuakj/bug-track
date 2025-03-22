@@ -11,7 +11,7 @@
     "dev": "run-p dev:backend dev:api",
     "dev:backend": "fastapi dev src/main.py",
     "dev:api": "bun --watch client/main.ts",
-    "test": "pytest",
+    "test": "cross-env MODE=test pytest",
     "lint": "run-p lint:backend lint:api",
     "lint:api": "prettier --check client",
     "lint:backend": "black src --check",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@types/bun": "^1.2.2",
     "bun": "^1.2.2",
+    "cross-env": "^7.0.3",
     "npm-run-all2": "^7.0.2",
     "openapi-typescript": "^7.6.0",
     "prettier": "*",
