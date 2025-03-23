@@ -43,7 +43,7 @@ def get_bug_report_by_search_and_cat(
     start: int,
     limit: int,
 ):
-    query = query = select(
+    query = select(
         BugReport.id,
         BugReport.dbms_id,
         BugReport.category_id,
