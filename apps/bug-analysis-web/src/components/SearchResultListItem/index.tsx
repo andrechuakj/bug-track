@@ -1,11 +1,12 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { List, Typography } from 'antd';
 import { useState } from 'react';
+import { useSession } from '../../contexts/SessionContext';
 import { BugSearchResult, BugSearchResultCategory } from '../../utils/bug';
 
 export interface SearchResultListItemProps {
   searchResultCategory: BugSearchResultCategory;
-  handleLoadMore: (categoryId: number) => void;
+  handleLoadMore?: (tenantId: number, categoryId: number) => void;
 }
 
 const SearchResultListItem: React.FC<SearchResultListItemProps> = ({
@@ -14,9 +15,13 @@ const SearchResultListItem: React.FC<SearchResultListItemProps> = ({
 }: SearchResultListItemProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const { currentTenant } = useSession();
+
   const handleClickLoadMore = async () => {
     setIsLoading(true);
-    await handleLoadMore(searchResultCategory.categoryId);
+    if (currentTenant) {
+      await handleLoadMore?.(currentTenant.id, searchResultCategory.categoryId);
+    }
     setIsLoading(false);
   };
 
@@ -36,7 +41,7 @@ const SearchResultListItem: React.FC<SearchResultListItemProps> = ({
           </List.Item>
         )}
       />
-      {!isLoading && (
+      {handleLoadMore && !isLoading && (
         <Typography.Link
           className="self-start"
           disabled={isLoading}
@@ -45,7 +50,9 @@ const SearchResultListItem: React.FC<SearchResultListItemProps> = ({
           Load more
         </Typography.Link>
       )}
-      {isLoading && <LoadingOutlined className="self-start" />}
+      {handleLoadMore && isLoading && (
+        <LoadingOutlined className="self-start" />
+      )}
     </List.Item>
   );
 };

@@ -12,17 +12,16 @@ import {
   Flex,
   Form,
   Input,
-  List,
+  InputRef,
   Row,
   SelectProps,
   Skeleton,
   Typography,
 } from 'antd';
-import clsx from 'clsx';
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import {
   AiSummary,
   BugCategory,
@@ -37,9 +36,12 @@ import {
 import CategoryTag from '../components/CategoryTag';
 import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
-import SearchResultListItem from '../components/SearchResultListItem';
 import { useAuth } from '../contexts/AuthContext';
 import { useSession } from '../contexts/SessionContext';
+import BugExploreSearchResultsModule, {
+  BUG_EXPLORE_KEY,
+  SEARCH_RESULTS_KEY,
+} from '../modules/BugExploreSearchResults';
 import {
   AcBugSearchResult,
   AcBugSearchResultCategory,
@@ -48,12 +50,14 @@ import {
   BugSearchResultStruct,
   categoriseBugs,
   setBugExplore,
+  setBugSearchResults,
 } from '../utils/bug';
 import { generateBugDistrBar, generateBugTrendChart } from '../utils/chart';
 import { useAppContext } from '../utils/context';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
 import {
   AppTheme,
+  categoryToIdMap,
   FilterBugCategory,
   FilterBugPriority,
   FilterSettings,
@@ -69,6 +73,23 @@ const HomePage: React.FC = (): ReactNode => {
   const [dbmsData, setDbmsData] = useState<DbmsResponseDto>();
   const [aiSummary, setAiSummary] = useState<AiSummary>();
   const [aiButtonLoading, setAiButtonLoading] = useState(false);
+  const [lastSearchedStr, setLastSearchedStr] = useState('');
+  // Filter states
+  const [filterSettings, setFilterSettings] = useState<FilterSettings>({
+    category: FilterBugCategory.NONE_SELECTED,
+    priority: FilterBugPriority.NONE_SELECTED,
+  });
+  // Form states
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [exploreSearchActiveKey, setExploreSearchActiveKey] =
+    useState(BUG_EXPLORE_KEY);
+  const [isFetchingSearchResult, setIsFetchingSearchResult] = useState(false);
+
+  const [acBugReports, setAcBugReports] = useState<BugReports>({
+    bug_reports: [],
+  });
+  const [bugSearchReports, setBugSearchReports] =
+    useState<BugSearchResultStruct>({});
 
   useEffect(() => {
     if (loading) return;
@@ -87,39 +108,63 @@ const HomePage: React.FC = (): ReactNode => {
 
   // Form logic (bug search)
   const [redemptionForm] = Form.useForm();
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  // TODO: Implement sort modal
-  // const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
-  const [acBugReports, setAcBugReports] = useState<BugReports>({
-    bug_reports: [],
-  });
+  const searchFieldRef = useRef<InputRef>(null);
 
   const handleSearch = useCallback(
+    async (searchStr: string) => {
+      if (!currentTenant) return;
+      const category =
+        filterSettings.category !== FilterBugCategory.NONE_SELECTED &&
+        categoryToIdMap[filterSettings.category];
+
+      const bugReports: BugReports = await searchBugReports(
+        currentTenant.id,
+        searchStr,
+        0,
+        100,
+        category || undefined
+      );
+      if (bugReports) {
+        setAcBugReports(bugReports);
+        setLastSearchedStr(searchStr);
+      }
+      return bugReports;
+    },
+    [currentTenant, filterSettings]
+  );
+
+  const handleSearchDebounce = useCallback(
     debounce(async (searchStr: string) => {
       if (!currentTenant) return;
       if (searchStr.length >= 3) {
-        // TODO: edit this accordingly
-        const bugReports: BugReports = await searchBugReports(
-          currentTenant.id,
-          searchStr,
-          0,
-          100
-        );
-        if (bugReports) {
-          setAcBugReports(bugReports);
-        }
+        handleSearch(searchStr);
       }
     }, 500),
-    []
+    [currentTenant]
   );
 
-  // Filter
-  const [filterSettings, setFilterSettings] = useState<FilterSettings>({
-    category: FilterBugCategory.NONE_SELECTED,
-    priority: FilterBugPriority.NONE_SELECTED,
-  });
+  const handlePopulateSearchResults = async () => {
+    let bugReportsResult: BugReports = acBugReports;
+    const searchValue = searchFieldRef.current?.input?.value;
 
+    if (searchValue && searchValue != lastSearchedStr) {
+      // Fetch due to mismatch
+      setIsFetchingSearchResult(true);
+      // Return result as setAcBugReport is done asynchronously, and we
+      // want to use the immediate result
+      const res = await handleSearch(searchValue);
+      if (res) {
+        bugReportsResult = res;
+      }
+      setIsFetchingSearchResult(false);
+    }
+    setBugSearchResults(setBugSearchReports, bugReportsResult);
+    setExploreSearchActiveKey(SEARCH_RESULTS_KEY);
+    setAcBugReports({ bug_reports: [] }); // close the autocomplete drop-down
+  };
+
+  // Filter
   const bugCategoryFilterOptions = Object.values(
     FilterBugCategory
   ) as FilterBugCategory[];
@@ -157,6 +202,20 @@ const HomePage: React.FC = (): ReactNode => {
     />,
   ];
 
+  const handleApplyFilter = useCallback(async () => {
+    let bugReportsResult: BugReports = acBugReports;
+
+    setIsFetchingSearchResult(true);
+    const res = await handleSearch(lastSearchedStr);
+    if (res) {
+      bugReportsResult = res;
+    }
+    setIsFetchingSearchResult(false);
+    setBugSearchResults(setBugSearchReports, bugReportsResult);
+    setExploreSearchActiveKey(SEARCH_RESULTS_KEY);
+    setIsFilterModalOpen(false);
+  }, [lastSearchedStr, filterSettings]);
+
   // Category bug explore
   // Note: The reason why we have separate data structures for autocomplete and bug explore
   //       is because these are 2 separate components, and their needs are different. While
@@ -173,7 +232,7 @@ const HomePage: React.FC = (): ReactNode => {
       currentTenant.id,
       '',
       0,
-      100
+      10
     );
     if (bugReports) {
       setBugExplore(
@@ -183,13 +242,16 @@ const HomePage: React.FC = (): ReactNode => {
         bugReports
       );
     }
-  }, []);
+  }, [currentTenant]);
 
   const handleBugExploreLoadMore = async (
+    tenantId: number,
     categoryId: number
   ): Promise<void> => {
+    if (tenantId === undefined) return;
+
     const bugExploreReports: BugExploreReports = await loadMoreBugsByCategory(
-      1,
+      tenantId,
       categoryId,
       bugExploreDistribution,
       5
@@ -291,7 +353,7 @@ const HomePage: React.FC = (): ReactNode => {
                 <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
                   <AutoComplete
                     options={options}
-                    onSearch={handleSearch}
+                    onSearch={handleSearchDebounce}
                     size="large"
                     filterOption={
                       ((inputValue, option) =>
@@ -301,7 +363,12 @@ const HomePage: React.FC = (): ReactNode => {
                         -1) as SelectProps['filterOption']
                     }
                   >
-                    <Input.Search size="large" placeholder="Search for bug" />
+                    <Input.Search
+                      ref={searchFieldRef}
+                      size="large"
+                      placeholder="Search for bug"
+                      onSearch={handlePopulateSearchResults}
+                    />
                   </AutoComplete>
                 </Form.Item>
               </div>
@@ -320,27 +387,15 @@ const HomePage: React.FC = (): ReactNode => {
               </div>
             </div>
           </Form>
-          <Card className="mb-4 ">
-            <Typography.Title
-              level={4}
-            >{`Explore bug reports`}</Typography.Title>
-            {bugReports && (
-              <List
-                size="large"
-                bordered
-                dataSource={Object.entries(bugReports)}
-                renderItem={([_, value]) => (
-                  <SearchResultListItem
-                    searchResultCategory={value}
-                    handleLoadMore={handleBugExploreLoadMore}
-                  />
-                )}
-                className={clsx(
-                  'h-[30vh] overflow-y-scroll',
-                  isDarkMode ? 'bg-black' : 'bg-white'
-                )}
-              />
-            )}
+          <Card className="mb-4">
+            <BugExploreSearchResultsModule
+              bugReports={bugReports}
+              bugSearchReports={bugSearchReports}
+              handleBugExploreLoadMore={handleBugExploreLoadMore}
+              activeKey={exploreSearchActiveKey}
+              setActiveKey={setExploreSearchActiveKey}
+              isFetchingSearchResult={isFetchingSearchResult}
+            />
           </Card>
           <Row gutter={[16, 16]}>
             <Col xs={24} md={14}>
@@ -545,6 +600,7 @@ const HomePage: React.FC = (): ReactNode => {
         isModalOpen={isFilterModalOpen}
         setIsModalOpen={setIsFilterModalOpen}
         modalItems={filterModalItems}
+        handleOk={handleApplyFilter}
       />
     </>
   );
