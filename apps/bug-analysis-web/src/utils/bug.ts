@@ -51,7 +51,7 @@ export const categoriseBugs = (
   for (let i = 0; i < reports.length; ++i) {
     const {
       id: bugReportId,
-      report_title: display,
+      title: display,
       category_id: categoryId,
     } = reports[i];
     const category: FilterBugCategory = BUG_CATEGORIES[categoryId];
@@ -61,7 +61,7 @@ export const categoriseBugs = (
     }
 
     let idx: number;
-    if (!categoryMap[category]) {
+    if (categoryMap[category] === undefined) {
       idx = searchResult.categories.length;
       searchResult.categories.push({
         title: category,
@@ -88,7 +88,7 @@ const bugReportToBugSearchResult = (reports: BugReports): BugSearchResult[] => {
 
   return bugReports.map((report) => ({
     description: report.description ?? '',
-    display: report.report_title,
+    display: report.title,
     bugReportId: report.id,
   }));
 };
@@ -135,7 +135,7 @@ export const setBugExplore = (
   for (const rep of bugReports) {
     const {
       id: bugReportId,
-      report_title: display,
+      title: display,
       category_id: categoryId,
       description,
     } = rep;
@@ -157,4 +157,36 @@ export const setBugExplore = (
   }
   setBugExploreDistribution(newDistr);
   setBugReports(bugSearchResult);
+};
+
+export const setBugSearchResults = (
+  setBugSearchReports: Dispatch<SetStateAction<BugSearchResultStruct>>,
+  bugReportsDelta: BugReports
+): void => {
+  // Bulk update
+  const { bug_reports: bugReports } = bugReportsDelta;
+
+  const bugSearchResult: BugSearchResultStruct = {};
+
+  for (const rep of bugReports) {
+    const {
+      id: bugReportId,
+      title: display,
+      category_id: categoryId,
+      description,
+    } = rep;
+
+    const category: FilterBugCategory = BUG_CATEGORIES[categoryId];
+    if (!bugSearchResult[category]) {
+      bugSearchResult[category] = { categoryId, title: category, bugs: [] };
+    }
+
+    bugSearchResult[category].bugs.push({
+      bugReportId,
+      display,
+      description: description ?? '',
+    });
+  }
+
+  setBugSearchReports(bugSearchResult);
 };
