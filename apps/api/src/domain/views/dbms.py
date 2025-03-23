@@ -27,8 +27,9 @@ class BugReportResponseDto(BaseResponseModel):
     id: int
     dbms_id: int
     category_id: int
-    report_title: str
+    title: str
     description: str | None
+    url: str | None
 
 
 class BugSearchResponseDto(BaseResponseModel):
@@ -36,7 +37,8 @@ class BugSearchResponseDto(BaseResponseModel):
 
 
 class BugSearchCategoryResponseDto(BaseResponseModel):
-    # Push this to the correct category on FE
-    bug_reports_delta: list[BugReportResponseDto]
-    # FE needs to update its bug_distr state (if any) with this
+    # Bug distribution used to establish the current loaded bugs 
+    # on Bug Explore on the FE 
     new_bug_distr: list[int]
+    # Load more feature
+    bug_reports_delta: list[BugReportResponseDto]

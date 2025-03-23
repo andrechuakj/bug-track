@@ -1,6 +1,6 @@
 from domain.helpers.Timestampable import Timestampable
 from internal.errors.client_errors import NotFoundError
-from sqlmodel import Field, Session, SQLModel, select
+from sqlmodel import Field, Session, select
 
 
 class BugReport(Timestampable, table=True):
@@ -10,6 +10,7 @@ class BugReport(Timestampable, table=True):
     category_id: int = Field(foreign_key="bug_categories.id")
     title: str
     description: str | None = None
+    url: str | None = None
 
 
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):
@@ -33,13 +34,54 @@ def get_bug_categories_by_dbms_id(tx: Session, dbms_id: int):
         select(BugReport.category_id).distinct().where(BugReport.dbms_id == dbms_id)
     ).all()
 
+def get_bug_report_by_search_and_cat(tx: Session, dbms_id: int, search: str, categories: list[int], start: int, limit: int): 
+    query = query = select(
+        BugReport.id,
+        BugReport.dbms_id,
+        BugReport.category_id,
+        BugReport.title,
+        BugReport.description,
+        BugReport.url
+    ).where(BugReport.dbms_id == dbms_id)
 
-def get_bug_report_by_dbms_and_category(tx: Session, dbms_id: int, category_id: int):
-    return tx.exec(
-        select(BugReport).where(
-            BugReport.dbms_id == dbms_id, BugReport.category_id == category_id
-        )
-    ).all()
+    if search:
+        query = query.where(BugReport.title.ilike(f"%{search}%"))
+
+    if categories: 
+        query = query.where(BugReport.category_id.in_(categories))
+        query = query.offset(start).limit(limit)
+
+        return tx.exec(query).all()
+    
+    else: # equal distribution 
+        categories = get_bug_categories_by_dbms_id(tx=tx, dbms_id=dbms_id)
+        
+        per_category_limit = max(limit // len(categories), 1)
+        
+        results = []
+
+        for category_id in categories:
+            query = select(
+                BugReport.id,
+                BugReport.dbms_id,
+                BugReport.category_id,
+                BugReport.title,
+                BugReport.description,
+                BugReport.url
+            ).where(
+                BugReport.dbms_id == dbms_id,
+                BugReport.category_id == category_id
+            )
+
+            if search:
+                query = query.where(
+                    BugReport.title.ilike(f"%{search}%")
+                )
+
+            query = query.offset(start).limit(per_category_limit)
+            results += tx.exec(query).all()
+
+        return results
 
 
 def save_bug_report(tx: Session, bug_report: BugReport):
@@ -55,3 +97,4 @@ def delete_bug_report(tx: Session, bug_report_id: int):
     tx.delete(bug_report)
     tx.commit()
     return bug_report
+
