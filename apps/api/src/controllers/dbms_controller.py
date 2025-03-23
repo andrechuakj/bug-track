@@ -10,6 +10,7 @@ from domain.views.dbms import (
     BugSearchResponseDto,
     DbmsListResponseDto,
     DbmsResponseDto,
+    BugReportResponseDto
 )
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
@@ -98,7 +99,7 @@ async def get_bugs(
             - category_id: 0-based category_id which corresponds to that in db
     """
     tx = get_db(r)
-    bug_reports = DbmsService.bug_search(
+    reports = DbmsService.bug_search(
         tx,
         dbms_id,
         search,
@@ -106,6 +107,19 @@ async def get_bugs(
         limit,
         [category_id] if category_id is not None else [],
     )
+
+    bug_reports = [
+        BugReportResponseDto(
+            id=r[0],
+            dbms_id=r[1],
+            category_id=r[2],
+            title=r[3],
+            description=r[4],
+            url=r[5]
+        )
+        for r in reports
+    ]   
+    
     return BugSearchResponseDto(bug_reports=bug_reports)
 
 
@@ -132,24 +146,33 @@ async def get_bugs_by_category(
                             corresponds to the offset from which we should fetch our bugs
     """
     tx = get_db(r)
+    
     try:
-        distribution = [int(i) for i in distribution.split(",")]
-        # TODO: Don't do this
-        if amount == 0 or category_id >= len(distribution) or category_id < 0:
+        distr = [int(i) for i in distribution.strip().split(",")]
+
+        if amount == 0 or category_id >= len(distr) or category_id < 0:
             raise BadRequestError(
                 "Invalid request, amount or distribution not passed or passed incorrectly.",
             )
-
-        # parse distribution
-
-        bug_reports_delta = DbmsService.bug_search_category(
-            dbms_id, category_id, distribution[category_id], amount
+        
+        delta = DbmsService.bug_search_category(tx, dbms_id, category_id, distr[category_id], amount
         )
-        delta_count = len(bug_reports_delta)
-        distribution[category_id] += delta_count
-        return BugSearchCategoryResponseDto(
-            bug_reports_delta=bug_reports_delta, new_bug_distr=distribution
-        )
+
+        delta = [
+            BugReportResponseDto(
+                id=r[0],
+                dbms_id=r[1],
+                category_id=r[2],
+                title=r[3],
+                description=r[4],
+                url=r[5]
+            )
+            for r in delta 
+        ]
+
+        delta_count = len(delta) 
+        distr[category_id] += delta_count
+        return BugSearchCategoryResponseDto(bug_reports_delta=delta, new_bug_distr=distr)
 
     except Exception as e:
         raise BadRequestError(

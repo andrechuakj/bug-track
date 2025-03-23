@@ -3,9 +3,9 @@ import random
 from domain.models.BugCategory import get_bug_category_by_ids
 from domain.models.BugReport import (
     get_bug_categories_by_dbms_id,
-    get_bug_report_by_dbms_and_category,
     get_bug_report_by_ids,
     get_bug_report_ids_by_dbms_id,
+    get_bug_report_by_search_and_cat
 )
 from domain.models.DBMSSystem import *
 from sqlmodel import Session
@@ -65,9 +65,9 @@ class _DbmsService(Service):
             - categories: a list of categories from which our bug reports should come from'
                           if empty; query from all categories.
         """
-        # TODO: replace with correct SQL / ORM stmt, need to access correct tenant db/table as well
-        # TODO: Write it in a way that each category gets almost equal amount of bug reports
-        raise NotImplementedError("Not implemented yet")
+        reports = get_bug_report_by_search_and_cat(tx, dbms_id, search, categories, start, limit)
+        
+        return reports
 
     def bug_search_category(
         self, tx: Session, dbms_id: int, category: int, start: int, amount: int = 5
@@ -80,9 +80,9 @@ class _DbmsService(Service):
             - start: 0-based starting index to offset our queries from
             - amount: number of bug reports to fetch
         """
-        category_bugs = get_bug_report_by_dbms_and_category(tx, dbms_id, category)
-        # TODO: Use limit and offset in SQL query directly
-        return list(category_bugs)[start : start + amount]
+        reports = get_bug_report_by_search_and_cat(tx, dbms_id, "", [category], start, amount)
+        
+        return reports
 
 
 DbmsService = _DbmsService()
