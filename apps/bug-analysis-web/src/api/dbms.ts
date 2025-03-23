@@ -3,7 +3,7 @@ import { api } from './client';
 
 export type DbmsListResponseDto = components['schemas']['DbmsListResponseDto'];
 export type DbmsResponseDto = components['schemas']['DbmsResponseDto'];
-export type BugCategory = components['schemas']['BugCategory'];
+export type BugCategory = components['schemas']['BugCategoryResponseDto'];
 export type AiSummary = components['schemas']['AiSummaryResponseDto'];
 export type BugReports = components['schemas']['BugSearchResponseDto'];
 export type BugExploreReports =
