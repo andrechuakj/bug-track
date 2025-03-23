@@ -10,7 +10,7 @@ from domain.views.dbms import (
     BugSearchResponseDto,
     DbmsListResponseDto,
     DbmsResponseDto,
-    BugReportResponseDto
+    BugReportResponseDto,
 )
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
@@ -115,11 +115,11 @@ async def get_bugs(
             category_id=r[2],
             title=r[3],
             description=r[4],
-            url=r[5]
+            url=r[5],
         )
         for r in reports
-    ]   
-    
+    ]
+
     return BugSearchResponseDto(bug_reports=bug_reports)
 
 
@@ -146,7 +146,7 @@ async def get_bugs_by_category(
                             corresponds to the offset from which we should fetch our bugs
     """
     tx = get_db(r)
-    
+
     try:
         distr = [int(i) for i in distribution.strip().split(",")]
 
@@ -154,8 +154,9 @@ async def get_bugs_by_category(
             raise BadRequestError(
                 "Invalid request, amount or distribution not passed or passed incorrectly.",
             )
-        
-        delta = DbmsService.bug_search_category(tx, dbms_id, category_id, distr[category_id], amount
+
+        delta = DbmsService.bug_search_category(
+            tx, dbms_id, category_id, distr[category_id], amount
         )
 
         delta = [
@@ -165,14 +166,16 @@ async def get_bugs_by_category(
                 category_id=r[2],
                 title=r[3],
                 description=r[4],
-                url=r[5]
+                url=r[5],
             )
-            for r in delta 
+            for r in delta
         ]
 
-        delta_count = len(delta) 
+        delta_count = len(delta)
         distr[category_id] += delta_count
-        return BugSearchCategoryResponseDto(bug_reports_delta=delta, new_bug_distr=distr)
+        return BugSearchCategoryResponseDto(
+            bug_reports_delta=delta, new_bug_distr=distr
+        )
 
     except Exception as e:
         raise BadRequestError(

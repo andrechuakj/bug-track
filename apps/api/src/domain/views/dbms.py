@@ -37,8 +37,8 @@ class BugSearchResponseDto(BaseResponseModel):
 
 
 class BugSearchCategoryResponseDto(BaseResponseModel):
-    # Bug distribution used to establish the current loaded bugs 
-    # on Bug Explore on the FE 
+    # Bug distribution used to establish the current loaded bugs
+    # on Bug Explore on the FE
     new_bug_distr: list[int]
     # Load more feature
     bug_reports_delta: list[BugReportResponseDto]

@@ -34,30 +34,38 @@ def get_bug_categories_by_dbms_id(tx: Session, dbms_id: int):
         select(BugReport.category_id).distinct().where(BugReport.dbms_id == dbms_id)
     ).all()
 
-def get_bug_report_by_search_and_cat(tx: Session, dbms_id: int, search: str, categories: list[int], start: int, limit: int): 
+
+def get_bug_report_by_search_and_cat(
+    tx: Session,
+    dbms_id: int,
+    search: str,
+    categories: list[int],
+    start: int,
+    limit: int,
+):
     query = query = select(
         BugReport.id,
         BugReport.dbms_id,
         BugReport.category_id,
         BugReport.title,
         BugReport.description,
-        BugReport.url
+        BugReport.url,
     ).where(BugReport.dbms_id == dbms_id)
 
     if search:
         query = query.where(BugReport.title.ilike(f"%{search}%"))
 
-    if categories: 
+    if categories:
         query = query.where(BugReport.category_id.in_(categories))
         query = query.offset(start).limit(limit)
 
         return tx.exec(query).all()
-    
-    else: # equal distribution 
+
+    else:  # equal distribution
         categories = get_bug_categories_by_dbms_id(tx=tx, dbms_id=dbms_id)
-        
+
         per_category_limit = max(limit // len(categories), 1)
-        
+
         results = []
 
         for category_id in categories:
@@ -67,16 +75,11 @@ def get_bug_report_by_search_and_cat(tx: Session, dbms_id: int, search: str, cat
                 BugReport.category_id,
                 BugReport.title,
                 BugReport.description,
-                BugReport.url
-            ).where(
-                BugReport.dbms_id == dbms_id,
-                BugReport.category_id == category_id
-            )
+                BugReport.url,
+            ).where(BugReport.dbms_id == dbms_id, BugReport.category_id == category_id)
 
             if search:
-                query = query.where(
-                    BugReport.title.ilike(f"%{search}%")
-                )
+                query = query.where(BugReport.title.ilike(f"%{search}%"))
 
             query = query.offset(start).limit(per_category_limit)
             results += tx.exec(query).all()
@@ -97,4 +100,3 @@ def delete_bug_report(tx: Session, bug_report_id: int):
     tx.delete(bug_report)
     tx.commit()
     return bug_report
-

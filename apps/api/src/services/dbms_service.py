@@ -5,7 +5,7 @@ from domain.models.BugReport import (
     get_bug_categories_by_dbms_id,
     get_bug_report_by_ids,
     get_bug_report_ids_by_dbms_id,
-    get_bug_report_by_search_and_cat
+    get_bug_report_by_search_and_cat,
 )
 from domain.models.DBMSSystem import *
 from sqlmodel import Session
@@ -65,8 +65,10 @@ class _DbmsService(Service):
             - categories: a list of categories from which our bug reports should come from'
                           if empty; query from all categories.
         """
-        reports = get_bug_report_by_search_and_cat(tx, dbms_id, search, categories, start, limit)
-        
+        reports = get_bug_report_by_search_and_cat(
+            tx, dbms_id, search, categories, start, limit
+        )
+
         return reports
 
     def bug_search_category(
@@ -80,8 +82,10 @@ class _DbmsService(Service):
             - start: 0-based starting index to offset our queries from
             - amount: number of bug reports to fetch
         """
-        reports = get_bug_report_by_search_and_cat(tx, dbms_id, "", [category], start, amount)
-        
+        reports = get_bug_report_by_search_and_cat(
+            tx, dbms_id, "", [category], start, amount
+        )
+
         return reports
 
 
