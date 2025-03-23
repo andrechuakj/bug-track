@@ -2,7 +2,6 @@ import {
   FilterOutlined,
   SortAscendingOutlined,
   ThunderboltTwoTone,
-  UserOutlined,
 } from '@ant-design/icons';
 import {
   AutoComplete,
@@ -316,14 +315,11 @@ const HomePage: React.FC = (): ReactNode => {
     </Flex>
   );
 
-  const renderItem = (title: string, count: number) => ({
+  const renderItem = (title: string, _count: number) => ({
     value: title,
     label: (
       <Flex align="center" justify="space-between">
         {title}
-        <span>
-          <UserOutlined /> {count}
-        </span>
       </Flex>
     ),
   });
