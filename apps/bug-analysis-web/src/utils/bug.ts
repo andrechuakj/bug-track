@@ -83,7 +83,9 @@ export const categoriseBugs = (
   return searchResult;
 };
 
-const bugReportToBugSearchResult = (reports: BugReports): BugSearchResult[] => {
+export const bugReportToBugSearchResult = (
+  reports: BugReports
+): BugSearchResult[] => {
   const { bug_reports: bugReports } = reports;
 
   return bugReports.map((report) => ({

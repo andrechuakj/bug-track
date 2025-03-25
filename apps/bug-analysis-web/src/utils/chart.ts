@@ -7,7 +7,6 @@ const MAX_LABEL_LEN = 10;
 
 export const generateBugDistrBar = (
   distr: BugCategory[],
-  title: string,
   theme: 'dark' | 'light' = 'dark'
 ): EChartsOption => {
   const isDark = theme === 'dark';
