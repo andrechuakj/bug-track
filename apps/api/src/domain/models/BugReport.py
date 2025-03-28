@@ -26,11 +26,7 @@ def get_bug_reports(tx: Session):
 
 
 def get_bug_report_by_id(tx: Session, bug_report_id: int):
-    stmt = select(BugReport).where(BugReport.id == bug_report_id)
-    bug_report = tx.exec(stmt).first()
-    if not bug_report:
-        raise NotFoundError(f"Bug report {bug_report_id} not found")
-    return bug_report
+    return tx.get(BugReport, bug_report_id)
 
 
 def get_bug_report_by_ids(tx: Session, bug_report_ids: list[int]):
