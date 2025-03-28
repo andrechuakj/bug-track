@@ -14,7 +14,7 @@ async def get_bug_report_by_id(bug_id: int, r: Request) -> BugReportResponseDto:
     tx = get_db(r)
     bug_report = BugReportService.get_bug_report_by_id(tx, bug_id)
     if bug_report is None:
-        raise NotFoundError("Bug report not found")
+        raise NotFoundError("Bug report {bug_id} not found")
     return bug_report
 
 
