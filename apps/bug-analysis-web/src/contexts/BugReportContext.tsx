@@ -26,6 +26,7 @@ export const BugReportProvider: React.FC<BugReportProviderProps> = ({
     setIsBugLoading(true);
     try {
       const data = await fetchBugById(bug_id);
+      console.log(data);
       setBugReport(data);
     } catch (error) {
       console.error('Error fetching bug report:', error);
