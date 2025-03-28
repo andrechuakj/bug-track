@@ -9,6 +9,6 @@ router = APIRouter(prefix="/api/v1/categories", tags=["bug_category"])
 
 
 @router.get("/")
-async def get_all_categories(r: Request) -> Sequence[BugCategoryResponseDto]:
+async def get_all_bug_category_names(r: Request) -> Sequence[BugCategoryResponseDto]:
     tx = get_db(r)
     return BugCategoryService.get_bug_categories(tx)
