@@ -9,12 +9,6 @@ from services.bug_report_service import BugReportService
 router = APIRouter(prefix="/api/v1/bug_reports", tags=["bug_reports"])
 
 
-@router.get("/")
-async def get_all_bugs(r: Request) -> Sequence[BugReportResponseDto]:
-    tx = get_db(r)
-    return BugReportService.get_bug_reports(tx)
-
-
 @router.get("/{bug_id}")
 async def get_bug_report_by_id(bug_id: int, r: Request) -> BugReportResponseDto:
     tx = get_db(r)
