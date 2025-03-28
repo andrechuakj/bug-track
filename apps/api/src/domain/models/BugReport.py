@@ -1,3 +1,4 @@
+from datetime import datetime
 from domain.helpers.Timestampable import Timestampable
 from domain.models.BugCategory import BugCategory
 from domain.models.DBMSSystem import DBMSSystem
@@ -15,6 +16,11 @@ class BugReport(Timestampable, table=True):
     title: str
     description: str | None = None
     url: str | None = None
+    repo_url: str | None = None
+    issue_created_at: datetime
+    issue_updated_at: datetime | None = None
+    issue_closed_at: datetime | None = None
+    is_closed: bool = Field(default=False)
 
 
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):

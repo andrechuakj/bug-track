@@ -1,3 +1,4 @@
+from datetime import datetime
 from utilities.views import BaseResponseModel
 
 
@@ -30,12 +31,17 @@ class AiSummaryResponseDto(BaseResponseModel):
 class BugReportResponseDto(BaseResponseModel):
     id: int
     dbms_id: int
-    dbms: str | None = None
+    dbms: str
     category_id: int
-    category: str | None = None
+    category: str
     title: str
     description: str | None
     url: str | None
+    repo_url: str | None
+    issue_created_at: datetime
+    issue_updated_at: datetime | None
+    issue_closed_at: datetime | None
+    is_closed: bool
 
 
 class BugSearchResponseDto(BaseResponseModel):
