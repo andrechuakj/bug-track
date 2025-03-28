@@ -35,23 +35,18 @@ class _BugReportService:
     ) -> BugReportViewModel:
         br = get_bug_report_by_id(tx, bug_report_id)
         return _BugReportService.BugReportViewModel(
-            id=br.id,
-            dbms_id=br.dbms.id,
+            **br.dict(),
             dbms=br.dbms.name,
-            category_id=br.category.id,
             category=br.category.name,
-            title=br.title,
-            description=br.description,
-            url=br.url,
-            repo_url=br.repo_url,
-            issue_created_at=br.issue_created_at,
-            issue_updated_at=br.issue_updated_at,
-            issue_closed_at=br.issue_closed_at,
-            is_closed=br.is_closed,
         )
 
     def update_bug_category(self, tx: Session, bug_report_id: int, category_id: int):
-        return update_bug_category(tx, bug_report_id, category_id)
+        br = update_bug_category(tx, bug_report_id, category_id)
+        return _BugReportService.BugReportViewModel(
+            **br.dict(),
+            dbms=br.dbms.name,
+            category=br.category.name,
+        )
 
 
 BugReportService = _BugReportService()

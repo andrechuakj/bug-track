@@ -113,23 +113,19 @@ def delete_bug_report(tx: Session, bug_report_id: int):
 
 
 def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
-    bug_report = tx.exec(
-        select(BugReport).where(BugReport.id == bug_report_id)
-    ).one_or_none()
+    bug_report = tx.get(BugReport, bug_report_id)
 
     if not bug_report:
         raise ValueError(f"BugReport with id {bug_report_id} not found")
 
-    new_category = tx.exec(
-        select(BugCategory).where(BugCategory.id == category_id)
-    ).one_or_none()
+    new_category = tx.get(BugCategory, category_id)
 
     if not new_category:
         raise ValueError(f"BugCategory with id {category_id} not found")
 
-    bug_report.category = new_category
+    bug_report.category_id = category_id
 
     tx.add(bug_report)
     tx.commit()
 
-    return get_bug_report_by_id(tx, bug_report.id)
+    return bug_report
