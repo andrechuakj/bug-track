@@ -4,6 +4,7 @@ import { api } from './client';
 
 export type BugCategoryResponseDto = Responses<'BugCategoryResponseDto'>;
 export type BugReport = Responses<'BugReportResponseDto'>;
+export type AiSummary = Responses<'AiSummaryResponseDto'>;
 
 export async function fetchBugById(bug_id: number): Promise<BugReport> {
   const { data, response } = await api.GET('/api/v1/bug_reports/{bug_id}', {
@@ -55,6 +56,22 @@ export async function updateBugPriority(bug_id: number, priority: BugPriority) {
   if (!data) {
     console.error('Error updating bug priority!', response);
     throw new Error('Error updating bug priority!');
+  }
+  return data;
+}
+
+export async function fetchBugReportAiSummary(
+  bug_id: number
+): Promise<AiSummary> {
+  const { data, response } = await api.GET('/api/v1/bug/{bug_id}/ai-summary', {
+    params: { path: { bug_id } },
+  });
+  if (!data) {
+    console.error(
+      `Error fetching AI summary for bug report ${bug_id}!`,
+      response
+    );
+    throw new Error(`Error fetching AI summary for bug report ${bug_id}!`);
   }
   return data;
 }
