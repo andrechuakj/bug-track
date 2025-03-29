@@ -2,10 +2,10 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { Collapse, Skeleton, Typography } from 'antd';
 import React from 'react';
 import { fetchBugReportAiSummary } from '../../api/bugReport';
-import { useBugDetail } from '../../contexts/BugDetailContext';
+import { useBugReport } from '../../contexts/BugReportContext';
 
 const AiSummary: React.FC = () => {
-  const { bugDetail } = useBugDetail();
+  const { bugReport } = useBugReport();
 
   const [summary, setSummary] = React.useState<string | null>(null);
   const [isFetchSuccess, setIsFetchSuccess] = React.useState(false);
@@ -16,22 +16,26 @@ const AiSummary: React.FC = () => {
     }
     setIsFetchSuccess(false);
     setSummary(null);
-    if (!bugDetail?.id) {
+    if (!bugReport) {
       setSummary('No bug report found, please try again');
       return;
     }
     try {
-      const data = await fetchBugReportAiSummary(bugDetail.id);
+      const data = await fetchBugReportAiSummary(bugReport.id);
       setSummary(data);
       setIsFetchSuccess(true);
     } catch (error) {
       console.error(
-        `Error fetching AI summary for bug report ${bugDetail.id}:`,
+        `Error fetching AI summary for bug report ${bugReport.id}:`,
         error
       );
       setSummary('Error fetching AI summary, please try again');
     }
   };
+
+  if (!bugReport) {
+    return <></>;
+  }
 
   return (
     <Collapse
