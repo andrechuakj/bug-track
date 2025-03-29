@@ -1,5 +1,6 @@
 from domain.config import get_db
 from domain.views.dbms import (
+    AiSummaryResponseDto,
     BugCategoryUpdateDto,
     BugReportResponseDto,
     BugPriorityUpdateDto,
@@ -40,6 +41,18 @@ async def update_bug_priority(
     tx = get_db(r)
     bug_report = BugReportService.update_bug_priority(tx, bug_id, dto.priority_level)
     return bug_report
+
+
+@router.get("/{bug_id}/ai_summary")
+async def get_bug_report_ai_summary(bug_id: int, r: Request) -> AiSummaryResponseDto:
+    tx = get_db(r)
+    bug_report = BugReportService.get_bug_report_by_id(tx, bug_id)
+    if bug_report is None:
+        raise NotFoundError("Bug report {bug_id} not found")
+    if bug_report.description is None:
+        raise NotFoundError("Bug report {bug_id} has no description")
+    summary = BugReportService.get_ai_summary(bug_report)
+    return AiSummaryResponseDto(summary=summary)
 
 
 __all__ = ["router"]

@@ -1,13 +1,14 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import { Collapse, Skeleton, Typography } from 'antd';
 import React from 'react';
+import type { AiSummary } from '../../api/bugReport';
 import { fetchBugReportAiSummary } from '../../api/bugReport';
 import { useBugReport } from '../../contexts/BugReportContext';
 
 const AiSummary: React.FC = () => {
   const { bugReport } = useBugReport();
 
-  const [summary, setSummary] = React.useState<string | null>(null);
+  const [aiSummary, setAiSummary] = React.useState<AiSummary | null>(null);
   const [isFetchSuccess, setIsFetchSuccess] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -21,21 +22,21 @@ const AiSummary: React.FC = () => {
       return;
     }
     setIsFetchSuccess(false);
-    setSummary(null);
+    setAiSummary(null);
     if (!bugReport) {
-      setSummary('No bug report found, please try again');
+      setAiSummary('No bug report found, please try again');
       return;
     }
     try {
       const data = await fetchBugReportAiSummary(bugReport.id);
-      setSummary(data);
+      setAiSummary(data.summary);
       setIsFetchSuccess(true);
     } catch (error) {
       console.error(
         `Error fetching AI summary for bug report ${bugReport.id}:`,
         error
       );
-      setSummary('Error fetching AI summary, please try again');
+      setAiSummary('Error fetching AI summary, please try again');
     }
   };
 
@@ -51,9 +52,9 @@ const AiSummary: React.FC = () => {
         {
           key: 'ai-summary',
           label: <Typography.Text>✨AI Summary</Typography.Text>,
-          children: summary ? (
+          children: aiSummary ? (
             <div className="flex items-center gap-2">
-              {summary}
+              {aiSummary}
               {!isFetchSuccess && (
                 <ReloadOutlined
                   className="cursor-pointer"

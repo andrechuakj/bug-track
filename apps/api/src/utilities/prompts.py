@@ -9,3 +9,10 @@ def get_dbms_ai_summary_prompt(dbms_name: str, desc: List[str]) -> str:
     {desc_numbered}
     """
     return PROMPT
+
+
+def get_bug_report_ai_summary_prompt(dbms_name: str, bug_report_desc: str) -> str:
+    prompt = f"""In 100 words, write a summary and suggest
+      a potential solution for the following bug report of a bug found in {dbms_name}:\n
+      {bug_report_desc}"""
+    return prompt

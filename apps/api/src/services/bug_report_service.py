@@ -7,9 +7,12 @@ from domain.models.BugReport import (
     update_bug_category,
     update_bug_priority,
 )
+import openai
 from pydantic import BaseModel
 from sqlmodel import Session
 from utilities.classes import Service
+from utilities.prompts import get_bug_report_ai_summary_prompt
+from internal.errors import NotFoundError
 
 
 class _BugReportService(Service):
@@ -73,6 +76,26 @@ class _BugReportService(Service):
             dbms=br.dbms.name,
             category=br.category.name,
         )
+
+    def get_ai_summary(self, bug_report: BugReportViewModel) -> str:
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": get_bug_report_ai_summary_prompt(
+                            bug_report.dbms, bug_report.description
+                        ),
+                    },
+                ],
+                max_tokens=200,
+                temperature=0.2,
+            )
+            summary = response.choices[0].message.content.strip()
+            return summary
+        except Exception as e:
+            raise NotFoundError("AI Summary not found")
 
 
 BugReportService = _BugReportService()
