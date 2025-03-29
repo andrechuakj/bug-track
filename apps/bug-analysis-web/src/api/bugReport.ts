@@ -63,9 +63,12 @@ export async function updateBugPriority(bug_id: number, priority: BugPriority) {
 export async function fetchBugReportAiSummary(
   bug_id: number
 ): Promise<AiSummary> {
-  const { data, response } = await api.GET('/api/v1/bug/{bug_id}/ai-summary', {
-    params: { path: { bug_id } },
-  });
+  const { data, response } = await api.GET(
+    '/api/v1/bug_reports/{bug_id}/ai-summary',
+    {
+      params: { path: { bug_id } },
+    }
+  );
   if (!data) {
     console.error(
       `Error fetching AI summary for bug report ${bug_id}!`,
