@@ -1,8 +1,11 @@
+import { Skeleton } from 'antd';
 import React from 'react';
 import { useAppContext } from '../../utils/context';
 
 const AiSummary: React.FC = () => {
   const { theme } = useAppContext();
+
+  const summary = false;
 
   return (
     <div
@@ -12,9 +15,15 @@ const AiSummary: React.FC = () => {
         src={
           theme === 'dark' ? '/ai_summary_white.png' : '/ai_summary_black.png'
         }
-        className="h-[5vh]"
+        className="h-[6vh]"
       />
-      {/* Text here */}
+      <div className="px-3 pb-4">
+        {summary ? (
+          <></>
+        ) : (
+          <Skeleton active paragraph={{ rows: 4 }} title={false} />
+        )}
+      </div>
     </div>
   );
 };
