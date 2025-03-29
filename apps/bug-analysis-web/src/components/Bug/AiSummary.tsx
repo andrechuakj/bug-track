@@ -1,3 +1,4 @@
+import { ReloadOutlined } from '@ant-design/icons';
 import { Collapse, Skeleton, Typography } from 'antd';
 import React from 'react';
 import { fetchBugReportAiSummary } from '../../api/bugReport';
@@ -13,6 +14,8 @@ const AiSummary: React.FC = () => {
     if (isFetchSuccess) {
       return;
     }
+    setIsFetchSuccess(false);
+    setSummary(null);
     if (!bugDetail?.id) {
       setSummary('No bug report found, please try again');
       return;
@@ -38,7 +41,17 @@ const AiSummary: React.FC = () => {
         {
           key: 'ai-summary',
           label: <Typography.Text>✨AI Summary</Typography.Text>,
-          children: summary || (
+          children: summary ? (
+            <div className="flex items-center gap-2">
+              {summary}
+              {!isFetchSuccess && (
+                <ReloadOutlined
+                  className="cursor-pointer"
+                  onClick={fetchAiSummary}
+                />
+              )}
+            </div>
+          ) : (
             <Skeleton active paragraph={{ rows: 4 }} title={false} />
           ),
         },
