@@ -9,8 +9,14 @@ const AiSummary: React.FC = () => {
 
   const [summary, setSummary] = React.useState<string | null>(null);
   const [isFetchSuccess, setIsFetchSuccess] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const fetchAiSummary = async () => {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+    setIsOpen(true);
     if (isFetchSuccess) {
       return;
     }
