@@ -111,15 +111,13 @@ export const generateBugTrendChart = (
       data: labels,
       axisTick: { alignWithLabel: true },
       axisLabel: {
-        interval: 0, // Show all labels
-
+        interval: (index: number) => (index % 2 === 0 ? false : true),
         formatter: (value: string) => truncateName(value, 6),
       },
     },
 
     yAxis: {
       type: 'value',
-      name: 'Bug Count',
     },
     grid: {
       top: '5%',
