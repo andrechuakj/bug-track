@@ -383,7 +383,7 @@ const HomePage: React.FC = (): ReactNode => {
               </div>
             </div>
           </Form>
-          <Card className="mb-4">
+          <Card className="mb-4 h-[52.5vh]">
             <BugExploreSearchResultsModule
               bugReports={bugReports}
               bugSearchReports={bugSearchReports}

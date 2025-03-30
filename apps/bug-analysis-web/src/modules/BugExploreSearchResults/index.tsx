@@ -46,7 +46,7 @@ const BugExploreSearchResultsModule: React.FC<
             />
           )}
           className={clsx(
-            'h-[30vh] overflow-y-scroll',
+            'h-[40vh] overflow-y-scroll',
             isDarkMode ? 'bg-black' : 'bg-white'
           )}
         />
