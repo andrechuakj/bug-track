@@ -28,6 +28,7 @@ import {
   BugReports,
   DbmsResponseDto,
   fetchAiSummary,
+  fetchBugTrend,
   fetchDbmsData,
   loadMoreBugsByCategory,
   searchBugReports,
@@ -41,6 +42,7 @@ import BugExploreSearchResultsModule, {
   BUG_EXPLORE_KEY,
   SEARCH_RESULTS_KEY,
 } from '../modules/BugExploreSearchResults';
+import BugTrendModule from '../modules/BugTrend';
 import {
   AcBugSearchResult,
   AcBugSearchResultCategory,
@@ -51,7 +53,7 @@ import {
   setBugExplore,
   setBugSearchResults,
 } from '../utils/bug';
-import { generateBugDistrBar, generateBugTrendChart } from '../utils/chart';
+import { generateBugDistrBar } from '../utils/chart';
 import { useAppContext } from '../utils/context';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
 import {
@@ -71,6 +73,7 @@ const HomePage: React.FC = (): ReactNode => {
   const router = useRouter();
   const [dbmsData, setDbmsData] = useState<DbmsResponseDto>();
   const [aiSummary, setAiSummary] = useState<AiSummary>();
+  const [bugTrend, setBugTrend] = useState<number[]>([]);
   const [aiButtonLoading, setAiButtonLoading] = useState(false);
   const [lastSearchedStr, setLastSearchedStr] = useState('');
   // Filter states
@@ -102,6 +105,7 @@ const HomePage: React.FC = (): ReactNode => {
     if (!currentTenant) return;
     fetchBugExplore();
     fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res));
+    fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res));
     handleAiSummary();
   }, [currentTenant]);
 
@@ -284,21 +288,6 @@ const HomePage: React.FC = (): ReactNode => {
   const isDarkMode = theme === 'dark';
 
   // Mock BugTallyInstance data
-  // Temporary type
-  const bugTallyInstances: { label: string; count: number }[] = [
-    { label: 'Jan', count: 120 },
-    { label: 'Feb', count: 150 },
-    { label: 'Mar', count: 180 },
-    { label: 'Apr', count: 160 },
-    { label: 'May', count: 130 },
-    { label: 'Jun', count: 170 },
-    { label: 'Jul', count: 200 },
-    { label: 'Aug', count: 190 },
-    { label: 'Sep', count: 220 },
-    { label: 'Oct', count: 210 },
-    { label: 'Nov', count: 230 },
-    { label: 'Dec', count: 240 },
-  ];
 
   const Title: React.FC<Readonly<{ title?: string }>> = (props: {
     title?: string;
@@ -397,24 +386,9 @@ const HomePage: React.FC = (): ReactNode => {
             <Col xs={24} md={14}>
               <Row>
                 <Card className="w-full h-[35vh] overflow-y-scroll">
-                  <Typography.Title level={4} className="!mb-1">
-                    Total Bugs
-                  </Typography.Title>
-                  <Typography.Title
-                    level={2}
-                    className="!mt-2 inline-block pr-2"
-                  >
-                    {dbmsData.bug_count}
-                  </Typography.Title>
-                  <Typography.Title
-                    level={4}
-                    className="mb-4 inline-block !font-thin"
-                  >
-                    Issues currently tracked
-                  </Typography.Title>
-                  <EChartsReact
-                    option={generateBugTrendChart(bugTallyInstances)}
-                    style={{ height: 'calc(35vh - 150px)' }}
+                  <BugTrendModule
+                    bugTrend={bugTrend}
+                    bugCount={dbmsData.bug_count}
                   />
                 </Card>
               </Row>
@@ -427,14 +401,13 @@ const HomePage: React.FC = (): ReactNode => {
                   DBMS performance requires attention.
                 </Typography.Title>
                 <div className="flex flex-col justify-center h-[21vh]">
-                  <div className="flex flex-row overflow-scroll gap-2">
+                  <div className="flex flex-row gap-2">
                     <Card
                       style={{
                         borderRadius: '12px',
                         backgroundColor: `${BugTrackColors.MAGENTA}40`,
                         width: '33%',
                         maxHeight: '19vh',
-                        overflow: 'scroll',
                       }}
                     >
                       <Typography.Title level={4}>
@@ -451,7 +424,6 @@ const HomePage: React.FC = (): ReactNode => {
                         backgroundColor: `${BugTrackColors.GREEN}40`,
                         width: '33%',
                         maxHeight: '19vh',
-                        overflow: 'scroll',
                       }}
                     >
                       <Typography.Title level={4}>
@@ -468,7 +440,6 @@ const HomePage: React.FC = (): ReactNode => {
                         backgroundColor: `${BugTrackColors.BLUE}40`,
                         width: '33%',
                         maxHeight: '19vh',
-                        overflow: 'scroll',
                       }}
                     >
                       <Typography.Title level={4}>
@@ -547,7 +518,6 @@ const HomePage: React.FC = (): ReactNode => {
                 <EChartsReact
                   option={generateBugDistrBar(
                     dbmsData.bug_categories,
-                    'Bug Distribution (by Category)',
                     (theme as AppTheme) ?? 'dark'
                   )}
                   style={{ height: '20vh' }}

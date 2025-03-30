@@ -87,3 +87,19 @@ export async function loadMoreBugsByCategory(
   }
   return data;
 }
+export async function fetchBugTrend(
+  dbms_id: number,
+  days: number = 30
+): Promise<number[]> {
+  const { data, response } = await api.GET('/api/v1/dbms/{dbms_id}/bug_trend', {
+    params: {
+      path: { dbms_id },
+      query: { days },
+    },
+  });
+  if (!data) {
+    console.error('Error fetching bug trend!', response);
+    throw new Error('Error fetching bug trend!');
+  }
+  return data;
+}
