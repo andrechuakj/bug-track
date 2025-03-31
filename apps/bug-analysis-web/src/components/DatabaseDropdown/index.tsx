@@ -9,7 +9,7 @@ const DatabaseDropdown: React.FC = () => {
       <Select
         placeholder="Select a Database"
         onChange={setCurrentTenant}
-        className={'text-center'}
+        className={'text-center w-full'}
         value={currentTenant?.id}
       >
         {tenantList.map(({ id, name }) => (

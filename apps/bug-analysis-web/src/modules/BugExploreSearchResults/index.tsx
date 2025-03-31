@@ -67,7 +67,9 @@ const BugExploreSearchResultsModule: React.FC<
           )}
           className={clsx(
             'h-[40vh] overflow-y-scroll',
-            isDarkMode ? 'bg-black' : 'bg-white'
+            isDarkMode ? 'bg-black' : 'bg-white',
+            Object.keys(bugSearchReports).length === 0 &&
+              'flex justify-center items-center'
           )}
         />
       )}
