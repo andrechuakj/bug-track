@@ -127,8 +127,8 @@ const HomePage: React.FC = (): ReactNode => {
       if (!currentTenant) return;
       const category =
         filterSettings.category !== FilterBugCategory.NONE_SELECTED
-          ? undefined
-          : categoryToIdMap[filterSettings.category];
+          ? categoryToIdMap[filterSettings.category]
+          : undefined;
 
       const bugReports: BugReports = await searchBugReports(
         currentTenant.id,
