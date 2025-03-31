@@ -19,7 +19,7 @@ const authMiddleware = {
       console.log('Unsecured endpoint, not attaching token');
       return undefined;
     }
-    const accessToken = getTokens()?.access_token;
+    const accessToken = getTokens()?.accessToken;
     if (!accessToken) {
       console.error('No access token found');
       // Early return, skip BE call.
@@ -52,7 +52,7 @@ const authMiddleware = {
     const newRequest = request.clone();
     newRequest.headers.set(
       'Authorization',
-      `Bearer ${getTokens()?.access_token}`
+      `Bearer ${getTokens()?.accessToken}`
     );
     retryCache[requestId] = false;
     return await fetch(newRequest);

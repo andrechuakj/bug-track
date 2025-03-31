@@ -21,8 +21,8 @@ class AuthService {
       }
 
       saveTokens({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
       });
       return true;
     } catch (error) {
@@ -45,8 +45,8 @@ class AuthService {
       }
 
       saveTokens({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
       });
       return true;
     } catch (error) {
@@ -57,7 +57,7 @@ class AuthService {
 
   async refreshToken(): Promise<boolean> {
     try {
-      const refreshToken = getTokens()?.refresh_token;
+      const refreshToken = getTokens()?.refreshToken;
       if (!refreshToken) {
         return false;
       }
@@ -71,8 +71,8 @@ class AuthService {
       }
 
       saveTokens({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
       });
       return true;
     } catch (error) {
@@ -84,7 +84,7 @@ class AuthService {
 
   getCurrentToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('user_token');
+      return localStorage.getItem('userToken');
     }
     return null;
   }
