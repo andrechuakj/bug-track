@@ -22,10 +22,10 @@ export const BugReportProvider: React.FC<BugReportProviderProps> = ({
   const [bugReport, setBugReport] = useState<BugReport | null>(null);
   const [isBugLoading, setIsBugLoading] = useState(false);
 
-  const fetchBugReport = async (bug_id: number) => {
+  const fetchBugReport = async (bugId: number) => {
     setIsBugLoading(true);
     try {
-      const data = await fetchBugById(bug_id);
+      const data = await fetchBugById(bugId);
       console.log(data);
       setBugReport(data);
     } catch (error) {
