@@ -124,14 +124,12 @@ def delete_bug_report(tx: Session, bug_report_id: int):
 
 def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
     bug_report = tx.get(BugReport, bug_report_id)
-
     if not bug_report:
-        raise ValueError(f"BugReport with id {bug_report_id} not found")
+        raise NotFoundError(f"BugReport with id {bug_report_id} not found")
 
     new_category = tx.get(BugCategory, category_id)
-
     if not new_category:
-        raise ValueError(f"BugCategory with id {category_id} not found")
+        raise NotFoundError(f"BugCategory with id {category_id} not found")
 
     bug_report.category_id = category_id
 
