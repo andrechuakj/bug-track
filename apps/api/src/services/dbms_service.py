@@ -70,7 +70,6 @@ class _DbmsService(Service):
         reports = get_bug_report_by_search_and_cat(
             tx, dbms_id, search, categories, start, limit
         )
-
         return reports
 
     def bug_search_category(

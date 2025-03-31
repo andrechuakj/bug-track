@@ -45,7 +45,7 @@ class BugReportResponseDto(BaseResponseModel):
 
 
 class BugSearchResponseDto(BaseResponseModel):
-    bug_reports: list[BugReportResponseDto]
+    bug_reports: list
 
 
 class BugSearchCategoryResponseDto(BaseResponseModel):
@@ -53,4 +53,4 @@ class BugSearchCategoryResponseDto(BaseResponseModel):
     # on Bug Explore on the FE
     new_bug_distr: list[int]
     # Load more feature
-    bug_reports_delta: list[BugReportResponseDto]
+    bug_reports_delta: list

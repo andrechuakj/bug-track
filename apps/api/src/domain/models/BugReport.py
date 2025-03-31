@@ -73,14 +73,7 @@ def get_bug_report_by_search_and_cat(
     start: int,
     limit: int,
 ):
-    query = select(
-        BugReport.id,
-        BugReport.dbms_id,
-        BugReport.category_id,
-        BugReport.title,
-        BugReport.description,
-        BugReport.url,
-    ).where(BugReport.dbms_id == dbms_id)
+    query = select(BugReport).where(BugReport.dbms_id == dbms_id)
 
     if search:
         query = query.where(BugReport.title.ilike(f"%{search}%"))
@@ -89,7 +82,9 @@ def get_bug_report_by_search_and_cat(
         query = query.where(BugReport.category_id.in_(categories))
         query = query.offset(start).limit(limit)
 
-        return tx.exec(query).all()
+        res = tx.exec(query).all()
+
+        return res
 
     else:  # equal distribution
         categories = get_bug_categories_by_dbms_id(tx=tx, dbms_id=dbms_id)
@@ -99,14 +94,9 @@ def get_bug_report_by_search_and_cat(
         results = []
 
         for category_id in categories:
-            query = select(
-                BugReport.id,
-                BugReport.dbms_id,
-                BugReport.category_id,
-                BugReport.title,
-                BugReport.description,
-                BugReport.url,
-            ).where(BugReport.dbms_id == dbms_id, BugReport.category_id == category_id)
+            query = select(BugReport).where(
+                BugReport.dbms_id == dbms_id, BugReport.category_id == category_id
+            )
 
             if search:
                 query = query.where(BugReport.title.ilike(f"%{search}%"))
@@ -145,6 +135,7 @@ def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
     tx.add(bug_report)
     tx.commit()
     return bug_report
+
 
 def get_bug_trend_last_k_days(tx: Session, dbms_id: int, k: int):
     today = today = datetime.utcnow().astimezone(timezone(timedelta(hours=8))).date()

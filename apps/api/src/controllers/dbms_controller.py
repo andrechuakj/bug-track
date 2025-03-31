@@ -10,7 +10,6 @@ from domain.views.dbms import (
     BugSearchResponseDto,
     DbmsListResponseDto,
     DbmsResponseDto,
-    BugReportResponseDto,
 )
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
@@ -109,19 +108,7 @@ async def get_bugs(
         [category_id] if category_id is not None else [],
     )
 
-    bug_reports = [
-        BugReportResponseDto(
-            id=r[0],
-            dbms_id=r[1],
-            category_id=r[2],
-            title=r[3],
-            description=r[4],
-            url=r[5],
-        )
-        for r in reports
-    ]
-
-    return BugSearchResponseDto(bug_reports=bug_reports)
+    return BugSearchResponseDto(bug_reports=reports)
 
 
 @router.get("/{dbms_id}/bug_search_category")
@@ -159,18 +146,6 @@ async def get_bugs_by_category(
         delta = DbmsService.bug_search_category(
             tx, dbms_id, category_id, distr[category_id], amount
         )
-
-        delta = [
-            BugReportResponseDto(
-                id=r[0],
-                dbms_id=r[1],
-                category_id=r[2],
-                title=r[3],
-                description=r[4],
-                url=r[5],
-            )
-            for r in delta
-        ]
 
         delta_count = len(delta)
         distr[category_id] += delta_count
