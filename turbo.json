@@ -12,6 +12,7 @@
     },
     "format": {},
     "test": {},
+    "coverage": {},
     "generate": {
       "dependsOn": ["^generate"],
       "cache": false

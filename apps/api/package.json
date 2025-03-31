@@ -12,6 +12,7 @@
     "dev:backend": "fastapi dev src/main.py",
     "dev:api": "bun --watch client/main.ts",
     "test": "cross-env MODE=test pytest",
+    "coverage": "cross-env MODE=test pytest --cov=src",
     "lint": "run-p lint:backend lint:api",
     "lint:api": "prettier --check client",
     "lint:backend": "black src --check",
