@@ -126,15 +126,16 @@ const HomePage: React.FC = (): ReactNode => {
     async (searchStr: string) => {
       if (!currentTenant) return;
       const category =
-        filterSettings.category !== FilterBugCategory.NONE_SELECTED &&
-        categoryToIdMap[filterSettings.category];
+        filterSettings.category !== FilterBugCategory.NONE_SELECTED
+          ? undefined
+          : categoryToIdMap[filterSettings.category];
 
       const bugReports: BugReports = await searchBugReports(
         currentTenant.id,
         searchStr,
         0,
         100,
-        category || undefined
+        category
       );
       if (bugReports) {
         setAcBugReports(bugReports);
