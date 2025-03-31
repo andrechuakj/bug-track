@@ -1,7 +1,7 @@
 import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Divider, Dropdown, Skeleton, Tag, Typography } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BugCategoryResponseDto,
   BugReport,
@@ -13,8 +13,8 @@ import CategoryTag from '../CategoryTag';
 
 const BugSideBar: React.FC = () => {
   const { bugReport, setBugReport, isBugLoading } = useBugReport();
-  const [isCategoryUpdating, setIsCategoryUpdating] = React.useState(false);
-  const [categoryMenuItems, setCategoryMenuItems] = React.useState<
+  const [isCategoryUpdating, setIsCategoryUpdating] = useState(false);
+  const [categoryMenuItems, setCategoryMenuItems] = useState<
     MenuProps['items']
   >([]);
 
