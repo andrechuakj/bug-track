@@ -12,6 +12,7 @@ import {
   Layout,
   Menu,
   MenuProps,
+  message,
   Row,
   Space,
   Switch,
@@ -22,7 +23,7 @@ import Grid from 'antd/es/card/Grid';
 import Sider from 'antd/es/layout/Sider';
 import { Content, Header } from 'antd/es/layout/layout';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAppContext } from '../../utils/context';
 import { APP_THEME } from '../../utils/theme';
@@ -32,7 +33,7 @@ import styles from './index.module.css';
 
 const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [siderCollapse, setSiderCollapse] = useState<boolean>(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   const router = useRouter();
 
@@ -54,9 +55,15 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const isDarkMode = themeSetting === 'dark';
   const logo = siderCollapse ? '/favicon.ico' : '/bug_track_logo.png';
   const logoStyle = siderCollapse ? 'h-3/6' : 'h-5/6';
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    logout();
+    messageApi.success('Successfully logged out');
   }, []);
 
   return (
@@ -71,6 +78,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
         },
       }}
     >
+      {contextHolder}
       <Layout className={'h-screen overflow-hidden'}>
         <Sider
           trigger={null}
@@ -129,7 +137,17 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
             <Text className="pl-3 text-lg/loose text-white">
               {`Bug Track - Never Let It Bug You Again 🫶`}
             </Text>
+
             <Space className={styles.switch}>
+              {isAuthenticated && (
+                <>
+                  <p className="text-white">Selected DBMS:</p>
+                  <DatabaseDropdown />
+                </>
+              )}
+              {isAuthenticated && (
+                <Button onClick={handleLogout}>Logout</Button>
+              )}
               <Switch
                 checkedChildren={<MoonOutlined />}
                 unCheckedChildren={<SunOutlined />}
