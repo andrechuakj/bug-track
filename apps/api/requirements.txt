@@ -42,7 +42,7 @@ mdurl==0.1.2
 murmurhash==1.0.12
 mypy-extensions==1.0.0
 numpy==2.2.3
-openai==1.66.3
+openai==0.28
 packaging==24.2
 passlib==1.7.4
 pathspec==0.12.1
