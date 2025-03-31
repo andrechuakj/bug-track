@@ -1,11 +1,7 @@
 import { CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Typography } from 'antd';
 
-const BugStatusIcon: React.FC<{ isClosed: boolean }> = ({
-  isClosed,
-}: {
-  isClosed: boolean;
-}) => {
+const BugStatusIcon: React.FC<{ isClosed: boolean }> = ({ isClosed }) => {
   switch (isClosed) {
     case false:
       return (
