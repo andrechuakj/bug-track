@@ -1,6 +1,6 @@
+import { components } from '../../../api/client/api';
 import { clearTokens, getTokens, saveTokens } from '../utils/auth';
 import { api } from './client';
-import { components } from '../../../api/client/api';
 
 export type AuthResponseDto = components['schemas']['AuthResponseDto'];
 export type LoginRequestDto = components['schemas']['LoginRequestDto'];

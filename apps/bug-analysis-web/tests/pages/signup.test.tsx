@@ -1,14 +1,14 @@
-import React from 'react';
 import {
-  render,
   fireEvent,
+  render,
   RenderResult,
   waitFor,
 } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import Signup from '../../src/pages/signup';
+import React from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginRequestDto, SignupRequestDto } from '../../src/api/auth';
 import { AuthContext, AuthContextType } from '../../src/contexts/AuthContext';
+import Signup from '../../src/pages/signup';
 
 if (typeof window !== 'undefined' && !window.matchMedia) {
   // @ts-expect-error creating mock to make antd's Grid.useBreakpoint work,
