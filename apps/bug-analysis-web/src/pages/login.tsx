@@ -23,6 +23,7 @@ const Login: React.FC = () => {
   const [form] = Form.useForm();
   const { login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const onFormSubmit = async (values: LoginFormValues): Promise<void> => {
     console.log('onFormSubmit | values:', values);
@@ -34,7 +35,7 @@ const Login: React.FC = () => {
       };
       const success = await login(authValues);
       if (success) {
-        message.success('Login successful!');
+        messageApi.success('Login successful!');
       } else {
         setLoginError('Invalid username or password. Please try again.');
       }
@@ -83,6 +84,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center">
+      {contextHolder}
       <img
         src="/bug_track_logo.png"
         alt="Logo"

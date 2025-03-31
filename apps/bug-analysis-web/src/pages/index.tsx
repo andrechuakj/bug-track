@@ -43,6 +43,7 @@ import BugExploreSearchResultsModule, {
   SEARCH_RESULTS_KEY,
 } from '../modules/BugExploreSearchResults';
 import BugTrendModule from '../modules/BugTrend';
+import DbmsDetails from '../modules/DbmsDetails';
 import {
   AcBugSearchResult,
   AcBugSearchResultCategory,
@@ -90,8 +91,13 @@ const HomePage: React.FC = (): ReactNode => {
   const [acBugReports, setAcBugReports] = useState<BugReports>({
     bug_reports: [],
   });
+
   const [bugSearchReports, setBugSearchReports] =
     useState<BugSearchResultStruct>({});
+
+  // Form logic (bug search)
+  const [redemptionForm] = Form.useForm();
+  const searchFieldRef = useRef<InputRef>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -101,18 +107,17 @@ const HomePage: React.FC = (): ReactNode => {
     }
   }, [loading, isAuthenticated, router]);
 
-  useEffect(() => {
+  const fetchDashboardData = async () => {
     if (!currentTenant) return;
     fetchBugExplore();
     fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res));
     fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res));
-    handleAiSummary();
+    handleLoadAiSummary();
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
   }, [currentTenant]);
-
-  // Form logic (bug search)
-  const [redemptionForm] = Form.useForm();
-
-  const searchFieldRef = useRef<InputRef>(null);
 
   const handleSearch = useCallback(
     async (searchStr: string) => {
@@ -274,7 +279,7 @@ const HomePage: React.FC = (): ReactNode => {
   };
 
   // AI logic
-  const handleAiSummary = async () => {
+  const handleLoadAiSummary = async () => {
     if (!currentTenant) return;
     setAiSummary(undefined);
     setAiButtonLoading(true);
@@ -395,62 +400,8 @@ const HomePage: React.FC = (): ReactNode => {
             </Col>
 
             <Col xs={24} md={10}>
-              <Card className="h-[35vh]">
-                <Typography.Title level={4}>Key Issues</Typography.Title>
-                <Typography.Title level={4} className="!font-light">
-                  DBMS performance requires attention.
-                </Typography.Title>
-                <div className="flex flex-col justify-center h-[21vh]">
-                  <div className="flex flex-row gap-2">
-                    <Card
-                      style={{
-                        borderRadius: '12px',
-                        backgroundColor: `${BugTrackColors.MAGENTA}40`,
-                        width: '33%',
-                        maxHeight: '19vh',
-                      }}
-                    >
-                      <Typography.Title level={4}>
-                        Number of Reporters
-                      </Typography.Title>
-                      <Typography.Title level={4} className="!font-light">
-                        123
-                      </Typography.Title>
-                    </Card>
-
-                    <Card
-                      style={{
-                        borderRadius: '12px',
-                        backgroundColor: `${BugTrackColors.GREEN}40`,
-                        width: '33%',
-                        maxHeight: '19vh',
-                      }}
-                    >
-                      <Typography.Title level={4}>
-                        Database Health
-                      </Typography.Title>
-                      <Typography.Title level={4} className="!font-light">
-                        Healthy
-                      </Typography.Title>
-                    </Card>
-
-                    <Card
-                      style={{
-                        borderRadius: '12px',
-                        backgroundColor: `${BugTrackColors.BLUE}40`,
-                        width: '33%',
-                        maxHeight: '19vh',
-                      }}
-                    >
-                      <Typography.Title level={4}>
-                        Report Last Updated
-                      </Typography.Title>
-                      <Typography.Title level={4} className="!font-light">
-                        7/3/25
-                      </Typography.Title>
-                    </Card>
-                  </div>
-                </div>
+              <Card className="h-[35vh] overflow-y-scroll">
+                <DbmsDetails />
               </Card>
             </Col>
           </Row>
@@ -478,7 +429,7 @@ const HomePage: React.FC = (): ReactNode => {
                     }}
                     loading={aiButtonLoading}
                     disabled={aiButtonLoading}
-                    onClick={handleAiSummary}
+                    onClick={handleLoadAiSummary}
                   >
                     AI Summary
                   </Button>
@@ -522,7 +473,7 @@ const HomePage: React.FC = (): ReactNode => {
                   )}
                   style={{ height: '20vh' }}
                 />
-                <div className="h-[calc(15vh-48px)] overflow-y-scroll p-1 flex flex-wrap">
+                <div className="overflow-y-scroll p-1 flex flex-wrap">
                   {dbmsData?.bug_categories?.map(
                     (cat: BugCategory, idx: number) =>
                       cat.count > 0 ? (
@@ -537,24 +488,6 @@ const HomePage: React.FC = (): ReactNode => {
                       )
                   )}
                 </div>
-              </Card>
-            </Col>
-          </Row>
-          <Row gutter={[16, 16]} className="mt-4">
-            <Col xs={24} md={12}>
-              <Card>
-                <Typography.Title level={5}>Detail A</Typography.Title>
-                <Typography.Text>
-                  Some statistic or info goes here...
-                </Typography.Text>
-              </Card>
-            </Col>
-            <Col md={12}>
-              <Card>
-                <Typography.Title level={5}>Detail B</Typography.Title>
-                <Typography.Text>
-                  Some statistic or info goes here...
-                </Typography.Text>
               </Card>
             </Col>
           </Row>
