@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from domain.helpers.Timestampable import Timestampable
-from domain.models.BugCategory import BugCategory
+from domain.models.BugCategory import BugCategory, get_bug_category_by_id
 from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
 from sqlmodel import TIMESTAMP, Field, Relationship, Session, select
@@ -127,13 +127,11 @@ def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
     if not bug_report:
         raise NotFoundError(f"BugReport with id {bug_report_id} not found")
 
-    new_category = tx.get(BugCategory, category_id)
+    new_category = get_bug_category_by_id(tx, category_id)
     if not new_category:
         raise NotFoundError(f"BugCategory with id {category_id} not found")
 
     bug_report.category_id = category_id
-
     tx.add(bug_report)
     tx.commit()
-
     return bug_report
