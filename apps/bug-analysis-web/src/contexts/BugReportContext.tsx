@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import { BugReport, fetchBugById } from '../api/bug_report';
 
 interface BugReportContextType {
@@ -22,7 +28,7 @@ export const BugReportProvider: React.FC<BugReportProviderProps> = ({
   const [bugReport, setBugReport] = useState<BugReport | null>(null);
   const [isBugLoading, setIsBugLoading] = useState(false);
 
-  const fetchBugReport = async (bugId: number) => {
+  const fetchBugReport = useCallback(async (bugId: number) => {
     setIsBugLoading(true);
     try {
       const data = await fetchBugById(bugId);
@@ -32,7 +38,7 @@ export const BugReportProvider: React.FC<BugReportProviderProps> = ({
     } finally {
       setIsBugLoading(false);
     }
-  };
+  }, []);
 
   return (
     <BugReportContext.Provider
