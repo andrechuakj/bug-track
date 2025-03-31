@@ -35,9 +35,12 @@ class _BugReportService(Service):
         self,
         tx: Session,
         bug_report_id: int,
-    ) -> BugReportViewModel:
+    ) -> BugReportViewModel | None:
         self.logger.info(f"Fetching bug report with id {bug_report_id}")
         br = get_bug_report_by_id(tx, bug_report_id)
+        if br is None:
+            self.logger.warning(f"Bug report with id {bug_report_id} not found")
+            return None
         return _BugReportService.BugReportViewModel(
             **br.model_dump(),
             dbms=br.dbms.name,
