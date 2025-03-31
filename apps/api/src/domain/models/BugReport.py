@@ -5,7 +5,8 @@ from domain.models.BugCategory import BugCategory, get_bug_category_by_id
 from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
 from sqlmodel import TIMESTAMP, Field, Relationship, Session, select
-
+from datetime import datetime, timedelta, timezone
+from sqlalchemy.sql import func
 
 class BugReport(Timestampable, table=True):
     __tablename__ = "bug_reports"
@@ -36,6 +37,14 @@ class BugReport(Timestampable, table=True):
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):
     return tx.exec(select(BugReport.id).where(BugReport.dbms_id == dbms_id)).all()
 
+def get_bug_ids_by_dbms_cat_id(
+    tx: Session, dbms_id: int, category_id: int
+):
+    return tx.exec(
+        select(BugReport.id).where(
+            BugReport.dbms_id == dbms_id, BugReport.category_id == category_id
+        )
+    ).all()
 
 def get_bug_reports(tx: Session):
     return tx.exec(select(BugReport)).all()
@@ -135,3 +144,23 @@ def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
     tx.add(bug_report)
     tx.commit()
     return bug_report
+
+def get_bug_trend_last_k_days(tx: Session, dbms_id: int, k: int):
+    today = today = datetime.utcnow().astimezone(timezone(timedelta(hours=8))).date()
+    trend_data = []
+
+    for i in range(k):
+        day_start = today - timedelta(days=i)
+        day_end = day_start + timedelta(days=1)
+
+        count = tx.exec(
+            select(func.count(BugReport.id))
+            .where(
+                BugReport.dbms_id == dbms_id,
+                BugReport.created_at < day_end,
+            )
+        )
+        
+        trend_data.append(count.one())
+
+    return trend_data[::-1]

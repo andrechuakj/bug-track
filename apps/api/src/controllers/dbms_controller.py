@@ -34,7 +34,10 @@ async def get_dbms_by_id(dbms_id: int, r: Request) -> DbmsResponseDto:
     bug_categories = DbmsService.get_dbms_bug_categories(tx, dbms_id)
     bug_category_counts = defaultdict(int)
     for bug_category in bug_categories:
-        bug_category_counts[(bug_category.id, bug_category.name)] += 1
+        bug_count = DbmsService.get_bug_count_category(
+            tx, dbms_id, bug_category.id
+        )
+        bug_category_counts[(bug_category.id, bug_category.name)] = bug_count
     if dbms is None:
         raise NotFoundError(f"DBMS with id {dbms_id} not found")
     return DbmsResponseDto(
@@ -182,5 +185,24 @@ async def get_bugs_by_category(
             "Invalid request, amount or distribution not passed or passed incorrectly.",
         )
 
+@router.get("/{dbms_id}/bug_trend")
+async def get_bug_trend(
+    dbms_id: int,
+    r: Request,
+    # Query parameters
+    days: int = 30,
+) -> list[int]:
+    """
+    Fetches the bug trend for the last `days` days for a given DBMS.
+
+    Query parameters:
+        - days: Number of days to fetch the bug trend for (default: 30)
+    """
+    tx = get_db(r)
+    if days <= 0:
+        raise BadRequestError("Days must be a positive integer.")
+
+    trend_data = DbmsService.get_bug_trend_last_k_days(tx, dbms_id, days)
+    return trend_data
 
 __all__ = ["router"]
