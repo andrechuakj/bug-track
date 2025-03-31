@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from domain.models.BugReport import (
     get_bug_report_by_id,
     get_bug_reports,
@@ -6,11 +7,13 @@ from domain.models.BugReport import (
 )
 from pydantic import BaseModel
 from sqlmodel import Session
+from utilities.classes import Service
 
 
-class _BugReportService:
+class _BugReportService(Service):
 
     def get_bug_reports(self, tx: Session):
+        self.logger.info("Fetching all bug reports")
         return get_bug_reports(tx)
 
     class BugReportViewModel(BaseModel):
@@ -33,6 +36,7 @@ class _BugReportService:
         tx: Session,
         bug_report_id: int,
     ) -> BugReportViewModel:
+        self.logger.info(f"Fetching bug report with id {bug_report_id}")
         br = get_bug_report_by_id(tx, bug_report_id)
         return _BugReportService.BugReportViewModel(
             **br.dict(),
@@ -41,6 +45,9 @@ class _BugReportService:
         )
 
     def update_bug_category(self, tx: Session, bug_report_id: int, category_id: int):
+        self.logger.info(
+            f"Updating bug report with id {bug_report_id} to category {category_id}"
+        )
         br = update_bug_category(tx, bug_report_id, category_id)
         return _BugReportService.BugReportViewModel(
             **br.dict(),
