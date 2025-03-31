@@ -1,19 +1,13 @@
 import { clearTokens, getTokens, saveTokens } from '../utils/auth';
 import { api } from './client';
+import { components } from '../../../api/client/api';
 
-export interface LoginValues {
-  email: string;
-  password: string;
-}
-
-export interface SignupValues {
-  email: string;
-  name: string;
-  password: string;
-}
+export type AuthResponseDto = components['schemas']['AuthResponseDto'];
+export type LoginRequestDto = components['schemas']['LoginRequestDto'];
+export type SignupRequestDto = components['schemas']['SignupRequestDto'];
 
 class AuthService {
-  async login(user: LoginValues): Promise<boolean> {
+  async login(user: LoginRequestDto): Promise<boolean> {
     try {
       const { data, error, response } = await api.POST(
         '/public/api/v1/auth/login',
@@ -27,8 +21,8 @@ class AuthService {
       }
 
       saveTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
       });
       return true;
     } catch (error) {
@@ -37,7 +31,7 @@ class AuthService {
     }
   }
 
-  async signup(user: SignupValues): Promise<boolean> {
+  async signup(user: SignupRequestDto): Promise<boolean> {
     try {
       const { data, error, response } = await api.POST(
         '/public/api/v1/auth/signup',
@@ -51,8 +45,8 @@ class AuthService {
       }
 
       saveTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
       });
       return true;
     } catch (error) {
@@ -63,7 +57,7 @@ class AuthService {
 
   async refreshToken(): Promise<boolean> {
     try {
-      const refreshToken = getTokens()?.refreshToken;
+      const refreshToken = getTokens()?.refresh_token;
       if (!refreshToken) {
         return false;
       }
@@ -77,8 +71,8 @@ class AuthService {
       }
 
       saveTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
       });
       return true;
     } catch (error) {

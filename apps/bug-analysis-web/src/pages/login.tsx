@@ -9,7 +9,7 @@ import {
 } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { LoginValues } from '../api/auth';
+import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { BugTrackColors } from '../utils/theme';
 
@@ -26,10 +26,9 @@ const Login: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const onFormSubmit = async (values: LoginFormValues): Promise<void> => {
-    console.log('onFormSubmit | values:', values);
     setLoginError(null);
     try {
-      const authValues: LoginValues = {
+      const authValues: LoginRequestDto = {
         email: values.email,
         password: values.password,
       };
@@ -37,7 +36,7 @@ const Login: React.FC = () => {
       if (success) {
         messageApi.success('Login successful!');
       } else {
-        setLoginError('Invalid username or password. Please try again.');
+        setLoginError('Invalid email or password. Please try again.');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -45,12 +44,11 @@ const Login: React.FC = () => {
     }
   };
 
-  const onLoginFail = (errorInfo: {
+  const onLoginFail = (_errorInfo: {
     values: LoginFormValues;
     errorFields: { name: (string | number)[]; errors: string[] }[];
     outOfDate?: boolean;
   }): void => {
-    console.log('Failed:', errorInfo);
     message.error('Please check the form for errors.');
   };
 
@@ -76,7 +74,6 @@ const Login: React.FC = () => {
   useLayoutEffect(() => {
     if (fieldsRef.current) {
       setFieldsHeight(fieldsRef.current.scrollHeight);
-      console.log(`${fieldsHeight} -> ${fieldsRef.current.scrollHeight}`);
     }
   }, [screens.md]);
 
@@ -114,7 +111,7 @@ const Login: React.FC = () => {
               name="email"
               rules={[{ required: true, message: 'Please enter your email!' }]}
             >
-              <Input placeholder="Enter your Username" />
+              <Input placeholder="Enter your Email" />
             </Form.Item>
             <Form.Item
               label="Password"

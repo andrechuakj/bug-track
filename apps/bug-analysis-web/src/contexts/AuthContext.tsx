@@ -1,17 +1,19 @@
 import { useRouter } from 'next/router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import authService, { LoginValues, SignupValues } from '../api/auth';
+import authService, { LoginRequestDto, SignupRequestDto } from '../api/auth';
 
-interface AuthContextType {
+export interface AuthContextType {
   isAuthenticated: boolean;
-  login: (details: LoginValues) => Promise<boolean>;
-  signup: (details: SignupValues) => Promise<boolean>;
+  login: (details: LoginRequestDto) => Promise<boolean>;
+  signup: (details: SignupRequestDto) => Promise<boolean>;
   logout: () => void;
   refreshToken: () => Promise<boolean>;
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -36,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const login = async (details: LoginValues): Promise<boolean> => {
+  const login = async (details: LoginRequestDto): Promise<boolean> => {
     setLoading(true);
     try {
       const success = await authService.login(details);
@@ -53,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const signup = async (details: SignupValues): Promise<boolean> => {
+  const signup = async (details: SignupRequestDto): Promise<boolean> => {
     setLoading(true);
     try {
       const success = await authService.signup(details);

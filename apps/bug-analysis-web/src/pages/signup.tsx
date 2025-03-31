@@ -2,7 +2,7 @@ import { LeftCircleFilled } from '@ant-design/icons';
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
-import { SignupValues } from '../api/auth';
+import { SignupRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 
 interface SignupFormValues {
@@ -27,7 +27,7 @@ const Signup: React.FC = () => {
       return;
     }
     try {
-      const authValues: SignupValues = {
+      const authValues: SignupRequestDto = {
         email: values.email,
         name: values.name,
         password: values.password,
@@ -48,7 +48,7 @@ const Signup: React.FC = () => {
     message.error('Please check the form for errors.');
   };
 
-  const onBackLogin = () => useCallback(() => router.push('/login'), []);
+  const onBackLogin = useCallback(() => router.push('/login'), []);
 
   return (
     <div

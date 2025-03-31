@@ -1,9 +1,7 @@
 import { compressToUTF16, decompressFromUTF16 } from 'lz-string';
+import { AuthResponseDto } from '../api/auth';
 
-type TokenState = {
-  accessToken: string;
-  refreshToken: string;
-} | null;
+type TokenState = AuthResponseDto | null;
 
 export const saveTokens = (token: NonNullable<TokenState>) => {
   localStorage.setItem('token', compressToUTF16(JSON.stringify(token)));
