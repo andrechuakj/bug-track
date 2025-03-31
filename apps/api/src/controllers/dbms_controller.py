@@ -34,9 +34,7 @@ async def get_dbms_by_id(dbms_id: int, r: Request) -> DbmsResponseDto:
     bug_categories = DbmsService.get_dbms_bug_categories(tx, dbms_id)
     bug_category_counts = defaultdict(int)
     for bug_category in bug_categories:
-        bug_count = DbmsService.get_bug_count_category(
-            tx, dbms_id, bug_category.id
-        )
+        bug_count = DbmsService.get_bug_count_category(tx, dbms_id, bug_category.id)
         bug_category_counts[(bug_category.id, bug_category.name)] = bug_count
     if dbms is None:
         raise NotFoundError(f"DBMS with id {dbms_id} not found")
@@ -74,7 +72,7 @@ async def get_ai_summary(dbms_id: int, r: Request) -> AiSummaryResponseDto:
         return AiSummaryResponseDto(summary=summary)
 
     except Exception as e:
-        print("e:", e)
+        print("eRROR:", e)
         return AiSummaryResponseDto(summary="Summary is not ready for this DBMS yet.")
 
 
@@ -185,6 +183,7 @@ async def get_bugs_by_category(
             "Invalid request, amount or distribution not passed or passed incorrectly.",
         )
 
+
 @router.get("/{dbms_id}/bug_trend")
 async def get_bug_trend(
     dbms_id: int,
@@ -204,5 +203,6 @@ async def get_bug_trend(
 
     trend_data = DbmsService.get_bug_trend_last_k_days(tx, dbms_id, days)
     return trend_data
+
 
 __all__ = ["router"]

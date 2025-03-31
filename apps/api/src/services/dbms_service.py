@@ -7,7 +7,7 @@ from domain.models.BugReport import (
     get_bug_report_ids_by_dbms_id,
     get_bug_report_by_search_and_cat,
     get_bug_ids_by_dbms_cat_id,
-    get_bug_trend_last_k_days
+    get_bug_trend_last_k_days,
 )
 from domain.models.DBMSSystem import *
 from sqlmodel import Session
@@ -89,7 +89,7 @@ class _DbmsService(Service):
         )
 
         return reports
-    
+
     def get_bug_count_category(self, tx: Session, dbms_id: int, category_id: int):
         """
         Get the number of bug reports for a given DBMS.
@@ -106,5 +106,6 @@ class _DbmsService(Service):
         trend = get_bug_trend_last_k_days(tx, dbms_id, days)
 
         return trend
-    
+
+
 DbmsService = _DbmsService()
