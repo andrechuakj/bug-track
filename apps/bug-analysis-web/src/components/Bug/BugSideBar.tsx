@@ -4,7 +4,6 @@ import { Divider, Dropdown, Skeleton, Tag, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
   BugCategoryResponseDto,
-  BugReport,
   fetchAllCategories,
   updateBugCategory,
 } from '../../api/bug_report';
@@ -22,11 +21,7 @@ const BugSideBar: React.FC = () => {
     setIsCategoryUpdating(true);
     try {
       const updatedReport = await updateBugCategory(bug_id, category_id);
-      setBugReport((prev: BugReport) => ({
-        ...prev,
-        category: updatedReport.category,
-        category_id: updatedReport.category_id,
-      }));
+      setBugReport(updatedReport);
     } catch (error) {
       console.error('Failed to update category:', error);
     } finally {
@@ -118,7 +113,8 @@ const BugSideBar: React.FC = () => {
         <Typography.Title level={5}>Versions affected</Typography.Title>
         {isBugLoading && <Skeleton.Input active size="small" />}
         {!isBugLoading &&
-          (bugReport?.versionsAffected ? (
+          // TODO: Add this field to schema
+          ((bugReport as any)?.versionsAffected ? (
             <Typography.Text>
               {/* TODO: Update dynamically */}
               1.0.1
