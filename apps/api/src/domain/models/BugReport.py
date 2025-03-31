@@ -132,7 +132,6 @@ def delete_bug_report(tx: Session, bug_report_id: int):
     return bug_report
 
 
-<<<<<<< HEAD
 def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
     bug_report = tx.get(BugReport, bug_report_id)
     if not bug_report:
@@ -147,8 +146,6 @@ def update_bug_category(tx: Session, bug_report_id: int, category_id: int):
     tx.commit()
     return bug_report
 
-=======
->>>>>>> 405c184 (feat: add logout button)
 def get_bug_trend_last_k_days(tx: Session, dbms_id: int, k: int):
     today = today = datetime.utcnow().astimezone(timezone(timedelta(hours=8))).date()
     trend_data = []
