@@ -1,9 +1,10 @@
 from datetime import datetime
+
 from domain.helpers.Timestampable import Timestampable
 from domain.models.BugCategory import BugCategory
 from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
-from sqlmodel import Field, Relationship, Session, select
+from sqlmodel import TIMESTAMP, Field, Relationship, Session, select
 
 
 class BugReport(Timestampable, table=True):
@@ -17,9 +18,18 @@ class BugReport(Timestampable, table=True):
     description: str | None = None
     url: str | None = None
     repo_url: str | None = None
-    issue_created_at: datetime
-    issue_updated_at: datetime | None = None
-    issue_closed_at: datetime | None = None
+    issue_created_at: datetime = Field(
+        sa_type=TIMESTAMP(timezone=True),
+        nullable=False,
+    )
+    issue_updated_at: datetime | None = Field(
+        sa_type=TIMESTAMP(timezone=True),
+        nullable=True,
+    )
+    issue_closed_at: datetime | None = Field(
+        sa_type=TIMESTAMP(timezone=True),
+        nullable=True,
+    )
     is_closed: bool = Field(default=False)
 
 
