@@ -76,6 +76,7 @@ const HomePage: React.FC = (): ReactNode => {
   const [aiSummary, setAiSummary] = useState<AiSummary>();
   const [bugTrend, setBugTrend] = useState<number[]>([]);
   const [aiButtonLoading, setAiButtonLoading] = useState(false);
+  const [isDashboardLoading, setIsDashboardLoading] = useState(false);
   const [lastSearchedStr, setLastSearchedStr] = useState('');
   // Filter states
   const [filterSettings, setFilterSettings] = useState<FilterSettings>({
@@ -116,7 +117,9 @@ const HomePage: React.FC = (): ReactNode => {
   };
 
   useEffect(() => {
+    setIsDashboardLoading(true);
     fetchDashboardData();
+    setIsDashboardLoading(false);
   }, [currentTenant]);
 
   const handleSearch = useCallback(
@@ -309,10 +312,16 @@ const HomePage: React.FC = (): ReactNode => {
     </Flex>
   );
 
-  const renderItem = (title: string, _count: number) => ({
+  const renderItem = (title: string, bugReportId: number, _count: number) => ({
     value: title,
     label: (
-      <Flex align="center" justify="space-between">
+      <Flex
+        align="center"
+        justify="space-between"
+        onClick={() => {
+          router.push(`/bug/${bugReportId}`);
+        }}
+      >
         {title}
       </Flex>
     ),
@@ -324,7 +333,7 @@ const HomePage: React.FC = (): ReactNode => {
       label: <Title title={cat.title} />,
       options:
         cat.options?.map((opt: AcBugSearchResult) =>
-          renderItem(opt.display, 1000)
+          renderItem(opt.display, opt.bugReportId, 1000)
         ) ?? [],
     }));
   };
@@ -384,7 +393,9 @@ const HomePage: React.FC = (): ReactNode => {
               handleBugExploreLoadMore={handleBugExploreLoadMore}
               activeKey={exploreSearchActiveKey}
               setActiveKey={setExploreSearchActiveKey}
-              isFetchingSearchResult={isFetchingSearchResult}
+              isFetchingSearchResult={
+                isFetchingSearchResult || isDashboardLoading
+              }
             />
           </Card>
           <Row gutter={[16, 16]}>

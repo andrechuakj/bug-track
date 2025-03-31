@@ -34,7 +34,8 @@ const BugExploreSearchResultsModule: React.FC<
 
   const bugExplore: ReactNode = (
     <>
-      {bugReports && (
+      {isFetchingSearchResult && <LoadingOutlined />}
+      {!isFetchingSearchResult && bugReports && (
         <List
           size="large"
           bordered
