@@ -8,12 +8,12 @@ async function mockTokens() {
   const auth = await import('../../src/utils/auth');
   vi.spyOn(auth, 'getTokens')
     .mockReturnValueOnce({
-      accessToken: 'test-token-1',
-      refreshToken: 'test-refresh-token-1',
+      access_token: 'test-token-1',
+      refresh_token: 'test-refresh-token-1',
     })
     .mockReturnValueOnce({
-      accessToken: 'test-token-2',
-      refreshToken: 'test-refresh-token-2',
+      access_token: 'test-token-2',
+      refresh_token: 'test-refresh-token-2',
     });
   return auth;
 }
