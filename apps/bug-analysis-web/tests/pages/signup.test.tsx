@@ -12,7 +12,7 @@ import Signup from '../../src/pages/signup';
 
 if (typeof window !== 'undefined' && !window.matchMedia) {
   // @ts-expect-error creating mock to make antd's Grid.useBreakpoint work,
-  //   which allows Login to render.
+  //   which allows Signup to render.
   //   Does not implement all other methods otherwise expected.
   window.matchMedia = () => ({
     matches: false,
@@ -109,7 +109,6 @@ describe('Signup', () => {
       getAllByPlaceholderText,
     } = renderPage();
 
-    // const emailField = getByPlaceholderText(/email/i);
     const nameField = getByPlaceholderText(/name/i);
     const [passwordField, confirmPasswordField] =
       getAllByPlaceholderText(/password/i);
@@ -175,7 +174,6 @@ describe('Signup', () => {
     } = renderPage();
 
     const emailField = getByPlaceholderText(/email/i);
-    // const nameField = getByPlaceholderText(/name/i);
     const [passwordField, confirmPasswordField] =
       getAllByPlaceholderText(/password/i);
     const signupButton = getByRole('button', { name: /sign.?up/i });
@@ -202,8 +200,6 @@ describe('Signup', () => {
 
     const emailField = getByPlaceholderText(/email/i);
     const nameField = getByPlaceholderText(/name/i);
-    // const [passwordField, confirmPasswordField] =
-    //   getAllByPlaceholderText(/password/i);
     const signupButton = getByRole('button', { name: /sign.?up/i });
 
     fireEvent.change(emailField, {
