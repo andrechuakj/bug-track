@@ -79,7 +79,7 @@ class _BugReportService(Service):
 
     def get_ai_summary(self, bug_report: BugReportViewModel) -> str:
         try:
-            response = openai.chat.completions.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-4o-mini",
                 messages=[
                     {
@@ -92,7 +92,7 @@ class _BugReportService(Service):
                 max_tokens=200,
                 temperature=0.2,
             )
-            summary = response.choices[0].message.content.strip()
+            summary = response["choices"][0]["message"]["content"].strip()
             return summary
         except Exception as e:
             raise NotFoundError("AI Summary not found")
