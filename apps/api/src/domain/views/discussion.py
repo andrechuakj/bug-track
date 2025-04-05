@@ -8,10 +8,12 @@ from utilities.views import BaseResponseModel
 class CreateDiscussionRequestDto(BaseModel):
     bug_report_id: int
     content: str
+    author_id: int
 
 
 class CreateReplyRequestDto(BaseModel):
     content: str
+    author_id: int
 
 
 class DiscussionResponseDto(BaseResponseModel):

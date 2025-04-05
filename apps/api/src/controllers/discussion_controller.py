@@ -30,8 +30,6 @@ def add_bug_report_comment(
 ) -> DiscussionResponseDto:
     tx = get_db(r)
     comment = Comment(**dto.model_dump())
-    # TODO: Don't hardcode
-    comment.author_id = 1
     return DiscussionService.add_bug_report_comment(tx, comment)
 
 
@@ -41,8 +39,6 @@ def add_comment_reply(
 ) -> DiscussionReplyResponseDto:
     tx = get_db(r)
     comment = Comment(**dto.model_dump())
-    # TODO: Don't hardcode
-    comment.author_id = 1
     return DiscussionService.add_comment_to_thread(tx, comment, id)
 
 
