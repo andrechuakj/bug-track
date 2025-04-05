@@ -93,7 +93,11 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
           className={styles.sider}
         >
           <div className="flex flex-col h-full">
-            <div role="img" className="flex justify-center h-16 items-center">
+            <div
+              role="img"
+              className="flex justify-center h-16 items-center cursor-pointer"
+              onClick={() => router.push('/')}
+            >
               <img src={logo} className={logoStyle} alt={'BugTrack logo'} />
             </div>
 
