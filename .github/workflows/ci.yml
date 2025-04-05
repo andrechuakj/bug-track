@@ -44,6 +44,12 @@ jobs:
         working-directory: ./apps/api
         run: pip install -r requirements.txt
       - name: Run codegen
+        # Dummy values for required environment variables
+        # as they are not needed for the codegen step
+        env:
+          OPENAI_API_KEY: dummy_openai_key
+          DATABASE_URL: postgresql://fake:fake@localhost:5432/fake
+          JWT_SECRET_KEY: dummy_jwt_secret_key
         run: yarn generate
       - name: Check lint
         run: yarn lint
