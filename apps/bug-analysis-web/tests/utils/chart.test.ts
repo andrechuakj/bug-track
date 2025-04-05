@@ -5,10 +5,26 @@ import {
   generateBugTrendChart,
 } from '../../src/utils/chart';
 
+const isNotArray = <T>(
+  value: T | T[] | undefined | null
+): T | undefined | null => {
+  if (value == undefined) return value;
+  expect(Array.isArray(value)).toBe(false);
+  return value as T;
+};
+
+const isArray = <T>(
+  value: T | T[] | undefined | null
+): T[] | undefined | null => {
+  if (value == undefined) return value as T[] | undefined | null;
+  expect(Array.isArray(value)).toBe(false);
+  return value as T[];
+};
+
 describe('generateBugDistrBar', () => {
   it('should return "No Bugs" chart when no data is provided', () => {
     const result = generateBugDistrBar([]);
-    expect(result.title?.text).toBe('No Bugs');
+    expect(isNotArray(result.title)?.text).toBe('No Bugs');
     expect(result.series).toBeUndefined();
   });
 
@@ -21,23 +37,23 @@ describe('generateBugDistrBar', () => {
     const result = generateBugDistrBar(mockData);
 
     // Only categories with count > 0
-    expect(result.series?.[0]?.data).toHaveLength(2);
+    expect(isArray(result.series)?.[0]?.data).toHaveLength(2);
   });
 
   it('should apply dark theme styles correctly', () => {
     const mockData: BugCategory[] = [{ id: 1, name: 'UI Bug', count: 5 }];
     const result = generateBugDistrBar(mockData, 'dark');
 
-    expect(result.xAxis?.axisLabel?.color).toBe('#ffffff');
-    expect(result.yAxis?.axisLabel?.color).toBe('#ffffff');
+    expect(isNotArray(result.xAxis)?.axisLabel?.color).toBe('#ffffff');
+    expect(isNotArray(result.yAxis)?.axisLabel?.color).toBe('#ffffff');
   });
 
   it('should apply light theme styles correctly', () => {
     const mockData: BugCategory[] = [{ id: 1, name: 'UI Bug', count: 5 }];
     const result = generateBugDistrBar(mockData, 'light');
 
-    expect(result.xAxis?.axisLabel?.color).toBe('#000000');
-    expect(result.yAxis?.axisLabel?.color).toBe('#000000');
+    expect(isNotArray(result.xAxis)?.axisLabel?.color).toBe('#000000');
+    expect(isNotArray(result.yAxis)?.axisLabel?.color).toBe('#000000');
   });
 });
 

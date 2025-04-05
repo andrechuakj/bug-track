@@ -29,9 +29,7 @@ vi.mock('next/router', () => ({
   }),
 }));
 
-const signupMock = vi.fn(async (_details: SignupRequestDto) => {
-  return true;
-});
+const signupMock = vi.fn((_details: SignupRequestDto) => true);
 
 type TestAuthProviderProps = {
   children: React.ReactNode;
@@ -44,10 +42,10 @@ export const MockAuthProviderForLogin: React.FC<TestAuthProviderProps> = ({
 }) => {
   const testContextValue: AuthContextType = {
     isAuthenticated: false,
-    login: async (_details: LoginRequestDto) => true,
+    login: (_details: LoginRequestDto) => true,
     signup: signup || signupMock,
     logout: () => {},
-    refreshToken: async () => true,
+    refreshToken: () => true,
     loading: false,
   };
 
