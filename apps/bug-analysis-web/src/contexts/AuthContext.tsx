@@ -1,5 +1,12 @@
 import { useRouter } from 'next/router';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import authService, { LoginRequestDto, SignupRequestDto } from '../api/auth';
 
 export type AuthContextType = {
@@ -15,11 +22,9 @@ export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   // Check if the user is authenticated on initial load
@@ -55,24 +60,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const signup = async (details: SignupRequestDto): Promise<boolean> => {
-    setLoading(true);
-    try {
-      const success = await authService.signup(details);
-      if (success) {
-        setIsAuthenticated(true);
-        await router.push('/');
+  const signup = useCallback(
+    async (details: SignupRequestDto): Promise<boolean> => {
+      setLoading(true);
+      try {
+        const success = await authService.signup(details);
+        if (success) {
+          setIsAuthenticated(true);
+          await router.push('/');
+        }
+        return success;
+      } catch (error) {
+        console.error('Login error:', error);
+        return false;
+      } finally {
+        setLoading(false);
       }
-      return success;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    []
+  );
 
-  const refreshToken = async (): Promise<boolean> => {
+  const refreshToken = useCallback(async (): Promise<boolean> => {
     try {
       const success = await authService.refreshToken();
       if (success) {
@@ -85,12 +93,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsAuthenticated(false);
       return false;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     setIsAuthenticated(false);
     await router.push('/login');
-  };
+  }, []);
 
   return (
     <AuthContext.Provider
