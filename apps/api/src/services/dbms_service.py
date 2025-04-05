@@ -3,10 +3,10 @@ import random
 from domain.models.BugCategory import get_bug_category_by_ids
 from domain.models.BugReport import (
     get_bug_categories_by_dbms_id,
-    get_bug_report_by_ids,
-    get_bug_report_ids_by_dbms_id,
-    get_bug_report_by_search_and_cat,
     get_bug_ids_by_dbms_cat_id,
+    get_bug_report_by_ids,
+    get_bug_report_by_search_and_cat,
+    get_bug_report_ids_by_dbms_id,
     get_bug_trend_last_k_days,
 )
 from domain.models.DBMSSystem import *
@@ -52,7 +52,7 @@ class _DbmsService(Service):
         self,
         tx: Session,
         dbms_id: int,
-        search: str,
+        search: str | None,
         start: int = 0,
         limit: int = 100,
         categories: list[int] = [],
