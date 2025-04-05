@@ -38,6 +38,7 @@ class BugReportResponseDto(BaseResponseModel):
     title: str
     description: str | None
     url: str
+    github_url: str
     issue_created_at: datetime
     issue_updated_at: datetime | None
     issue_closed_at: datetime | None
