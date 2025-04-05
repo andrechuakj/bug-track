@@ -60,7 +60,7 @@ describe('categoriseBugs', () => {
           ],
         },
         {
-          title: 'Usability',
+          title: 'Infinite Loop / Hang',
           options: [
             {
               display: 'Backend Bug 1',
@@ -69,7 +69,7 @@ describe('categoriseBugs', () => {
           ],
         },
         {
-          title: 'Performance Degradation',
+          title: 'Constraint Violation',
           options: [
             {
               display: 'Performance Bug 1',
@@ -152,7 +152,7 @@ describe('setBugExplore', () => {
   });
 
   it('should update multiple categories', () => {
-    const mockBugExploreDistribution = [0, 0, 0];
+    const mockBugExploreDistribution = [0, 0, 0, 0, 0, 0];
     const setBugExploreDistribution = vi.fn();
     const setBugReports = vi.fn();
 
@@ -170,7 +170,7 @@ describe('setBugExplore', () => {
           id: 2,
           dbms_id: 0,
           url: 'http://example.com/bug2',
-          category_id: 2,
+          category_id: 4,
           title: 'Backend Bug 1',
           description: 'API timeout',
         },
@@ -184,7 +184,7 @@ describe('setBugExplore', () => {
       mockBugReportsDelta
     );
 
-    expect(setBugExploreDistribution).toHaveBeenCalledWith([1, 0, 1]);
+    expect(setBugExploreDistribution).toHaveBeenCalledWith([1, 0, 0, 0, 1, 0]);
     expect(setBugReports).toHaveBeenCalledWith({
       [FilterBugCategory.CRASH]: {
         categoryId: 0,
@@ -197,9 +197,9 @@ describe('setBugExplore', () => {
           },
         ],
       },
-      [FilterBugCategory.USABILITY]: {
-        categoryId: 2,
-        title: 'Usability',
+      [FilterBugCategory.TRANSACTION_ANOMALY]: {
+        categoryId: 4,
+        title: 'Transaction Anomaly',
         bugs: [
           {
             bugReportId: 2,
