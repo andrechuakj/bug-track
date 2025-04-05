@@ -6,7 +6,7 @@ from sqlmodel import Field, Session, select
 class BugCategory(Timestampable, table=True):
     __tablename__ = "bug_categories"
     id: int | None = Field(default=None, primary_key=True)
-    name: str
+    name: str = Field(nullable=False, min_length=1)
 
 
 def get_bug_categories(tx: Session):

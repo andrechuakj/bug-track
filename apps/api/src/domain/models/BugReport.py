@@ -1,12 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from domain.helpers.Timestampable import Timestampable
 from domain.models.BugCategory import BugCategory, get_bug_category_by_id
 from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
-from sqlmodel import TIMESTAMP, Field, Relationship, Session, select
-from datetime import datetime, timedelta, timezone
+from pydantic import ValidationInfo, field_validator
 from sqlalchemy.sql import func
+from sqlmodel import TIMESTAMP, Field, Relationship, Session, select
 
 
 class BugReport(Timestampable, table=True):
@@ -14,12 +14,13 @@ class BugReport(Timestampable, table=True):
     id: int | None = Field(default=None, primary_key=True)
     dbms_id: int = Field(foreign_key="dbms_systems.id")
     dbms: DBMSSystem = Relationship()
-    category_id: int = Field(foreign_key="bug_categories.id")
-    category: BugCategory = Relationship()
-    title: str
-    description: str | None = None
-    url: str | None = None
-    repo_url: str | None = None
+    category_id: int | None = Field(
+        foreign_key="bug_categories.id", nullable=True, default=None
+    )
+    category: BugCategory | None = Relationship()
+    title: str = Field(nullable=False, max_length=256)
+    description: str | None = Field(nullable=True, default=None)
+    url: str = Field(nullable=False, min_length=1)
     issue_created_at: datetime = Field(
         sa_type=TIMESTAMP(timezone=True),
         nullable=False,
@@ -27,12 +28,28 @@ class BugReport(Timestampable, table=True):
     issue_updated_at: datetime | None = Field(
         sa_type=TIMESTAMP(timezone=True),
         nullable=True,
+        default=None,
     )
     issue_closed_at: datetime | None = Field(
         sa_type=TIMESTAMP(timezone=True),
         nullable=True,
+        default=None,
     )
     is_closed: bool = Field(default=False)
+
+    @field_validator("issue_closed_at", mode="before")
+    @classmethod
+    def validate_issue_closed_at(
+        cls, value: datetime | None, info: ValidationInfo
+    ) -> datetime | None:
+        is_closed = info.data.get("is_closed", False)
+
+        if is_closed and value is None:
+            raise ValueError("'issue_closed_at' must be set when 'is_closed' is True")
+        if not is_closed and value is not None:
+            raise ValueError("'issue_closed_at' must be None when 'is_closed' is False")
+
+        return value
 
 
 def get_bug_report_ids_by_dbms_id(tx: Session, dbms_id: int):

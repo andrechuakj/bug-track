@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from utilities.views import BaseResponseModel
 
 
@@ -32,12 +33,11 @@ class BugReportResponseDto(BaseResponseModel):
     id: int
     dbms_id: int
     dbms: str
-    category_id: int
-    category: str
+    category_id: int | None
+    category: str | None
     title: str
     description: str | None
-    url: str | None
-    repo_url: str | None
+    url: str
     issue_created_at: datetime
     issue_updated_at: datetime | None
     issue_closed_at: datetime | None

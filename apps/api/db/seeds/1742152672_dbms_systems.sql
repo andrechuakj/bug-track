@@ -1,4 +1,4 @@
 INSERT INTO
-    dbms_systems (id, name)
+    dbms_systems (id, name, repository)
 VALUES
-    (0, 'TiDB');
+    (0, 'TiDB', 'pingcap/tidb');

@@ -1,14 +1,15 @@
 from domain.helpers.Timestampable import Timestampable
 from internal.errors import NotFoundError
-from sqlmodel import Field, Session, SQLModel, select
+from pydantic import EmailStr
+from sqlmodel import Field, Session, select
 
 
 class User(Timestampable, table=True):
     __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
-    name: str
-    email: str
-    password: str = Field(repr=False)
+    name: str = Field(nullable=False, min_length=1)
+    email: EmailStr = Field(nullable=False, unique=True)
+    password: str = Field(nullable=False, repr=False)
 
 
 def get_users(tx: Session):

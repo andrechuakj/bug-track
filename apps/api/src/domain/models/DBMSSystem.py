@@ -1,16 +1,22 @@
 from domain.helpers.Timestampable import Timestampable
 from internal.errors.client_errors import NotFoundError
+from pydantic import computed_field
 from sqlmodel import Field, Session, select
 
 
 class DBMSSystem(Timestampable, table=True):
     __tablename__ = "dbms_systems"
     id: int | None = Field(default=None, primary_key=True)
-    name: str
-    description: str | None = None
-    website_url: str | None = None
-    logo_url: str | None = None
-    github_url: str | None = None
+    name: str = Field(nullable=False, min_length=1)
+    description: str | None = Field(nullable=True, default=None)
+    website_url: str | None = Field(nullable=True, default=None)
+    logo_url: str | None = Field(nullable=True, default=None)
+    repository: str = Field(nullable=False, min_length=1)
+
+    @computed_field
+    @property
+    def github_url(self) -> str:
+        return f"https://github.com/{self.repository}"
 
 
 def get_dbms_systems(tx: Session):

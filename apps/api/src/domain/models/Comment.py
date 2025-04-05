@@ -8,12 +8,14 @@ from sqlmodel import TEXT, Field, Relationship, Session, or_, select
 class Comment(Timestampable, table=True):
     __tablename__ = "comments"
     id: int | None = Field(default=None, primary_key=True)
-    content: str = Field(sa_type=TEXT)
-    author_id: int = Field(foreign_key="users.id")
+    content: str = Field(nullable=False, sa_type=TEXT)
+    author_id: int = Field(nullable=False, foreign_key="users.id")
     author: User = Relationship()
-    is_deleted: bool | None = Field(default=False)
+    is_deleted: bool = Field(nullable=False, default=False)
     bug_report_id: int = Field(foreign_key="bug_reports.id")
-    thread_id: int | None = Field(foreign_key="comments.id", default=None)
+    thread_id: int | None = Field(
+        foreign_key="comments.id", nullable=True, default=None
+    )
 
     # Explicitly define remote_side due to self-referential relationship
     _discussion: list["Comment"] = Relationship(
