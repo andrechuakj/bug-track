@@ -9,7 +9,7 @@ import {
   Typography,
 } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   addBugReportComment,
   DiscussionResponseDto,
@@ -36,6 +36,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
 
   // Toast
   const [messageApi, contextHolder] = message.useMessage();
+
+  // Ref for the newly added thread (scroll & highlight behaviour)
+  const newThreadRef = useRef<HTMLDivElement | null>(null);
 
   const fetchComments = () => {
     setIsFetchingDiscussions(true);
@@ -93,6 +96,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
         ]);
         setNewComment('');
         setIsModalVisible(false);
+
+        setTimeout(() => {
+          if (newThreadRef.current) {
+            newThreadRef.current.scrollIntoView({ behavior: 'smooth' });
+            newThreadRef.current.classList.add('highlight-border');
+            setTimeout(() => {
+              newThreadRef.current?.classList.remove('highlight-border');
+            }, 4000);
+          }
+        }, 100);
       })
       .catch((error) => {
         console.error('Error adding comment:', error);
@@ -109,7 +122,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
 
   const addComment = (
     <span
-      className="text-blue-500 cursor-pointer ml-2 flex gap-2"
+      className="text-blue-500 cursor-pointer ml-2 flex gap-2 mt-3"
       onClick={handleAddCommentClick}
     >
       <PlusOutlined />
@@ -123,9 +136,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
         <Typography.Title level={3} className="mb-4">
           Comments
         </Typography.Title>
-        <Button type="link" onClick={fetchComments}>
-          Refresh
-        </Button>
+        <div className="flex items-center">
+          <Button type="link" onClick={handleAddCommentClick}>
+            Add a comment
+          </Button>
+          <Button type="link" onClick={fetchComments}>
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {contextHolder}
@@ -134,8 +152,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
       {!isFetchingDiscussions &&
         (discussions.length > 0 ? (
           <>
-            {discussions.map((discussion) => (
-              <Thread key={discussion.id} discussion={discussion} />
+            {discussions.map((discussion, index) => (
+              <div
+                key={discussion.id}
+                ref={index === discussions.length - 1 ? newThreadRef : null}
+              >
+                <Thread
+                  discussion={discussion}
+                  isLast={index === discussions.length - 1}
+                />
+              </div>
             ))}
             {addComment}
           </>
