@@ -67,8 +67,21 @@ class _DbmsService(Service):
             - categories: a list of categories from which our bug reports should come from'
                           if empty; query from all categories.
         """
+
+        per_category_limit = None
+        if not categories:
+            self.logger.info(
+                f"No categories provided; querying all categories for dbms_id: {dbms_id}"
+            )
+            categories = get_bug_categories_by_dbms_id(tx, dbms_id)
+            self.logger.info(f"Found categories: {categories} for dbms_id: {dbms_id}")
+            per_category_limit = max(limit // len(categories), 1)
+            self.logger.info(
+                f"Setting per_category_limit to {per_category_limit} for dbms_id: {dbms_id}"
+            )
+            limit = None
         reports = get_bug_report_by_search_and_cat(
-            tx, dbms_id, search, categories, start, limit
+            tx, dbms_id, search, categories, start, limit, per_category_limit
         )
         return reports
 
