@@ -1,7 +1,13 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { List, Tabs } from 'antd';
 import clsx from 'clsx';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useMemo,
+} from 'react';
 import SearchResultListItem from '../../components/SearchResultListItem';
 import { useAppContext } from '../../contexts/AppContext';
 import { BugSearchResultStruct } from '../../utils/bug';
@@ -27,68 +33,80 @@ const BugExploreSearchResultsModule: React.FC<Props> = ({
   isFetchingSearchResult,
 }) => {
   const { theme } = useAppContext();
-  const isDarkMode = theme === 'dark';
+  const isDarkMode = useMemo(() => theme === 'dark', [theme]);
 
-  const bugExplore: ReactNode = (
-    <>
-      {isFetchingSearchResult && <LoadingOutlined />}
-      {!isFetchingSearchResult && bugReports && (
-        <List
-          size="large"
-          bordered
-          dataSource={Object.entries(bugReports)}
-          renderItem={([_, value]) => (
-            <SearchResultListItem
-              searchResultCategory={value}
-              handleLoadMore={handleBugExploreLoadMore}
-            />
-          )}
-          className={clsx(
-            'h-[40vh] overflow-y-scroll',
-            isDarkMode ? 'bg-black' : 'bg-white'
-          )}
-        />
-      )}
-    </>
+  const bugExplore: ReactNode = useMemo(
+    () => (
+      <>
+        {isFetchingSearchResult && <LoadingOutlined />}
+        {!isFetchingSearchResult && bugReports && (
+          <List
+            size="large"
+            bordered
+            dataSource={Object.entries(bugReports)}
+            renderItem={([_, value]) => (
+              <SearchResultListItem
+                searchResultCategory={value}
+                handleLoadMore={handleBugExploreLoadMore}
+              />
+            )}
+            className={clsx(
+              'h-[40vh] overflow-y-scroll',
+              isDarkMode ? 'bg-black' : 'bg-white'
+            )}
+          />
+        )}
+      </>
+    ),
+    [bugReports, handleBugExploreLoadMore, isDarkMode, isFetchingSearchResult]
   );
 
-  const bugSearchResults: ReactNode = (
-    <>
-      {isFetchingSearchResult && <LoadingOutlined />}
-      {!isFetchingSearchResult && bugSearchReports && (
-        <List
-          size="large"
-          bordered
-          dataSource={Object.entries(bugSearchReports)}
-          renderItem={([_, value]) => (
-            <SearchResultListItem searchResultCategory={value} />
-          )}
-          className={clsx(
-            'h-[40vh] overflow-y-scroll',
-            isDarkMode ? 'bg-black' : 'bg-white',
-            Object.keys(bugSearchReports).length === 0 &&
-              'flex justify-center items-center'
-          )}
-        />
-      )}
-    </>
+  const bugSearchResults: ReactNode = useMemo(
+    () => (
+      <>
+        {isFetchingSearchResult && <LoadingOutlined />}
+        {!isFetchingSearchResult && bugSearchReports && (
+          <List
+            size="large"
+            bordered
+            dataSource={Object.entries(bugSearchReports)}
+            renderItem={([_, value]) => (
+              <SearchResultListItem searchResultCategory={value} />
+            )}
+            className={clsx(
+              'h-[40vh] overflow-y-scroll',
+              isDarkMode ? 'bg-black' : 'bg-white',
+              Object.keys(bugSearchReports).length === 0 &&
+                'flex justify-center items-center'
+            )}
+          />
+        )}
+      </>
+    ),
+    [bugSearchReports, isDarkMode, isFetchingSearchResult]
   );
 
-  const items = [
-    {
-      label: 'Explore Bug Reports',
-      children: bugExplore,
-      key: BUG_EXPLORE_KEY,
-    },
-    {
-      label: 'Search Results',
-      children: bugSearchResults,
-      key: SEARCH_RESULTS_KEY,
-    },
-  ];
+  const items = useMemo(
+    () => [
+      {
+        label: 'Explore Bug Reports',
+        children: bugExplore,
+        key: BUG_EXPLORE_KEY,
+      },
+      {
+        label: 'Search Results',
+        children: bugSearchResults,
+        key: SEARCH_RESULTS_KEY,
+      },
+    ],
+    [bugExplore, bugSearchResults]
+  );
 
   // Tabs callbacks
-  const onChange = (newActiveKey: string) => setActiveKey(newActiveKey);
+  const onChange = useCallback(
+    () => (newActiveKey: string) => setActiveKey(newActiveKey),
+    [setActiveKey]
+  );
 
   return <Tabs {...{ onChange, activeKey, items }} />;
 };
