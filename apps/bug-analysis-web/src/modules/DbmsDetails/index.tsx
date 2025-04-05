@@ -46,7 +46,7 @@ const DbmsDetails: React.FC = () => {
                 color={antdTagPresets[1]}
               />
               <CategoryTag
-                text={FilterBugCategory.USABILITY}
+                text={FilterBugCategory.INFINITE_LOOP}
                 color={antdTagPresets[2]}
               />
             </div>
