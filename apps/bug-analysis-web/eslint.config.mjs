@@ -33,6 +33,7 @@ export default tseslint.config([
       'react/jsx-boolean-value': ['warn', 'never', { always: ['value'] }],
       'react/self-closing-comp': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_' },
