@@ -42,3 +42,33 @@
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0);
+}
+
+.highlight {
+  animation: shine 1s ease-in-out;
+  border-radius: 5px;
+}
+@keyframes shine {
+  0% {
+    background-color: #a7c7e7;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+.highlight-border {
+  animation: highlight-border 4s ease-in-out forwards;
+  border-radius: 5px;
+  border: 2px solid #a7c7e7;
+}
+
+@keyframes highlight-border {
+  0% {
+    border-color: #a7c7e7;
+  }
+  100% {
+    border-color: transparent;
+  }
+}
