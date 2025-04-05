@@ -12,6 +12,7 @@ const authMiddleware = {
     console.debug(request.method, url.pathname);
     if (!request.headers.has('X-Request-Id')) {
       const requestId = Math.random().toString(36).slice(16);
+      request = request.clone();
       request.headers.set('X-Request-Id', requestId);
       retryCache[requestId] = true;
     }
@@ -28,6 +29,7 @@ const authMiddleware = {
       return new Response('Unauthorized', { status: 401 }) as any;
     }
     if (!request.headers.has('Authorization')) {
+      request = request.clone();
       request.headers.set('Authorization', `Bearer ${accessToken}`);
     }
     return request;
