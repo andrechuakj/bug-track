@@ -6,6 +6,7 @@ export type DbmsResponseDto = Responses<'DbmsResponseDto'>;
 export type BugCategory = Responses<'BugCategoryResponseDto'>;
 export type AiSummary = Responses<'AiSummaryResponseDto'>;
 export type BugReports = Responses<'BugSearchResponseDto'>;
+export type BugReport = Responses<'BugReportResponseDto'>;
 export type BugExploreReports = Responses<'BugSearchCategoryResponseDto'>;
 
 export async function fetchDbmsList(): Promise<DbmsListResponseDto[]> {
