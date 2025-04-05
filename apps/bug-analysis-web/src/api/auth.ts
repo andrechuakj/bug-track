@@ -1,8 +1,7 @@
-import { RequestBody, Responses } from '~api';
+import { RequestBody } from '~api';
 import { clearTokens, getTokens, saveTokens } from '../utils/auth';
 import { api } from './client';
 
-export type AuthResponseDto = Responses<'AuthResponseDto'>;
 export type LoginRequestDto = RequestBody<'LoginRequestDto'>;
 export type SignupRequestDto = RequestBody<'SignupRequestDto'>;
 
