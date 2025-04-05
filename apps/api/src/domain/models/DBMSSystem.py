@@ -13,7 +13,7 @@ class DBMSSystem(Timestampable, table=True):
     logo_url: str | None = Field(nullable=True, default=None)
     repository: str = Field(nullable=False, min_length=1)
 
-    @computed_field
+    @computed_field(return_type=str)
     @property
     def github_url(self) -> str:
         return f"https://github.com/{self.repository}"
