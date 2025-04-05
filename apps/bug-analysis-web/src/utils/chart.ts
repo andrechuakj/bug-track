@@ -1,4 +1,4 @@
-import { EChartsOption } from 'echarts-for-react';
+import { EChartsOption } from 'echarts';
 import { BugCategory } from '../api/dbms';
 import { truncateName } from './text';
 import { antdTagPresets, BugTrackColors } from './theme';

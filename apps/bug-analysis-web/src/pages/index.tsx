@@ -515,7 +515,7 @@ const BugDistrubutionChart: React.FC<{ categories: BugCategory[] }> = ({
       </div>
 
       <EChartsReact
-        option={generateBugDistrBar(categories, theme) as unknown}
+        option={generateBugDistrBar(categories, theme)}
         style={{ height: '20vh' }}
       />
       <div className="overflow-y-scroll p-1 flex flex-wrap">
