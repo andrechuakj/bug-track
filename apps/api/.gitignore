@@ -16,3 +16,4 @@ myenv/
 
 # Code generation
 /client/api.ts
+/openapi.json

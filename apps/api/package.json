@@ -18,7 +18,10 @@
     "lint:backend": "black src --check",
     "format": "run-p format:backend format:api",
     "format:api": "prettier --write client",
-    "format:backend": "black src"
+    "format:backend": "black src",
+    "generate": "run-s generate:openapi generate:client",
+    "generate:openapi": "python src/generate.py",
+    "generate:client": "cross-env SRC_PATH='../openapi.json' bun client/generate.ts"
   },
   "dependencies": {
     "openapi-fetch": "^0.13.4"
