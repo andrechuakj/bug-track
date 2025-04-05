@@ -1,18 +1,27 @@
 // @ts-check
-import pluginJs from '@eslint/js';
-import pluginReact from 'eslint-plugin-react';
-import globals from 'globals';
+import js from '@eslint/js';
+import react from 'eslint-plugin-react';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config([
+  { ignores: ['eslint.config.mjs'] },
+  js.configs.recommended,
+  tseslint.configs.recommended,
   {
-    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
-    languageOptions: { globals: globals.browser },
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        ecmaFeatures: {
+          jsx: true,
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
   },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
+  { settings: { react: { version: 'detect' } } },
+  react.configs.flat.recommended,
   {
+    files: ['**/*.{ts,tsx}'],
     rules: {
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
