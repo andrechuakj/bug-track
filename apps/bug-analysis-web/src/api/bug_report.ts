@@ -1,9 +1,8 @@
-import { components } from '../../../api/client/api';
+import { Responses } from '~api';
 import { api } from './client';
 
-export type BugCategoryResponseDto =
-  components['schemas']['BugCategoryResponseDto'];
-export type BugReport = components['schemas']['BugReportResponseDto'];
+export type BugCategoryResponseDto = Responses<'BugCategoryResponseDto'>;
+export type BugReport = Responses<'BugReportResponseDto'>;
 
 export async function fetchBugById(bug_id: number): Promise<BugReport> {
   const { data, response } = await api.GET('/api/v1/bug_reports/{bug_id}', {

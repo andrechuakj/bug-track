@@ -1,10 +1,10 @@
-import { components } from '../../../api/client/api';
+import { RequestBody, Responses } from '~api';
 import { clearTokens, getTokens, saveTokens } from '../utils/auth';
 import { api } from './client';
 
-export type AuthResponseDto = components['schemas']['AuthResponseDto'];
-export type LoginRequestDto = components['schemas']['LoginRequestDto'];
-export type SignupRequestDto = components['schemas']['SignupRequestDto'];
+export type AuthResponseDto = Responses<'AuthResponseDto'>;
+export type LoginRequestDto = RequestBody<'LoginRequestDto'>;
+export type SignupRequestDto = RequestBody<'SignupRequestDto'>;
 
 class AuthService {
   async login(user: LoginRequestDto): Promise<boolean> {
