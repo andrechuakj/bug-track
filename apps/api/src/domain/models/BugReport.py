@@ -15,7 +15,9 @@ class BugReport(Timestampable, table=True):
     dbms_id: int = Field(foreign_key="dbms_systems.id")
     dbms: DBMSSystem = Relationship()
     category_id: int | None = Field(
-        foreign_key="bug_categories.id", nullable=True, default=None
+        foreign_key="bug_categories.id",
+        nullable=True,
+        default=None,
     )
     category: BugCategory | None = Relationship()
     title: str = Field(nullable=False, max_length=256)
@@ -40,7 +42,9 @@ class BugReport(Timestampable, table=True):
     @field_validator("issue_closed_at", mode="before")
     @classmethod
     def validate_issue_closed_at(
-        cls, value: datetime | None, info: ValidationInfo
+        cls,
+        value: datetime | None,
+        info: ValidationInfo,
     ) -> datetime | None:
         is_closed = info.data.get("is_closed", False)
 

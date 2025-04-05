@@ -14,7 +14,9 @@ class Comment(Timestampable, table=True):
     is_deleted: bool = Field(nullable=False, default=False)
     bug_report_id: int = Field(foreign_key="bug_reports.id")
     thread_id: int | None = Field(
-        foreign_key="comments.id", nullable=True, default=None
+        foreign_key="comments.id",
+        nullable=True,
+        default=None,
     )
 
     # Explicitly define remote_side due to self-referential relationship
