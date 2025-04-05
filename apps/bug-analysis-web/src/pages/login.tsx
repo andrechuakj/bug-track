@@ -22,10 +22,7 @@ const formIsValid = (form: FormInstance<LoginFormValues>) => {
   const requiredFields: Array<keyof LoginFormValues> = ['email', 'password'];
   const allFieldsFilled = requiredFields.every((field) => {
     const value = form.getFieldValue(field) as string | undefined;
-    console.log(
-      `Field: ${field}, Value: ${value}, Is Valid: ${value !== undefined && value !== null && value !== ''}`
-    );
-    return value !== undefined && value !== null && value !== '';
+    return !!value;
   });
 
   const errors = form.getFieldsError(requiredFields);
