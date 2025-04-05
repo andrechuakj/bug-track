@@ -104,22 +104,30 @@ const HomePage: React.FC = (): ReactNode => {
     if (loading) return;
     if (!isAuthenticated) {
       console.log('User not authenticated, redirecting to login page');
-      router.push('/login');
+      void router.push('/login');
     }
   }, [loading, isAuthenticated, router]);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!currentTenant) return;
-    fetchBugExplore();
-    fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res));
-    fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res));
-    handleLoadAiSummary();
-  };
+    await Promise.all([
+      fetchBugExplore(),
+      fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res)),
+      fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res)),
+      handleLoadAiSummary(),
+    ]);
+  }, [currentTenant]);
 
   useEffect(() => {
     setIsDashboardLoading(true);
-    fetchDashboardData();
-    setIsDashboardLoading(false);
+    fetchDashboardData()
+      .then(() => {
+        setIsDashboardLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching dashboard data:', error);
+        setIsDashboardLoading(false);
+      });
   }, [currentTenant]);
 
   const handleSearch = useCallback(
@@ -150,7 +158,7 @@ const HomePage: React.FC = (): ReactNode => {
     debounce(async (searchStr: string) => {
       if (!currentTenant) return;
       if (searchStr.length >= 3) {
-        handleSearch(searchStr);
+        await handleSearch(searchStr);
       }
     }, 500),
     [currentTenant]
@@ -319,9 +327,7 @@ const HomePage: React.FC = (): ReactNode => {
       <Flex
         align="center"
         justify="space-between"
-        onClick={() => {
-          router.push(`/bug/${bugReportId}`);
-        }}
+        onClick={() => void router.push(`/bug/${bugReportId}`)}
       >
         {title}
       </Flex>
@@ -353,7 +359,7 @@ const HomePage: React.FC = (): ReactNode => {
                 <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
                   <AutoComplete
                     options={options}
-                    onSearch={handleSearchDebounce}
+                    onSearch={void handleSearchDebounce}
                     size="large"
                     filterOption={
                       ((inputValue, option) =>
@@ -367,7 +373,7 @@ const HomePage: React.FC = (): ReactNode => {
                       ref={searchFieldRef}
                       size="large"
                       placeholder="Search for bug"
-                      onSearch={handlePopulateSearchResults}
+                      onSearch={void handlePopulateSearchResults}
                     />
                   </AutoComplete>
                 </Form.Item>
@@ -488,15 +494,13 @@ const HomePage: React.FC = (): ReactNode => {
                 <div className="overflow-y-scroll p-1 flex flex-wrap">
                   {dbmsData?.bug_categories?.map(
                     (cat: BugCategory, idx: number) =>
-                      cat.count > 0 ? (
+                      cat.count > 0 && (
                         <CategoryTag
                           key={idx}
                           color={antdTagPresets[idx % antdTagPresets.length]}
                           text={`${cat.name} | ${cat.count}`}
                           className="mt-2"
                         />
-                      ) : (
-                        <></>
                       )
                   )}
                 </div>
