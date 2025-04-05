@@ -5,7 +5,7 @@ import React, {
   useContext,
   useState,
 } from 'react';
-import { BugReport, fetchBugById } from '../api/bug_report';
+import { BugReport, fetchBugById } from '../api/bugReport';
 
 type BugReportContextType = {
   bugReport: BugReport | null;

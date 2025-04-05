@@ -6,7 +6,7 @@ import {
   BugCategoryResponseDto,
   fetchAllCategories,
   updateBugCategory,
-} from '../../api/bug_report';
+} from '../../api/bugReport';
 import { useBugReport } from '../../contexts/BugReportContext';
 import CategoryTag from '../CategoryTag';
 

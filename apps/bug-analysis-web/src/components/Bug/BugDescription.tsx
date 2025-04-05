@@ -1,7 +1,7 @@
 import { Divider, Skeleton, Typography } from 'antd';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { BugReport } from '../../api/bug_report';
+import { BugReport } from '../../api/bugReport';
 import { useBugReport } from '../../contexts/BugReportContext';
 import { useAppContext } from '../../utils/context';
 import { formatDate } from '../../utils/dateUtils';
