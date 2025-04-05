@@ -8,6 +8,7 @@ import {
   BugReportProvider,
   useBugReport,
 } from '../../contexts/BugReportContext';
+import CommentSection from '../../modules/CommentSection';
 
 const BugReportPage: React.FC = () => {
   const { fetchBugReport } = useBugReport();
@@ -31,6 +32,9 @@ const BugReportPage: React.FC = () => {
           <BugSideBar />
         </div>
       </div>
+      <Divider />
+
+      {id && !isNaN(Number(id)) && <CommentSection bugReportId={Number(id)} />}
     </div>
   );
 };
