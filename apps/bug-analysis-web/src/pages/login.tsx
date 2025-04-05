@@ -38,23 +38,24 @@ const Login: React.FC = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const onFormSubmit = async (values: LoginFormValues): Promise<void> => {
+  const onFormSubmit = (values: LoginFormValues) => {
     setLoginError(null);
-    try {
-      const authValues: LoginRequestDto = {
-        email: values.email,
-        password: values.password,
-      };
-      const success = await login(authValues);
-      if (success) {
-        messageApi.success('Login successful!');
-      } else {
-        setLoginError('Invalid email or password. Please try again.');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setLoginError('An error occurred during login.');
-    }
+    const authValues: LoginRequestDto = {
+      email: values.email,
+      password: values.password,
+    };
+    login(authValues)
+      .then((success) => {
+        if (success) {
+          messageApi.success('Login successful!');
+        } else {
+          setLoginError('Invalid email or password. Please try again.');
+        }
+      })
+      .catch((error) => {
+        console.error('Login error:', error);
+        setLoginError('An error occurred during login.');
+      });
   };
 
   const onLoginFail = (_errorInfo: {
@@ -96,7 +97,7 @@ const Login: React.FC = () => {
         initialValues={{ remember: true }}
         className={`w-2/3 lg:w-1/2 flex flex-col items-center`}
         form={form}
-        onFinish={void onFormSubmit}
+        onFinish={onFormSubmit}
         onFinishFailed={onLoginFail}
       >
         <div // for setting boundaries for visible children in transition, and resizing
@@ -136,7 +137,7 @@ const Login: React.FC = () => {
           shouldUpdate
         >
           {() => {
-            const isDisabled: boolean = !formIsValid(form) || loading;
+            const isDisabled = !formIsValid(form) || loading;
             return (
               <div className="flex justify-center">
                 <div className="flex flex-col gap-2">
