@@ -1,6 +1,7 @@
 // @ts-check
 import js from '@eslint/js';
 import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config([
@@ -22,7 +23,11 @@ export default tseslint.config([
   react.configs.flat.recommended,
   {
     files: ['**/*.{ts,tsx}'],
+    plugins: {
+      'react-hooks': reactHooks,
+    },
     rules: {
+      ...reactHooks.configs.recommended.rules,
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-boolean-value': ['warn', 'never', { always: ['value'] }],
