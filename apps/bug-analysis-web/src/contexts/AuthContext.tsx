@@ -2,14 +2,14 @@ import { useRouter } from 'next/router';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import authService, { LoginRequestDto, SignupRequestDto } from '../api/auth';
 
-export interface AuthContextType {
+export type AuthContextType = {
   isAuthenticated: boolean;
   login: (details: LoginRequestDto) => Promise<boolean>;
   signup: (details: SignupRequestDto) => Promise<boolean>;
   logout: () => void;
   refreshToken: () => Promise<boolean>;
   loading: boolean;
-}
+};
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined

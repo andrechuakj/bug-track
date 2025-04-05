@@ -5,15 +5,15 @@ import { useState } from 'react';
 import { useSession } from '../../contexts/SessionContext';
 import { BugSearchResult, BugSearchResultCategory } from '../../utils/bug';
 
-export interface SearchResultListItemProps {
+type Props = {
   searchResultCategory: BugSearchResultCategory;
   handleLoadMore?: (tenantId: number, categoryId: number) => void;
-}
+};
 
-const SearchResultListItem: React.FC<SearchResultListItemProps> = ({
+const SearchResultListItem: React.FC<Props> = ({
   searchResultCategory,
   handleLoadMore,
-}: SearchResultListItemProps) => {
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { currentTenant } = useSession();

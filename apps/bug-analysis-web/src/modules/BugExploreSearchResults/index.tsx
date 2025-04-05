@@ -6,21 +6,19 @@ import SearchResultListItem from '../../components/SearchResultListItem';
 import { BugSearchResultStruct } from '../../utils/bug';
 import { useAppContext } from '../../utils/context';
 
-interface BugExploreSearchResultsModuleProps {
+type Props = {
   bugReports: BugSearchResultStruct;
   bugSearchReports: BugSearchResultStruct;
   handleBugExploreLoadMore: (tenantId: number, categoryId: number) => void;
   activeKey: string;
   setActiveKey: Dispatch<SetStateAction<string>>;
   isFetchingSearchResult: boolean;
-}
+};
 
 export const BUG_EXPLORE_KEY = '1';
 export const SEARCH_RESULTS_KEY = '2';
 
-const BugExploreSearchResultsModule: React.FC<
-  BugExploreSearchResultsModuleProps
-> = (props: BugExploreSearchResultsModuleProps) => {
+const BugExploreSearchResultsModule: React.FC<Props> = (props) => {
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
   const {

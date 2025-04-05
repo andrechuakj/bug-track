@@ -1,22 +1,23 @@
 import { Modal } from 'antd';
 import React from 'react';
 
-export interface DynamicModalProps {
+type Props = {
   modalTitle: string;
   modalOkButtonText: string;
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   modalItems?: React.JSX.Element[];
   handleOk?: () => void;
-}
-const DynamicModal: React.FC<DynamicModalProps> = ({
+};
+
+const DynamicModal: React.FC<Props> = ({
   modalTitle,
   modalOkButtonText,
   isModalOpen,
   setIsModalOpen,
   modalItems = [],
   handleOk,
-}: DynamicModalProps) => {
+}) => {
   return (
     <>
       <Modal

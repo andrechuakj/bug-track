@@ -13,10 +13,10 @@ import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { BugTrackColors } from '../utils/theme';
 
-interface LoginFormValues {
+type LoginFormValues = {
   email: string;
   password: string;
-}
+};
 
 const Login: React.FC = () => {
   const router = useRouter();

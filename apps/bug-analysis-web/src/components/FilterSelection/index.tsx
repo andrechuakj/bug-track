@@ -2,20 +2,21 @@ import { Select } from 'antd';
 import React, { ReactNode } from 'react';
 import { FilterSettings } from '../../utils/types';
 
-export interface FilterSelectionProps {
+type Props = {
   filterPrefix: ReactNode;
   filterSetting: FilterSettings[keyof FilterSettings];
   filterOptions: FilterSettings[keyof FilterSettings][];
   filterOnChange: (val: FilterSettings[keyof FilterSettings]) => void;
   filterPlaceholder: string;
-}
-const FilterSelection: React.FC<FilterSelectionProps> = ({
+};
+
+const FilterSelection: React.FC<Props> = ({
   filterPrefix,
   filterSetting,
   filterOptions,
   filterOnChange,
   filterPlaceholder,
-}: FilterSelectionProps) => {
+}) => {
   return (
     <Select
       showSearch

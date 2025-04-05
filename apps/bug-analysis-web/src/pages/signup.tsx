@@ -5,12 +5,12 @@ import React, { useCallback, useState } from 'react';
 import { SignupRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 
-interface SignupFormValues {
+type SignupFormValues = {
   email: string;
   name: string;
   password: string;
   confirmPassword: string;
-}
+};
 
 const Signup: React.FC = () => {
   const router = useRouter();

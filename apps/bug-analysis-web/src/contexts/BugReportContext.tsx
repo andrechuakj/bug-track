@@ -7,24 +7,22 @@ import React, {
 } from 'react';
 import { BugReport, fetchBugById } from '../api/bug_report';
 
-interface BugReportContextType {
+type BugReportContextType = {
   bugReport: BugReport | null;
   setBugReport: (bugReport: BugReport) => void;
   fetchBugReport: (bug_id: number) => Promise<void>;
   isBugLoading: boolean;
-}
+};
 
 const BugReportContext = createContext<BugReportContextType | undefined>(
   undefined
 );
 
-interface BugReportProviderProps {
+type Props = {
   children: ReactNode;
-}
+};
 
-export const BugReportProvider: React.FC<BugReportProviderProps> = ({
-  children,
-}: BugReportProviderProps) => {
+export const BugReportProvider: React.FC<Props> = ({ children }) => {
   const [bugReport, setBugReport] = useState<BugReport | null>(null);
   const [isBugLoading, setIsBugLoading] = useState(false);
 
