@@ -1,31 +1,38 @@
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import { AuthProvider } from '../contexts/AuthContext';
 import { AppTheme } from './types';
 
-const AppContext = createContext({
-  theme: '',
-  updateTheme: (_: AppTheme) => {},
-});
+type AppContextType = {
+  theme: AppTheme;
+  updateTheme: (newTheme: AppTheme) => void;
+};
 
-export const useAppContext = () => useContext(AppContext);
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<PropsWithChildren> = ({
-  children,
-}: PropsWithChildren) => {
+export const useAppContext = (): AppContextType => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+  return context;
+};
+
+export const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [theme, setTheme] = useState<AppTheme>('dark');
 
-  const updateTheme = (newTheme: AppTheme) => {
+  const updateTheme = useCallback((newTheme: AppTheme) => {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-  };
-
-  const contextValue = {
-    theme,
-    updateTheme,
-  };
+  }, []);
 
   return (
-    <AppContext.Provider value={contextValue}>
+    <AppContext.Provider value={{ theme, updateTheme }}>
       <AuthProvider>{children}</AuthProvider>
     </AppContext.Provider>
   );
