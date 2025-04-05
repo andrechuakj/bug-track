@@ -24,7 +24,6 @@ const Comment: React.FC<CommentProps> = ({ name, content, timestamp, idx }) => {
         style={{
           marginBottom: '8px',
           borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         }}
       >
         <div className="flex items-center">
@@ -34,6 +33,7 @@ const Comment: React.FC<CommentProps> = ({ name, content, timestamp, idx }) => {
                 BugTrackColorsArr[idx % BugTrackColorsArr.length],
               marginRight: '12px',
               flexShrink: 0,
+              marginBottom: '15px',
             }}
           >
             {getInitials(name)}
