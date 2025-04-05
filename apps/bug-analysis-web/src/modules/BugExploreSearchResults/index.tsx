@@ -3,8 +3,8 @@ import { List, Tabs } from 'antd';
 import clsx from 'clsx';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import SearchResultListItem from '../../components/SearchResultListItem';
+import { useAppContext } from '../../contexts/AppContext';
 import { BugSearchResultStruct } from '../../utils/bug';
-import { useAppContext } from '../../utils/context';
 
 type Props = {
   bugReports: BugSearchResultStruct;

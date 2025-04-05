@@ -5,8 +5,8 @@ import {
   useContext,
   useState,
 } from 'react';
-import { AuthProvider } from '../contexts/AuthContext';
-import { AppTheme } from './types';
+import { AppTheme } from '../utils/types';
+import { AuthProvider } from './AuthContext';
 
 type AppContextType = {
   theme: AppTheme;

@@ -2,8 +2,8 @@ import type { AppProps } from 'next/app';
 
 import Head from 'next/head';
 import AppLayout from '../components/AppLayout';
+import { AppProvider } from '../contexts/AppContext';
 import SessionProvider from '../contexts/SessionContext';
-import { AppProvider } from '../utils/context';
 import './globals.css';
 
 const App = ({ Component, pageProps }: AppProps) => {

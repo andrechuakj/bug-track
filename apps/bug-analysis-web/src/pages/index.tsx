@@ -36,6 +36,7 @@ import {
 import CategoryTag from '../components/CategoryTag';
 import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
+import { useAppContext } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useSession } from '../contexts/SessionContext';
 import BugExploreSearchResultsModule, {
@@ -55,7 +56,6 @@ import {
   setBugSearchResults,
 } from '../utils/bug';
 import { generateBugDistrBar } from '../utils/chart';
-import { useAppContext } from '../utils/context';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
 import {
   AppTheme,

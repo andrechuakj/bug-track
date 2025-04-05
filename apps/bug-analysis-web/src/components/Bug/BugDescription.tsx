@@ -2,8 +2,8 @@ import { Divider, Skeleton, Typography } from 'antd';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { BugReport } from '../../api/bugReport';
+import { useAppContext } from '../../contexts/AppContext';
 import { useBugReport } from '../../contexts/BugReportContext';
-import { useAppContext } from '../../utils/context';
 import { formatDate } from '../../utils/dateUtils';
 
 const getDateDescription = (bugReport: BugReport | null): string => {
