@@ -6,7 +6,7 @@ export type AuthContextType = {
   isAuthenticated: boolean;
   login: (details: LoginRequestDto) => Promise<boolean>;
   signup: (details: SignupRequestDto) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshToken: () => Promise<boolean>;
   loading: boolean;
 };
@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const success = await authService.login(details);
       if (success) {
         setIsAuthenticated(true);
-        router.push('/');
+        await router.push('/');
       }
       return success;
     } catch (error) {
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const success = await authService.signup(details);
       if (success) {
         setIsAuthenticated(true);
-        router.push('/');
+        await router.push('/');
       }
       return success;
     } catch (error) {
@@ -87,9 +87,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setIsAuthenticated(false);
-    router.push('/login');
+    await router.push('/login');
   };
 
   return (
