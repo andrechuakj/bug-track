@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config([
   { ignores: ['eslint.config.mjs'] },
   js.configs.recommended,
-  tseslint.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       parserOptions: {
@@ -25,10 +25,9 @@ export default tseslint.config([
     rules: {
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-      'import/no-commonjs': 'off',
+      'react/jsx-boolean-value': ['warn', 'never', { always: ['value'] }],
+      'react/self-closing-comp': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_' },
