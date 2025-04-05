@@ -106,7 +106,7 @@ describe('categoriseBugs', () => {
       ],
     };
 
-    const result = categoriseBugs(mockBugReports);
+    const result = categoriseBugs(mockBugReports.bug_reports);
 
     expect(result).toEqual(expectedCategorisedBugs);
   });

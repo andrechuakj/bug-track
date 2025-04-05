@@ -14,10 +14,13 @@ export enum FilterBugCategory {
   NONE_SELECTED = 'None Selected',
 }
 
-export const categoryToIdMap: { [cat in FilterBugCategory]?: number } =
+const categoryToIdMap: { [cat in FilterBugCategory]?: number } =
   Object.fromEntries(
     Object.values(FilterBugCategory).map((value, index) => [value, index])
   );
+
+export const BUG_CATEGORY_FILTERS: ReadonlyArray<FilterBugCategory> =
+  Object.values(FilterBugCategory);
 
 export enum FilterBugPriority {
   LOW = 'Low',
@@ -27,8 +30,16 @@ export enum FilterBugPriority {
   NONE_SELECTED = 'None Selected',
 }
 
+export const BUG_PRIORITY_FILTERS: ReadonlyArray<FilterBugPriority> =
+  Object.values(FilterBugPriority);
+
 // Dashboard filter settings
 export type FilterSettings = {
   category: FilterBugCategory;
   priority: FilterBugPriority;
 };
+
+export const getCategoryId = ({ category }: FilterSettings) =>
+  category !== FilterBugCategory.NONE_SELECTED
+    ? categoryToIdMap[category]
+    : undefined;

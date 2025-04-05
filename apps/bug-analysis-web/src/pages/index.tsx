@@ -31,6 +31,7 @@ import {
 import {
   AiSummary,
   BugCategory,
+  BugReport,
   BugReports,
   DbmsResponseDto,
   fetchAiSummary,
@@ -64,10 +65,10 @@ import {
 import { generateBugDistrBar } from '../utils/chart';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
 import {
-  categoryToIdMap,
   FilterBugCategory,
   FilterBugPriority,
   FilterSettings,
+  getCategoryId,
 } from '../utils/types';
 
 // Dynamically import ECharts for client-side rendering only
@@ -105,9 +106,7 @@ const HomePage: React.FC = (): ReactNode => {
     useState(BUG_EXPLORE_KEY);
   const [isFetchingSearchResult, setIsFetchingSearchResult] = useState(false);
 
-  const [acBugReports, setAcBugReports] = useState<BugReports>({
-    bug_reports: [],
-  });
+  const [acBugReports, setAcBugReports] = useState<BugReport[]>([]);
 
   const [bugSearchReports, setBugSearchReports] =
     useState<BugSearchResultStruct>({});
@@ -178,20 +177,17 @@ const HomePage: React.FC = (): ReactNode => {
   const handleSearch = useCallback(
     async (searchStr: string) => {
       if (!currentTenant) return;
-      const category =
-        filterSettings.category !== FilterBugCategory.NONE_SELECTED
-          ? categoryToIdMap[filterSettings.category]
-          : undefined;
+      const categoryId = getCategoryId(filterSettings);
 
       const bugReports: BugReports = await searchBugReports(
         currentTenant.id,
         searchStr,
         0,
         100,
-        category
+        categoryId
       );
       if (bugReports) {
-        setAcBugReports(bugReports);
+        setAcBugReports(bugReports.bug_reports);
         setLastSearchedStr(searchStr);
       }
       return bugReports;
@@ -211,7 +207,7 @@ const HomePage: React.FC = (): ReactNode => {
   );
 
   const handlePopulateSearchResults = async () => {
-    let bugReportsResult: BugReports = acBugReports;
+    let bugReportsResult = acBugReports;
     const searchValue = searchFieldRef.current?.input?.value;
 
     if (searchValue && searchValue != lastSearchedStr) {
@@ -221,13 +217,13 @@ const HomePage: React.FC = (): ReactNode => {
       // want to use the immediate result
       const res = await handleSearch(searchValue);
       if (res) {
-        bugReportsResult = res;
+        bugReportsResult = res.bug_reports;
       }
       setIsFetchingSearchResult(false);
     }
     setBugSearchResults(setBugSearchReports, bugReportsResult);
     setExploreSearchActiveKey(SEARCH_RESULTS_KEY);
-    setAcBugReports({ bug_reports: [] }); // close the autocomplete drop-down
+    setAcBugReports([]); // close the autocomplete drop-down
   };
 
   // Filter
@@ -277,12 +273,12 @@ const HomePage: React.FC = (): ReactNode => {
   );
 
   const handleApplyFilter = useCallback(async () => {
-    let bugReportsResult: BugReports = acBugReports;
+    let bugReportsResult = acBugReports;
 
     setIsFetchingSearchResult(true);
     const res = await handleSearch(lastSearchedStr);
     if (res) {
-      bugReportsResult = res;
+      bugReportsResult = res.bug_reports;
     }
     setIsFetchingSearchResult(false);
     setBugSearchResults(setBugSearchReports, bugReportsResult);

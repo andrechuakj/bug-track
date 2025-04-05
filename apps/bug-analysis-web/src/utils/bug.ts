@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { BugReports } from '../api/dbms';
+import { BugReport, BugReports } from '../api/dbms';
 import { FilterBugCategory } from './types';
 
 // TODO: shift options logic to the BE. We are no planning to change the categories soon, and thus prioritise working code.
@@ -39,11 +39,9 @@ export type BugSearchResultStruct = {
 };
 
 export const categoriseBugs = (
-  bugReports: BugReports
+  reports: BugReport[]
 ): AcBugSearchResultStruct => {
   const categoryMap: { [cat in FilterBugCategory]?: number } = {};
-
-  const { bug_reports: reports } = bugReports;
   const searchResult: AcBugSearchResultStruct = {
     categories: [],
   };
@@ -173,11 +171,8 @@ export const setBugExplore = (
 
 export const setBugSearchResults = (
   setBugSearchReports: Dispatch<SetStateAction<BugSearchResultStruct>>,
-  bugReportsDelta: BugReports
+  bugReports: BugReport[]
 ): void => {
-  // Bulk update
-  const { bug_reports: bugReports } = bugReportsDelta;
-
   const bugSearchResult: BugSearchResultStruct = {};
 
   for (const {
@@ -193,7 +188,7 @@ export const setBugSearchResults = (
       continue;
     }
 
-    const category: FilterBugCategory = BUG_CATEGORIES[categoryId];
+    const category = BUG_CATEGORIES[categoryId];
     if (!bugSearchResult[category]) {
       bugSearchResult[category] = { categoryId, title: category, bugs: [] };
     }
