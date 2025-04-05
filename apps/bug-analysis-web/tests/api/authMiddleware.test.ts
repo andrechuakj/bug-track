@@ -115,7 +115,7 @@ describe('authMiddleware', () => {
       // Second request will return 200
       const response = new Response(null, { status: 401 });
       const result2 = await authMiddleware.onResponse({
-        request,
+        request: result ?? request,
         response,
       } as any);
       expect(result2.status).toBe(200);
@@ -132,7 +132,7 @@ describe('authMiddleware', () => {
 
       const response = new Response(null, { status: 401 });
       const result2 = await authMiddleware.onResponse({
-        request,
+        request: result ?? request,
         response,
       } as any);
       expect(result2.status).toBe(401);
@@ -153,7 +153,7 @@ describe('authMiddleware', () => {
 
       const response = new Response(null, { status: 401 });
       const result2 = await authMiddleware.onResponse({
-        request,
+        request: result ?? request,
         response,
       } as any);
       expect(result2.status).toBe(401);

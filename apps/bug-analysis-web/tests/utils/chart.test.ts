@@ -9,7 +9,7 @@ const isNotArray = <T>(
   value: T | T[] | undefined | null
 ): T | undefined | null => {
   if (value == undefined) return value;
-  expect(Array.isArray(value)).toBe(false);
+  // We can't check that it is not an array, since T can be an array
   return value as T;
 };
 
@@ -17,7 +17,7 @@ const isArray = <T>(
   value: T | T[] | undefined | null
 ): T[] | undefined | null => {
   if (value == undefined) return value as T[] | undefined | null;
-  expect(Array.isArray(value)).toBe(false);
+  expect(Array.isArray(value)).toBe(true);
   return value as T[];
 };
 
