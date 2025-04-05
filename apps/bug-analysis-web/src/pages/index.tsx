@@ -20,11 +20,17 @@ import {
 import { debounce } from 'lodash';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   AiSummary,
   BugCategory,
-  BugExploreReports,
   BugReports,
   DbmsResponseDto,
   fetchAiSummary,
@@ -66,6 +72,19 @@ import {
 
 // Dynamically import ECharts for client-side rendering only
 const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
+
+const Title: React.FC<Readonly<{ title?: string }>> = ({ title }) => (
+  <Flex align="center" justify="space-between">
+    {title}
+    <a
+      href="https://www.google.com/search?q=antd"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      more
+    </a>
+  </Flex>
+);
 
 const HomePage: React.FC = (): ReactNode => {
   const { isAuthenticated, loading } = useAuth();
@@ -232,34 +251,42 @@ const HomePage: React.FC = (): ReactNode => {
     FilterBugPriority
   ) as FilterBugPriority[];
 
-  const filterModalItems: React.JSX.Element[] = [
-    <FilterSelection
-      key="filter-sel-1"
-      filterPrefix={<p className="font-light">Category:</p>}
-      filterSetting={filterSettings.category}
-      filterOptions={bugCategoryFilterOptions}
-      filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
-        setFilterSettings((settings) => ({
-          ...settings,
-          category: val as FilterBugCategory,
-        }));
-      }}
-      filterPlaceholder="Select Bug Category"
-    />,
-    <FilterSelection
-      key="filter-sel-1"
-      filterPrefix={<p className="font-light">Priority:</p>}
-      filterSetting={filterSettings.priority}
-      filterOptions={bugPriorityFilterOptions}
-      filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
-        setFilterSettings((settings) => ({
-          ...settings,
-          priority: val as FilterBugPriority,
-        }));
-      }}
-      filterPlaceholder="Select Bug Priority"
-    />,
-  ];
+  const filterModalItems: React.JSX.Element[] = useMemo(
+    () => [
+      <FilterSelection
+        key="filter-sel-1"
+        filterPrefix={<p className="font-light">Category:</p>}
+        filterSetting={filterSettings.category}
+        filterOptions={bugCategoryFilterOptions}
+        filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
+          setFilterSettings((settings) => ({
+            ...settings,
+            category: val as FilterBugCategory,
+          }));
+        }}
+        filterPlaceholder="Select Bug Category"
+      />,
+      <FilterSelection
+        key="filter-sel-1"
+        filterPrefix={<p className="font-light">Priority:</p>}
+        filterSetting={filterSettings.priority}
+        filterOptions={bugPriorityFilterOptions}
+        filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
+          setFilterSettings((settings) => ({
+            ...settings,
+            priority: val as FilterBugPriority,
+          }));
+        }}
+        filterPlaceholder="Select Bug Priority"
+      />,
+    ],
+    [
+      bugCategoryFilterOptions,
+      bugPriorityFilterOptions,
+      filterSettings.category,
+      filterSettings.priority,
+    ]
+  );
 
   const handleApplyFilter = useCallback(async () => {
     let bugReportsResult: BugReports = acBugReports;
@@ -275,242 +302,76 @@ const HomePage: React.FC = (): ReactNode => {
     setIsFilterModalOpen(false);
   }, [acBugReports, handleSearch, lastSearchedStr]);
 
-  const handleBugExploreLoadMore = async (
-    tenantId: number,
-    categoryId: number
-  ): Promise<void> => {
-    if (tenantId === undefined) return;
+  const handleBugExploreLoadMore = useCallback(
+    async (tenantId: number, categoryId: number) => {
+      const bugExploreReports = await loadMoreBugsByCategory(
+        tenantId,
+        categoryId,
+        bugExploreDistribution,
+        5
+      );
+      const { bug_reports_delta, new_bug_distr } = bugExploreReports;
+      setBugExploreDistribution(new_bug_distr);
+      // Utilise setBugExplore function again
 
-    const bugExploreReports: BugExploreReports = await loadMoreBugsByCategory(
-      tenantId,
-      categoryId,
-      bugExploreDistribution,
-      5
-    );
-    const { bug_reports_delta, new_bug_distr } = bugExploreReports;
-    setBugExploreDistribution(new_bug_distr);
-    // Utilise setBugExplore function again
-
-    setBugExplore(
-      bugExploreDistribution,
-      setBugExploreDistribution,
-      setBugReports,
-      { bug_reports: bug_reports_delta },
-      BUG_CATEGORIES[categoryId],
-      categoryId
-    );
-  };
+      setBugExplore(
+        bugExploreDistribution,
+        setBugExploreDistribution,
+        setBugReports,
+        { bug_reports: bug_reports_delta },
+        BUG_CATEGORIES[categoryId],
+        categoryId
+      );
+    },
+    [bugExploreDistribution]
+  );
 
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
 
   // Mock BugTallyInstance data
 
-  const Title: React.FC<Readonly<{ title?: string }>> = (props: {
-    title?: string;
-  }) => (
-    <Flex align="center" justify="space-between">
-      {props.title}
-      <a
-        href="https://www.google.com/search?q=antd"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        more
-      </a>
-    </Flex>
+  const renderItem = useCallback(
+    (title: string, bugReportId: number, _count: number) => ({
+      value: title,
+      label: (
+        <Flex
+          align="center"
+          justify="space-between"
+          onClick={() => void router.push(`/bug/${bugReportId}`)}
+        >
+          {title}
+        </Flex>
+      ),
+    }),
+    [router]
   );
 
-  const renderItem = (title: string, bugReportId: number, _count: number) => ({
-    value: title,
-    label: (
-      <Flex
-        align="center"
-        justify="space-between"
-        onClick={() => void router.push(`/bug/${bugReportId}`)}
-      >
-        {title}
-      </Flex>
-    ),
-  });
-
   // Parse bugReports into options
-  const generateOptions = (result: AcBugSearchResultStruct) => {
-    return result.categories.map((cat: AcBugSearchResultCategory) => ({
-      label: <Title title={cat.title} />,
-      options:
-        cat.options?.map((opt: AcBugSearchResult) =>
-          renderItem(opt.display, opt.bugReportId, 1000)
-        ) ?? [],
-    }));
-  };
-  const searchResultStruct: AcBugSearchResultStruct =
-    categoriseBugs(acBugReports);
-  const options = generateOptions(searchResultStruct);
+  const generateOptions = useCallback(
+    (result: AcBugSearchResultStruct) => {
+      return result.categories.map((cat: AcBugSearchResultCategory) => ({
+        label: <Title title={cat.title} />,
+        options:
+          cat.options?.map((opt: AcBugSearchResult) =>
+            renderItem(opt.display, opt.bugReportId, 1000)
+          ) ?? [],
+      }));
+    },
+    [renderItem]
+  );
 
-  return (
-    <>
-      {!dbmsData && <Skeleton active round />}
-      {dbmsData && (
-        <div className="px-4">
-          <Form form={redemptionForm} onFinish={() => {}}>
-            <div className="flex flex-row flex-wrap">
-              <div className="w-3/4">
-                <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
-                  <AutoComplete
-                    options={options}
-                    onSearch={void handleSearchDebounce}
-                    size="large"
-                    filterOption={
-                      ((inputValue, option) =>
-                        String(option?.value)
-                          .toUpperCase()
-                          .indexOf(inputValue.toUpperCase()) !==
-                        -1) as SelectProps['filterOption']
-                    }
-                  >
-                    <Input.Search
-                      ref={searchFieldRef}
-                      size="large"
-                      placeholder="Search for bug"
-                      onSearch={void handlePopulateSearchResults}
-                    />
-                  </AutoComplete>
-                </Form.Item>
-              </div>
-              <div className="w-1/8 pl-2">
-                <Button
-                  icon={<FilterOutlined />}
-                  className="h-[40px] !w-[40px]"
-                  onClick={() => setIsFilterModalOpen(true)}
-                />
-              </div>
-              <div className="w-1/8 pl-2">
-                <Button
-                  icon={<SortAscendingOutlined />}
-                  className="h-[40px] !w-[40px]"
-                />
-              </div>
-            </div>
-          </Form>
-          <Card className="mb-4 h-[52.5vh]">
-            <BugExploreSearchResultsModule
-              bugReports={bugReports}
-              bugSearchReports={bugSearchReports}
-              handleBugExploreLoadMore={void handleBugExploreLoadMore}
-              activeKey={exploreSearchActiveKey}
-              setActiveKey={setExploreSearchActiveKey}
-              isFetchingSearchResult={
-                isFetchingSearchResult || isDashboardLoading
-              }
-            />
-          </Card>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} md={14}>
-              <Row>
-                <Card className="w-full h-[35vh] overflow-y-scroll">
-                  <BugTrendModule
-                    bugTrend={bugTrend}
-                    bugCount={dbmsData.bug_count}
-                  />
-                </Card>
-              </Row>
-            </Col>
+  const searchResultStruct: AcBugSearchResultStruct = useMemo(
+    () => categoriseBugs(acBugReports),
+    [acBugReports]
+  );
+  const options = useMemo(
+    () => generateOptions(searchResultStruct),
+    [generateOptions, searchResultStruct]
+  );
 
-            <Col xs={24} md={10}>
-              <Card className="h-[35vh] overflow-y-scroll">
-                <DbmsDetails />
-              </Card>
-            </Col>
-          </Row>
-          <Row className="mt-4" gutter={[16, 16]}>
-            <Col xs={24} md={10}>
-              <Card className="h-full">
-                <div className="h-[5vh] flex justify-between flex-wrap overflow-y-scroll">
-                  <img
-                    src={
-                      isDarkMode
-                        ? 'ai_summary_white.png'
-                        : 'ai_summary_black.png'
-                    }
-                    className="h-[5vh]"
-                  />
-                  <Button
-                    icon={
-                      <ThunderboltTwoTone
-                        twoToneColor={BugTrackColors.ORANGE}
-                      />
-                    }
-                    style={{
-                      background: `linear-gradient(135deg, ${BugTrackColors.MAGENTA}, ${BugTrackColors.ORANGE})`,
-                      border: `1px solid ${isDarkMode ? 'white' : 'black'}`,
-                    }}
-                    loading={aiButtonLoading}
-                    disabled={aiButtonLoading}
-                    onClick={void handleLoadAiSummary}
-                  >
-                    AI Summary
-                  </Button>
-                </div>
-                <Card
-                  className="m-1 p-3 h-[26vh] overflow-y-scroll"
-                  styles={{
-                    body: {
-                      padding: 0,
-                    },
-                  }}
-                >
-                  <Typography.Title
-                    level={5}
-                    className="!font-light text-justify !leading-[1.75]"
-                  >
-                    {!aiSummary && (
-                      <div className="mr-4">
-                        <Skeleton active />
-                      </div>
-                    )}
-                    {aiSummary && (
-                      <p className="fade-in-text ">{aiSummary?.summary}</p>
-                    )}
-                  </Typography.Title>
-                </Card>
-              </Card>
-            </Col>
-            <Col xs={24} md={14}>
-              <Card className="h-[40vh] w-[100%]">
-                <div className="h-[5vh]">
-                  <Typography.Title level={4}>
-                    Bug Distribution (by category)
-                  </Typography.Title>
-                </div>
-
-                <EChartsReact
-                  option={
-                    generateBugDistrBar(
-                      dbmsData.bug_categories,
-                      theme ?? 'dark'
-                    ) as unknown
-                  }
-                  style={{ height: '20vh' }}
-                />
-                <div className="overflow-y-scroll p-1 flex flex-wrap">
-                  {dbmsData?.bug_categories?.map(
-                    (cat: BugCategory, idx: number) =>
-                      cat.count > 0 && (
-                        <CategoryTag
-                          key={idx}
-                          color={antdTagPresets[idx % antdTagPresets.length]}
-                          text={`${cat.name} | ${cat.count}`}
-                          className="mt-2"
-                        />
-                      )
-                  )}
-                </div>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      )}
+  const modal = useMemo(
+    () => (
       <DynamicModal
         modalTitle="Filter settings"
         modalOkButtonText="Apply filters"
@@ -519,7 +380,170 @@ const HomePage: React.FC = (): ReactNode => {
         modalItems={filterModalItems}
         handleOk={void handleApplyFilter}
       />
-    </>
+    ),
+    [filterModalItems, handleApplyFilter, isFilterModalOpen]
+  );
+
+  if (!dbmsData) {
+    return <Skeleton active round />;
+  }
+
+  return (
+    <div className="px-4">
+      <Form form={redemptionForm} onFinish={() => {}}>
+        <div className="flex flex-row flex-wrap">
+          <div className="w-3/4">
+            <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
+              <AutoComplete
+                options={options}
+                onSearch={void handleSearchDebounce}
+                size="large"
+                filterOption={
+                  ((inputValue, option) =>
+                    String(option?.value)
+                      .toUpperCase()
+                      .indexOf(inputValue.toUpperCase()) !==
+                    -1) as SelectProps['filterOption']
+                }
+              >
+                <Input.Search
+                  ref={searchFieldRef}
+                  size="large"
+                  placeholder="Search for bug"
+                  onSearch={void handlePopulateSearchResults}
+                />
+              </AutoComplete>
+            </Form.Item>
+          </div>
+          <div className="w-1/8 pl-2">
+            <Button
+              icon={<FilterOutlined />}
+              className="h-[40px] !w-[40px]"
+              onClick={() => setIsFilterModalOpen(true)}
+            />
+          </div>
+          <div className="w-1/8 pl-2">
+            <Button
+              icon={<SortAscendingOutlined />}
+              className="h-[40px] !w-[40px]"
+            />
+          </div>
+        </div>
+      </Form>
+      <Card className="mb-4 h-[52.5vh]">
+        <BugExploreSearchResultsModule
+          bugReports={bugReports}
+          bugSearchReports={bugSearchReports}
+          handleBugExploreLoadMore={(tenantId, categoryId) => {
+            handleBugExploreLoadMore(tenantId, categoryId);
+          }}
+          activeKey={exploreSearchActiveKey}
+          setActiveKey={setExploreSearchActiveKey}
+          isFetchingSearchResult={isFetchingSearchResult || isDashboardLoading}
+        />
+      </Card>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} md={14}>
+          <Row>
+            <Card className="w-full h-[35vh] overflow-y-scroll">
+              <BugTrendModule
+                bugTrend={bugTrend}
+                bugCount={dbmsData.bug_count}
+              />
+            </Card>
+          </Row>
+        </Col>
+
+        <Col xs={24} md={10}>
+          <Card className="h-[35vh] overflow-y-scroll">
+            <DbmsDetails />
+          </Card>
+        </Col>
+      </Row>
+      <Row className="mt-4" gutter={[16, 16]}>
+        <Col xs={24} md={10}>
+          <Card className="h-full">
+            <div className="h-[5vh] flex justify-between flex-wrap overflow-y-scroll">
+              <img
+                src={
+                  isDarkMode ? 'ai_summary_white.png' : 'ai_summary_black.png'
+                }
+                className="h-[5vh]"
+              />
+              <Button
+                icon={
+                  <ThunderboltTwoTone twoToneColor={BugTrackColors.ORANGE} />
+                }
+                style={{
+                  background: `linear-gradient(135deg, ${BugTrackColors.MAGENTA}, ${BugTrackColors.ORANGE})`,
+                  border: `1px solid ${isDarkMode ? 'white' : 'black'}`,
+                }}
+                loading={aiButtonLoading}
+                disabled={aiButtonLoading}
+                onClick={void handleLoadAiSummary}
+              >
+                AI Summary
+              </Button>
+            </div>
+            <Card
+              className="m-1 p-3 h-[26vh] overflow-y-scroll"
+              styles={{
+                body: {
+                  padding: 0,
+                },
+              }}
+            >
+              <Typography.Title
+                level={5}
+                className="!font-light text-justify !leading-[1.75]"
+              >
+                {!aiSummary && (
+                  <div className="mr-4">
+                    <Skeleton active />
+                  </div>
+                )}
+                {aiSummary && (
+                  <p className="fade-in-text ">{aiSummary?.summary}</p>
+                )}
+              </Typography.Title>
+            </Card>
+          </Card>
+        </Col>
+        <Col xs={24} md={14}>
+          <Card className="h-[40vh] w-[100%]">
+            <div className="h-[5vh]">
+              <Typography.Title level={4}>
+                Bug Distribution (by category)
+              </Typography.Title>
+            </div>
+
+            <EChartsReact
+              option={
+                generateBugDistrBar(
+                  dbmsData.bug_categories,
+                  theme ?? 'dark'
+                ) as unknown
+              }
+              style={{ height: '20vh' }}
+            />
+            <div className="overflow-y-scroll p-1 flex flex-wrap">
+              {dbmsData?.bug_categories?.map(
+                (cat: BugCategory, idx: number) =>
+                  cat.count > 0 && (
+                    <CategoryTag
+                      key={idx}
+                      color={antdTagPresets[idx % antdTagPresets.length]}
+                      text={`${cat.name} | ${cat.count}`}
+                      className="mt-2"
+                    />
+                  )
+              )}
+            </div>
+          </Card>
+        </Col>
+      </Row>
+      {modal}
+    </div>
   );
 };
 
