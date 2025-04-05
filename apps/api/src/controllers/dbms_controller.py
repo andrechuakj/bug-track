@@ -6,6 +6,7 @@ from domain.config import get_db
 from domain.views.dbms import (
     AiSummaryResponseDto,
     BugCategoryResponseDto,
+    BugReportResponseDto,
     BugSearchCategoryResponseDto,
     BugSearchResponseDto,
     DbmsListResponseDto,
@@ -108,7 +109,16 @@ async def get_bugs(
         [category_id] if category_id is not None else [],
     )
 
-    return BugSearchResponseDto(bug_reports=reports)
+    return BugSearchResponseDto(
+        bug_reports=[
+            BugReportResponseDto(
+                **report.model_dump(),
+                category=report.category.name,
+                dbms=report.dbms.name,
+            )
+            for report in reports
+        ]
+    )
 
 
 @router.get("/{dbms_id}/bug_search_category")
@@ -150,7 +160,15 @@ async def get_bugs_by_category(
         delta_count = len(delta)
         distr[category_id] += delta_count
         return BugSearchCategoryResponseDto(
-            bug_reports_delta=delta, new_bug_distr=distr
+            bug_reports_delta=[
+                BugReportResponseDto(
+                    **report.model_dump(),
+                    category=report.category.name,
+                    dbms=report.dbms.name,
+                )
+                for report in delta
+            ],
+            new_bug_distr=distr,
         )
 
     except Exception as e:
