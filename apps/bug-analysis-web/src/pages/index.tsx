@@ -91,9 +91,7 @@ const HomePage: React.FC = (): ReactNode => {
   const { currentTenant } = useSession();
   const router = useRouter();
   const [dbmsData, setDbmsData] = useState<DbmsResponseDto>();
-  const [aiSummary, setAiSummary] = useState<AiSummary>();
   const [bugTrend, setBugTrend] = useState<number[]>([]);
-  const [aiButtonLoading, setAiButtonLoading] = useState(false);
   const [isDashboardLoading, setIsDashboardLoading] = useState(false);
   const [lastSearchedStr, setLastSearchedStr] = useState('');
   // Filter states
@@ -155,15 +153,6 @@ const HomePage: React.FC = (): ReactNode => {
   }, [bugExploreDistribution, currentTenant]);
 
   // AI logic
-  const handleLoadAiSummary = useCallback(async () => {
-    if (!currentTenant) return;
-    setAiSummary(undefined);
-    setAiButtonLoading(true);
-    await fetchAiSummary(currentTenant.id).then((res: AiSummary) =>
-      setAiSummary(res)
-    );
-    setAiButtonLoading(false);
-  }, [currentTenant]);
 
   const fetchDashboardData = useCallback(async () => {
     if (!currentTenant) return;
@@ -171,9 +160,8 @@ const HomePage: React.FC = (): ReactNode => {
       fetchBugExplore(),
       fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res)),
       fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res)),
-      handleLoadAiSummary(),
     ]);
-  }, [currentTenant, fetchBugExplore, handleLoadAiSummary]);
+  }, [currentTenant, fetchBugExplore]);
 
   useEffect(() => {
     setIsDashboardLoading(true);
@@ -326,9 +314,6 @@ const HomePage: React.FC = (): ReactNode => {
     [bugExploreDistribution]
   );
 
-  const { theme } = useAppContext();
-  const isDarkMode = theme === 'dark';
-
   // Mock BugTallyInstance data
 
   const renderItem = useCallback(
@@ -384,7 +369,7 @@ const HomePage: React.FC = (): ReactNode => {
     [filterModalItems, handleApplyFilter, isFilterModalOpen]
   );
 
-  if (!dbmsData) {
+  if (!dbmsData || !currentTenant) {
     return <Skeleton active round />;
   }
 
@@ -460,90 +445,113 @@ const HomePage: React.FC = (): ReactNode => {
           </Card>
         </Col>
       </Row>
+
       <Row className="mt-4" gutter={[16, 16]}>
         <Col xs={24} md={10}>
-          <Card className="h-full">
-            <div className="h-[5vh] flex justify-between flex-wrap overflow-y-scroll">
-              <img
-                src={
-                  isDarkMode ? 'ai_summary_white.png' : 'ai_summary_black.png'
-                }
-                className="h-[5vh]"
-              />
-              <Button
-                icon={
-                  <ThunderboltTwoTone twoToneColor={BugTrackColors.ORANGE} />
-                }
-                style={{
-                  background: `linear-gradient(135deg, ${BugTrackColors.MAGENTA}, ${BugTrackColors.ORANGE})`,
-                  border: `1px solid ${isDarkMode ? 'white' : 'black'}`,
-                }}
-                loading={aiButtonLoading}
-                disabled={aiButtonLoading}
-                onClick={void handleLoadAiSummary}
-              >
-                AI Summary
-              </Button>
-            </div>
-            <Card
-              className="m-1 p-3 h-[26vh] overflow-y-scroll"
-              styles={{
-                body: {
-                  padding: 0,
-                },
-              }}
-            >
-              <Typography.Title
-                level={5}
-                className="!font-light text-justify !leading-[1.75]"
-              >
-                {!aiSummary && (
-                  <div className="mr-4">
-                    <Skeleton active />
-                  </div>
-                )}
-                {aiSummary && (
-                  <p className="fade-in-text ">{aiSummary?.summary}</p>
-                )}
-              </Typography.Title>
-            </Card>
-          </Card>
+          <DbmsAiSummary dbmsId={currentTenant?.id} />
         </Col>
         <Col xs={24} md={14}>
-          <Card className="h-[40vh] w-[100%]">
-            <div className="h-[5vh]">
-              <Typography.Title level={4}>
-                Bug Distribution (by category)
-              </Typography.Title>
-            </div>
-
-            <EChartsReact
-              option={
-                generateBugDistrBar(
-                  dbmsData.bug_categories,
-                  theme ?? 'dark'
-                ) as unknown
-              }
-              style={{ height: '20vh' }}
-            />
-            <div className="overflow-y-scroll p-1 flex flex-wrap">
-              {dbmsData?.bug_categories?.map(
-                (cat: BugCategory, idx: number) =>
-                  cat.count > 0 && (
-                    <CategoryTag
-                      key={idx}
-                      color={antdTagPresets[idx % antdTagPresets.length]}
-                      text={`${cat.name} | ${cat.count}`}
-                      className="mt-2"
-                    />
-                  )
-              )}
-            </div>
-          </Card>
+          <BugDistrubutionChart categories={dbmsData.bug_categories} />
         </Col>
       </Row>
       {modal}
     </div>
+  );
+};
+
+const DbmsAiSummary: React.FC<{ dbmsId: number }> = ({ dbmsId }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [summary, setSummary] = useState<string>();
+  const { theme } = useAppContext();
+  const isDarkMode = useMemo(() => theme === 'dark', [theme]);
+
+  const reload = useCallback(() => {
+    fetchAiSummary(dbmsId)
+      .then((res: AiSummary) => setSummary(res.summary))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [dbmsId]);
+
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
+  return (
+    <Card className="h-full">
+      <div className="h-[5vh] flex justify-between flex-wrap overflow-y-scroll">
+        <img
+          src={isDarkMode ? 'ai_summary_white.png' : 'ai_summary_black.png'}
+          className="h-[5vh]"
+        />
+        <Button
+          icon={<ThunderboltTwoTone twoToneColor={BugTrackColors.ORANGE} />}
+          style={{
+            background: `linear-gradient(135deg, ${BugTrackColors.MAGENTA}, ${BugTrackColors.ORANGE})`,
+            border: `1px solid ${isDarkMode ? 'white' : 'black'}`,
+          }}
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={reload}
+        >
+          AI Summary
+        </Button>
+      </div>
+      <Card
+        className="m-1 p-3 h-[26vh] overflow-y-scroll"
+        styles={{
+          body: {
+            padding: 0,
+          },
+        }}
+      >
+        <Typography.Title
+          level={5}
+          className="!font-light text-justify !leading-[1.75]"
+        >
+          {!summary && (
+            <div className="mr-4">
+              <Skeleton active />
+            </div>
+          )}
+          {summary && <p className="fade-in-text ">{summary}</p>}
+        </Typography.Title>
+      </Card>
+    </Card>
+  );
+};
+
+const BugDistrubutionChart: React.FC<{ categories: BugCategory[] }> = ({
+  categories,
+}) => {
+  const { theme } = useAppContext();
+
+  return (
+    <Card className="h-[40vh] w-[100%]">
+      <div className="h-[5vh]">
+        <Typography.Title level={4}>
+          Bug Distribution (by category)
+        </Typography.Title>
+      </div>
+
+      <EChartsReact
+        option={generateBugDistrBar(categories, theme) as unknown}
+        style={{ height: '20vh' }}
+      />
+      <div className="overflow-y-scroll p-1 flex flex-wrap">
+        {categories.map(
+          (cat: BugCategory, idx: number) =>
+            cat.count > 0 && (
+              <CategoryTag
+                key={idx}
+                color={antdTagPresets[idx % antdTagPresets.length]}
+                text={`${cat.name} | ${cat.count}`}
+                className="mt-2"
+              />
+            )
+        )}
+      </div>
+    </Card>
   );
 };
 
