@@ -6,7 +6,7 @@ from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
 from pydantic import ValidationInfo, field_validator
 from sqlalchemy.sql import func
-from sqlmodel import TIMESTAMP, Field, Relationship, Session, select
+from sqlmodel import TIMESTAMP, Field, Relationship, Session, select, text
 
 
 class BugReport(Timestampable, table=True):
@@ -89,43 +89,41 @@ def get_bug_categories_by_dbms_id(tx: Session, dbms_id: int):
 def get_bug_report_by_search_and_cat(
     tx: Session,
     dbms_id: int,
-    search: str,
+    search: str | None,
     categories: list[int],
     start: int,
-    limit: int,
+    limit: int | None,
+    per_category_limit: int | None = None,
 ):
-    query = select(BugReport).where(BugReport.dbms_id == dbms_id)
+    row_number = (
+        func.row_number()
+        .over(
+            partition_by=BugReport.category_id,
+            order_by=BugReport.created_at.desc(),
+        )
+        .label("row_number")
+    )
 
-    if search:
-        query = query.where(BugReport.title.ilike(f"%{search}%"))
+    query = (
+        select(BugReport, row_number)
+        .where(BugReport.dbms_id == dbms_id)
+        .where(search is None or BugReport.title.ilike(f"%{search}%"))
+        .where(BugReport.category_id.in_(categories))
+        .offset(start)
+        .limit(limit)
+    )
 
-    if categories:
-        query = query.where(BugReport.category_id.in_(categories))
-        query = query.offset(start).limit(limit)
-
+    if per_category_limit is None:
         res = tx.exec(query).all()
+        return [r[0] for r in res]
 
-        return res
-
-    else:  # equal distribution
-        categories = get_bug_categories_by_dbms_id(tx=tx, dbms_id=dbms_id)
-
-        per_category_limit = max(limit // len(categories), 1)
-
-        results = []
-
-        for category_id in categories:
-            query = select(BugReport).where(
-                BugReport.dbms_id == dbms_id, BugReport.category_id == category_id
-            )
-
-            if search:
-                query = query.where(BugReport.title.ilike(f"%{search}%"))
-
-            query = query.offset(start).limit(per_category_limit)
-            results += tx.exec(query).all()
-
-        return results
+    # Somehow, we can't just select * despite correct SQL generated
+    query = (
+        select(BugReport)
+        .join(query.subquery().alias("sq"), BugReport.id == text("sq.id"))
+        .where(text("row_number <= :per_category_limit"))
+    )
+    return tx.exec(query, params={"per_category_limit": per_category_limit}).all()
 
 
 def save_bug_report(tx: Session, bug_report: BugReport):
