@@ -28,7 +28,7 @@ export enum FilterBugPriority {
 }
 
 // Dashboard filter settings
-export interface FilterSettings {
+export type FilterSettings = {
   category: FilterBugCategory;
   priority: FilterBugPriority;
-}
+};

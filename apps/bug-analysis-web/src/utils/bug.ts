@@ -9,30 +9,30 @@ export const BUG_CATEGORIES = Object.values(
 ) as FilterBugCategory[];
 
 // Autocomplete types
-export interface AcBugSearchResult {
+export type AcBugSearchResult = {
   display: string;
   bugReportId: number;
-}
+};
 
-export interface AcBugSearchResultCategory {
+export type AcBugSearchResultCategory = {
   title: FilterBugCategory;
   options: AcBugSearchResult[];
-}
+};
 
-export interface AcBugSearchResultStruct {
+export type AcBugSearchResultStruct = {
   categories: AcBugSearchResultCategory[];
-}
+};
 
 // Search result / bug explore types
 export type BugSearchResult = AcBugSearchResult & {
   description: string;
 };
 
-export interface BugSearchResultCategory {
+export type BugSearchResultCategory = {
   categoryId: number;
   title: FilterBugCategory;
   bugs: BugSearchResult[];
-}
+};
 
 export type BugSearchResultStruct = {
   [cat in FilterBugCategory]?: BugSearchResultCategory;
