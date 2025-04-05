@@ -14,7 +14,7 @@ type SignupFormValues = {
 
 const Signup: React.FC = () => {
   const router = useRouter();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<SignupFormValues>();
   const { signup, loading } = useAuth();
   const [signupError, setSignupError] = useState<string | null>(null);
 
@@ -61,17 +61,24 @@ const Signup: React.FC = () => {
         <img src="/bug_track_logo.png" alt="Logo" className={`w-full `} />
       </div>
       <div />
-      <Form
+      <Form<SignupFormValues>
         form={form}
         name="signup_form"
         layout={screens.md ? 'horizontal' : 'vertical'}
         labelCol={screens.md ? { span: 8 } : undefined}
         wrapperCol={screens.md ? { span: 12 } : undefined}
         className={`w-2/3 lg:w-1/2 flex flex-col items-center`}
-        onFinish={void onFinish}
+        onFinish={(values) => {
+          onFinish(values);
+        }}
         onFinishFailed={onFinishFailed}
       >
-        <div className="mb-2 cursor-pointer" onClick={void onBackLogin}>
+        <div
+          className="mb-2 cursor-pointer"
+          onClick={() => {
+            onBackLogin();
+          }}
+        >
           <LeftCircleFilled />
           <span className="ml-2">Back to login</span>
         </div>

@@ -160,7 +160,9 @@ const Login: React.FC = () => {
                     className="transition-none"
                     loading={loading}
                     style={{ background: BugTrackColors.ORANGE }}
-                    onClick={void handleSignUpOnClick}
+                    onClick={() => {
+                      handleSignUpOnClick();
+                    }}
                   >
                     Sign up
                   </Button>
