@@ -2,12 +2,13 @@ import { EChartsOption } from 'echarts-for-react';
 import { BugCategory } from '../api/dbms';
 import { truncateName } from './text';
 import { antdTagPresets, BugTrackColors } from './theme';
+import { AppTheme } from './types';
 
 const MAX_LABEL_LEN = 10;
 
 export const generateBugDistrBar = (
   distr: BugCategory[],
-  theme: 'dark' | 'light' = 'dark'
+  theme: AppTheme = 'dark'
 ): EChartsOption => {
   const isDark = theme === 'dark';
   const color = isDark ? '#ffffff' : '#000000';

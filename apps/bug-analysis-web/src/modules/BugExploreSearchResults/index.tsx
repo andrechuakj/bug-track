@@ -18,17 +18,16 @@ type Props = {
 export const BUG_EXPLORE_KEY = '1';
 export const SEARCH_RESULTS_KEY = '2';
 
-const BugExploreSearchResultsModule: React.FC<Props> = (props) => {
+const BugExploreSearchResultsModule: React.FC<Props> = ({
+  bugReports,
+  bugSearchReports,
+  handleBugExploreLoadMore,
+  activeKey,
+  setActiveKey,
+  isFetchingSearchResult,
+}) => {
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
-  const {
-    bugReports,
-    bugSearchReports,
-    handleBugExploreLoadMore,
-    activeKey,
-    setActiveKey,
-    isFetchingSearchResult,
-  } = props;
 
   const bugExplore: ReactNode = (
     <>

@@ -146,7 +146,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
                 </>
               )}
               {isAuthenticated && (
-                <Button onClick={handleLogout}>Logout</Button>
+                <Button onClick={void handleLogout}>Logout</Button>
               )}
               <Switch
                 checkedChildren={<MoonOutlined />}

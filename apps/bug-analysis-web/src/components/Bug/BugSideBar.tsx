@@ -114,6 +114,7 @@ const BugSideBar: React.FC = () => {
         {isBugLoading && <Skeleton.Input active size="small" />}
         {!isBugLoading &&
           // TODO: Add this field to schema
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           ((bugReport as any)?.versionsAffected ? (
             <Typography.Text>
               {/* TODO: Update dynamically */}

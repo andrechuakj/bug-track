@@ -18,9 +18,25 @@ type LoginFormValues = {
   password: string;
 };
 
+const formIsValid = (form: FormInstance<LoginFormValues>) => {
+  const requiredFields: Array<keyof LoginFormValues> = ['email', 'password'];
+  const allFieldsFilled = requiredFields.every((field) => {
+    const value = form.getFieldValue(field) as string | undefined;
+    console.log(
+      `Field: ${field}, Value: ${value}, Is Valid: ${value !== undefined && value !== null && value !== ''}`
+    );
+    return value !== undefined && value !== null && value !== '';
+  });
+
+  const errors = form.getFieldsError(requiredFields);
+  const hasErrors = errors.some(({ errors }) => errors.length > 0);
+
+  return allFieldsFilled && !hasErrors;
+};
+
 const Login: React.FC = () => {
   const router = useRouter();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<LoginFormValues>();
   const { login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -50,18 +66,6 @@ const Login: React.FC = () => {
     outOfDate?: boolean;
   }): void => {
     message.error('Please check the form for errors.');
-  };
-
-  const formIsValid = (form: FormInstance) => {
-    const requiredFields = ['email', 'password'];
-
-    const values = form.getFieldsValue(requiredFields);
-    const allFieldsFilled = Object.values(values).every((value) => value);
-
-    const errors = form.getFieldsError(requiredFields);
-    const hasErrors = errors.some(({ errors }) => errors.length > 0);
-
-    return allFieldsFilled && !hasErrors;
   };
 
   const screens = Grid.useBreakpoint();
@@ -95,7 +99,7 @@ const Login: React.FC = () => {
         initialValues={{ remember: true }}
         className={`w-2/3 lg:w-1/2 flex flex-col items-center`}
         form={form}
-        onFinish={onFormSubmit}
+        onFinish={void onFormSubmit}
         onFinishFailed={onLoginFail}
       >
         <div // for setting boundaries for visible children in transition, and resizing
@@ -154,7 +158,7 @@ const Login: React.FC = () => {
                     className="transition-none"
                     loading={loading}
                     style={{ background: BugTrackColors.ORANGE }}
-                    onClick={handleSignUpOnClick}
+                    onClick={void handleSignUpOnClick}
                   >
                     Sign up
                   </Button>

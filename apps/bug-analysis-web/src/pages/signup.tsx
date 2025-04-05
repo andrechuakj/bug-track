@@ -60,7 +60,7 @@ const Signup: React.FC = () => {
         <h1 className={`text-5xl font-bold mb-4`}>Welcome to</h1>
         <img src="/bug_track_logo.png" alt="Logo" className={`w-full `} />
       </div>
-      <div></div>
+      <div />
       <Form
         form={form}
         name="signup_form"
@@ -68,10 +68,10 @@ const Signup: React.FC = () => {
         labelCol={screens.md ? { span: 8 } : undefined}
         wrapperCol={screens.md ? { span: 12 } : undefined}
         className={`w-2/3 lg:w-1/2 flex flex-col items-center`}
-        onFinish={onFinish}
+        onFinish={void onFinish}
         onFinishFailed={onFinishFailed}
       >
-        <div className="mb-2 cursor-pointer" onClick={onBackLogin}>
+        <div className="mb-2 cursor-pointer" onClick={void onBackLogin}>
           <LeftCircleFilled />
           <span className="ml-2">Back to login</span>
         </div>

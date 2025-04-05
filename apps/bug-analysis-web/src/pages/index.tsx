@@ -58,7 +58,6 @@ import {
 import { generateBugDistrBar } from '../utils/chart';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
 import {
-  AppTheme,
   categoryToIdMap,
   FilterBugCategory,
   FilterBugPriority,
@@ -397,7 +396,7 @@ const HomePage: React.FC = (): ReactNode => {
             <BugExploreSearchResultsModule
               bugReports={bugReports}
               bugSearchReports={bugSearchReports}
-              handleBugExploreLoadMore={handleBugExploreLoadMore}
+              handleBugExploreLoadMore={void handleBugExploreLoadMore}
               activeKey={exploreSearchActiveKey}
               setActiveKey={setExploreSearchActiveKey}
               isFetchingSearchResult={
@@ -447,7 +446,7 @@ const HomePage: React.FC = (): ReactNode => {
                     }}
                     loading={aiButtonLoading}
                     disabled={aiButtonLoading}
-                    onClick={handleLoadAiSummary}
+                    onClick={void handleLoadAiSummary}
                   >
                     AI Summary
                   </Button>
@@ -485,10 +484,12 @@ const HomePage: React.FC = (): ReactNode => {
                 </div>
 
                 <EChartsReact
-                  option={generateBugDistrBar(
-                    dbmsData.bug_categories,
-                    (theme as AppTheme) ?? 'dark'
-                  )}
+                  option={
+                    generateBugDistrBar(
+                      dbmsData.bug_categories,
+                      theme ?? 'dark'
+                    ) as unknown
+                  }
                   style={{ height: '20vh' }}
                 />
                 <div className="overflow-y-scroll p-1 flex flex-wrap">
@@ -515,7 +516,7 @@ const HomePage: React.FC = (): ReactNode => {
         isModalOpen={isFilterModalOpen}
         setIsModalOpen={setIsFilterModalOpen}
         modalItems={filterModalItems}
-        handleOk={handleApplyFilter}
+        handleOk={void handleApplyFilter}
       />
     </>
   );

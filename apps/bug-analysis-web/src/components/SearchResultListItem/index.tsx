@@ -19,10 +19,10 @@ const SearchResultListItem: React.FC<Props> = ({
   const { currentTenant } = useSession();
   const router = useRouter();
 
-  const handleClickLoadMore = async () => {
+  const handleClickLoadMore = () => {
     setIsLoading(true);
     if (currentTenant) {
-      await handleLoadMore?.(currentTenant.id, searchResultCategory.categoryId);
+      handleLoadMore?.(currentTenant.id, searchResultCategory.categoryId);
     }
     setIsLoading(false);
   };

@@ -48,14 +48,19 @@ export const categoriseBugs = (
     categories: [],
   };
 
-  for (let i = 0; i < reports.length; ++i) {
-    const {
-      id: bugReportId,
-      title: display,
-      category_id: categoryId,
-    } = reports[i];
-    const category: FilterBugCategory = BUG_CATEGORIES[categoryId];
+  for (const {
+    id: bugReportId,
+    title: display,
+    category_id: categoryId,
+  } of reports) {
+    if (categoryId == null) {
+      console.error(
+        `Bug report ${bugReportId} has no category ID. This should not happen.`
+      );
+      continue;
+    }
 
+    const category: FilterBugCategory = BUG_CATEGORIES[categoryId];
     if (categoryId >= BUG_CATEGORIES.length) {
       continue;
     }
@@ -134,13 +139,18 @@ export const setBugExplore = (
   const newDistr = Array(bugExploreDistribution.length).fill(0);
   const bugSearchResult: BugSearchResultStruct = {};
 
-  for (const rep of bugReports) {
-    const {
-      id: bugReportId,
-      title: display,
-      category_id: categoryId,
-      description,
-    } = rep;
+  for (const {
+    id: bugReportId,
+    title: display,
+    category_id: categoryId,
+    description,
+  } of bugReports) {
+    if (categoryId == null) {
+      console.error(
+        `Bug report ${bugReportId} has no category ID. This should not happen.`
+      );
+      continue;
+    }
 
     if (categoryId >= newDistr.length || categoryId >= BUG_CATEGORIES.length)
       continue;
@@ -170,13 +180,18 @@ export const setBugSearchResults = (
 
   const bugSearchResult: BugSearchResultStruct = {};
 
-  for (const rep of bugReports) {
-    const {
-      id: bugReportId,
-      title: display,
-      category_id: categoryId,
-      description,
-    } = rep;
+  for (const {
+    id: bugReportId,
+    title: display,
+    category_id: categoryId,
+    description,
+  } of bugReports) {
+    if (categoryId == null) {
+      console.error(
+        `Bug report ${bugReportId} has no category ID. This should not happen.`
+      );
+      continue;
+    }
 
     const category: FilterBugCategory = BUG_CATEGORIES[categoryId];
     if (!bugSearchResult[category]) {

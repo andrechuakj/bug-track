@@ -14,7 +14,7 @@ export const getTokens = (): TokenState => {
   if (!token) {
     return null;
   }
-  return JSON.parse(decompressFromUTF16(token));
+  return JSON.parse(decompressFromUTF16(token)) as TokenState;
 };
 
 export const clearTokens = () => {
