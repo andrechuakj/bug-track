@@ -43,6 +43,8 @@ jobs:
       - name: Install dependencies (Python)
         working-directory: ./apps/api
         run: pip install -r requirements.txt
+      - name: Run codegen
+        run: yarn generate
       - name: Check lint
         run: yarn lint
       - name: Run tests
