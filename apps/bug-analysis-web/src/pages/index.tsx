@@ -65,6 +65,8 @@ import {
 import { generateBugDistrBar } from '../utils/chart';
 import { antdTagPresets, BugTrackColors } from '../utils/theme';
 import {
+  BUG_CATEGORY_FILTERS,
+  BUG_PRIORITY_FILTERS,
   FilterBugCategory,
   FilterBugPriority,
   FilterSettings,
@@ -227,49 +229,31 @@ const HomePage: React.FC = (): ReactNode => {
   };
 
   // Filter
-  const bugCategoryFilterOptions = Object.values(
-    FilterBugCategory
-  ) as FilterBugCategory[];
-
-  const bugPriorityFilterOptions = Object.values(
-    FilterBugPriority
-  ) as FilterBugPriority[];
 
   const filterModalItems: React.JSX.Element[] = useMemo(
     () => [
-      <FilterSelection
-        key="filter-sel-1"
+      <FilterSelection<'category'>
+        key="filter-sel-category"
         filterPrefix={<p className="font-light">Category:</p>}
         filterSetting={filterSettings.category}
-        filterOptions={bugCategoryFilterOptions}
-        filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
-          setFilterSettings((settings) => ({
-            ...settings,
-            category: val as FilterBugCategory,
-          }));
+        filterOptions={BUG_CATEGORY_FILTERS}
+        filterOnChange={(val) => {
+          setFilterSettings((settings) => ({ ...settings, category: val }));
         }}
         filterPlaceholder="Select Bug Category"
       />,
-      <FilterSelection
-        key="filter-sel-1"
+      <FilterSelection<'priority'>
+        key="filter-sel-priority"
         filterPrefix={<p className="font-light">Priority:</p>}
         filterSetting={filterSettings.priority}
-        filterOptions={bugPriorityFilterOptions}
-        filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
-          setFilterSettings((settings) => ({
-            ...settings,
-            priority: val as FilterBugPriority,
-          }));
+        filterOptions={BUG_PRIORITY_FILTERS}
+        filterOnChange={(val) => {
+          setFilterSettings((settings) => ({ ...settings, priority: val }));
         }}
         filterPlaceholder="Select Bug Priority"
       />,
     ],
-    [
-      bugCategoryFilterOptions,
-      bugPriorityFilterOptions,
-      filterSettings.category,
-      filterSettings.priority,
-    ]
+    [filterSettings.category, filterSettings.priority]
   );
 
   const handleApplyFilter = useCallback(async () => {

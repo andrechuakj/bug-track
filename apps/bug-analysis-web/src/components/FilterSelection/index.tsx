@@ -2,21 +2,21 @@ import { Select } from 'antd';
 import React, { ReactNode } from 'react';
 import { FilterSettings } from '../../utils/types';
 
-type Props = {
+type Props<T extends keyof FilterSettings> = {
   filterPrefix: ReactNode;
-  filterSetting: FilterSettings[keyof FilterSettings];
-  filterOptions: FilterSettings[keyof FilterSettings][];
-  filterOnChange: (val: FilterSettings[keyof FilterSettings]) => void;
+  filterSetting: FilterSettings[T];
+  filterOptions: ReadonlyArray<FilterSettings[T]>;
+  filterOnChange: (val: FilterSettings[T]) => void;
   filterPlaceholder: string;
 };
 
-const FilterSelection: React.FC<Props> = ({
+const FilterSelection = (<T extends keyof FilterSettings>({
   filterPrefix,
   filterSetting,
   filterOptions,
   filterOnChange,
   filterPlaceholder,
-}) => {
+}: Props<T>) => {
   return (
     <Select
       showSearch
@@ -24,16 +24,14 @@ const FilterSelection: React.FC<Props> = ({
       value={filterSetting}
       optionLabelProp="label"
       placeholder={filterPlaceholder}
-      options={filterOptions.map(
-        (opt: FilterSettings[keyof FilterSettings]) => ({
-          value: opt,
-          label: opt,
-        })
-      )}
+      options={filterOptions.map((opt: FilterSettings[T]) => ({
+        value: opt,
+        label: opt,
+      }))}
       className="w-full"
       onChange={filterOnChange}
     />
   );
-};
+}) satisfies React.FC<Props<keyof FilterSettings>>;
 
 export default FilterSelection;
