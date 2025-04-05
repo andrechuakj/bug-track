@@ -80,7 +80,10 @@ const Login: React.FC = () => {
     }
   }, [screens.md]);
 
-  const handleSignUpOnClick = useCallback(() => router.push('/signup'), []);
+  const handleSignUpOnClick = useCallback(
+    () => router.push('/signup'),
+    [router]
+  );
 
   return (
     <div className="flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center">

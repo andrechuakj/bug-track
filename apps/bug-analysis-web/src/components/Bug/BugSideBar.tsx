@@ -1,7 +1,7 @@
 import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Divider, Dropdown, Skeleton, Tag, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   BugCategoryResponseDto,
   fetchAllCategories,
@@ -17,17 +17,20 @@ const BugSideBar: React.FC = () => {
     MenuProps['items']
   >([]);
 
-  const handleUpdateCategory = async (bug_id: number, category_id: number) => {
-    setIsCategoryUpdating(true);
-    try {
-      const updatedReport = await updateBugCategory(bug_id, category_id);
-      setBugReport(updatedReport);
-    } catch (error) {
-      console.error('Failed to update category:', error);
-    } finally {
-      setIsCategoryUpdating(false);
-    }
-  };
+  const handleUpdateCategory = useCallback(
+    async (bug_id: number, category_id: number) => {
+      setIsCategoryUpdating(true);
+      try {
+        const updatedReport = await updateBugCategory(bug_id, category_id);
+        setBugReport(updatedReport);
+      } catch (error) {
+        console.error('Failed to update category:', error);
+      } finally {
+        setIsCategoryUpdating(false);
+      }
+    },
+    [setBugReport]
+  );
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -48,7 +51,7 @@ const BugSideBar: React.FC = () => {
     };
 
     loadCategories();
-  }, [bugReport]);
+  }, [bugReport, handleUpdateCategory]);
 
   return (
     <div className="w-full">

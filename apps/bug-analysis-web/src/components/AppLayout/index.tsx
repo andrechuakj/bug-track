@@ -59,12 +59,12 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
 
   useEffect(() => {
     updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
-  }, []);
+  }, [themeSetting, updateTheme]);
 
   const handleLogout = useCallback(async () => {
     await logout();
     messageApi.success('Successfully logged out');
-  }, []);
+  }, [logout, messageApi]);
 
   return (
     <ConfigProvider

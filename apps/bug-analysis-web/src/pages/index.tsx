@@ -107,6 +107,45 @@ const HomePage: React.FC = (): ReactNode => {
     }
   }, [loading, isAuthenticated, router]);
 
+  // Category bug explore
+  // Note: The reason why we have separate data structures for autocomplete and bug explore
+  //       is because these are 2 separate components, and their needs are different. While
+  //       autocomplete (AC) results can be dumped as an array. We might prefer fast lookup
+  //       when trying to load more of a specific category.
+  const [bugExploreDistribution, setBugExploreDistribution] = useState<
+    number[]
+  >(Object.values(FilterBugCategory).map((_) => 0));
+  const [bugReports, setBugReports] = useState<BugSearchResultStruct>({});
+
+  const fetchBugExplore = useCallback(async () => {
+    if (!currentTenant) return;
+    const bugReports: BugReports = await searchBugReports(
+      currentTenant.id,
+      '',
+      0,
+      10
+    );
+    if (bugReports) {
+      setBugExplore(
+        bugExploreDistribution,
+        setBugExploreDistribution,
+        setBugReports,
+        bugReports
+      );
+    }
+  }, [bugExploreDistribution, currentTenant]);
+
+  // AI logic
+  const handleLoadAiSummary = useCallback(async () => {
+    if (!currentTenant) return;
+    setAiSummary(undefined);
+    setAiButtonLoading(true);
+    await fetchAiSummary(currentTenant.id).then((res: AiSummary) =>
+      setAiSummary(res)
+    );
+    setAiButtonLoading(false);
+  }, [currentTenant]);
+
   const fetchDashboardData = useCallback(async () => {
     if (!currentTenant) return;
     await Promise.all([
@@ -115,7 +154,7 @@ const HomePage: React.FC = (): ReactNode => {
       fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res)),
       handleLoadAiSummary(),
     ]);
-  }, [currentTenant]);
+  }, [currentTenant, fetchBugExplore, handleLoadAiSummary]);
 
   useEffect(() => {
     setIsDashboardLoading(true);
@@ -127,7 +166,7 @@ const HomePage: React.FC = (): ReactNode => {
         console.error('Error fetching dashboard data:', error);
         setIsDashboardLoading(false);
       });
-  }, [currentTenant]);
+  }, [currentTenant, fetchDashboardData]);
 
   const handleSearch = useCallback(
     async (searchStr: string) => {
@@ -153,6 +192,7 @@ const HomePage: React.FC = (): ReactNode => {
     [currentTenant, filterSettings]
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearchDebounce = useCallback(
     debounce(async (searchStr: string) => {
       if (!currentTenant) return;
@@ -160,7 +200,7 @@ const HomePage: React.FC = (): ReactNode => {
         await handleSearch(searchStr);
       }
     }, 500),
-    [currentTenant]
+    [currentTenant, handleSearch]
   );
 
   const handlePopulateSearchResults = async () => {
@@ -233,35 +273,7 @@ const HomePage: React.FC = (): ReactNode => {
     setBugSearchResults(setBugSearchReports, bugReportsResult);
     setExploreSearchActiveKey(SEARCH_RESULTS_KEY);
     setIsFilterModalOpen(false);
-  }, [lastSearchedStr, filterSettings]);
-
-  // Category bug explore
-  // Note: The reason why we have separate data structures for autocomplete and bug explore
-  //       is because these are 2 separate components, and their needs are different. While
-  //       autocomplete (AC) results can be dumped as an array. We might prefer fast lookup
-  //       when trying to load more of a specific category.
-  const [bugExploreDistribution, setBugExploreDistribution] = useState<
-    number[]
-  >(Object.values(FilterBugCategory).map((_) => 0));
-  const [bugReports, setBugReports] = useState<BugSearchResultStruct>({});
-
-  const fetchBugExplore = useCallback(async () => {
-    if (!currentTenant) return;
-    const bugReports: BugReports = await searchBugReports(
-      currentTenant.id,
-      '',
-      0,
-      10
-    );
-    if (bugReports) {
-      setBugExplore(
-        bugExploreDistribution,
-        setBugExploreDistribution,
-        setBugReports,
-        bugReports
-      );
-    }
-  }, [currentTenant]);
+  }, [acBugReports, handleSearch, lastSearchedStr]);
 
   const handleBugExploreLoadMore = async (
     tenantId: number,
@@ -287,17 +299,6 @@ const HomePage: React.FC = (): ReactNode => {
       BUG_CATEGORIES[categoryId],
       categoryId
     );
-  };
-
-  // AI logic
-  const handleLoadAiSummary = async () => {
-    if (!currentTenant) return;
-    setAiSummary(undefined);
-    setAiButtonLoading(true);
-    await fetchAiSummary(currentTenant.id).then((res: AiSummary) =>
-      setAiSummary(res)
-    );
-    setAiButtonLoading(false);
   };
 
   const { theme } = useAppContext();

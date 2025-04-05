@@ -17,7 +17,7 @@ const BugReportPage: React.FC = () => {
   useEffect(() => {
     if (!id) return;
     fetchBugReport(Number(id));
-  }, [id]);
+  }, [fetchBugReport, id]);
 
   return (
     <div className="p-4 max-w-7xl mx-auto">

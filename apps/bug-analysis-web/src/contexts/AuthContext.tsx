@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         setLoading(false);
       }
     },
-    []
+    [router]
   );
 
   const refreshToken = useCallback(async (): Promise<boolean> => {
@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const logout = useCallback(async () => {
     setIsAuthenticated(false);
     await router.push('/login');
-  }, []);
+  }, [router]);
 
   return (
     <AuthContext.Provider

@@ -48,7 +48,7 @@ const Signup: React.FC = () => {
     message.error('Please check the form for errors.');
   };
 
-  const onBackLogin = useCallback(() => router.push('/login'), []);
+  const onBackLogin = useCallback(() => router.push('/login'), [router]);
 
   return (
     <div

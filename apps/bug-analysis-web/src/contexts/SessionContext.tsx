@@ -61,16 +61,19 @@ const SessionProvider: React.FC<PropsWithChildren> = ({ children }) => {
         setCurrentTenant(data[0]);
       }
     });
-  }, []);
+  }, [currentTenant]);
 
-  const setCurrentTenantId = useCallback((tenantId: number) => {
-    const tenant = tenantList.find((t) => t.id === tenantId);
-    if (!tenant) {
-      console.error('Tenant not found:', tenantId);
-      return;
-    }
-    setCurrentTenant(tenant);
-  }, []);
+  const setCurrentTenantId = useCallback(
+    (tenantId: number) => {
+      const tenant = tenantList.find((t) => t.id === tenantId);
+      if (!tenant) {
+        console.error('Tenant not found:', tenantId);
+        return;
+      }
+      setCurrentTenant(tenant);
+    },
+    [tenantList]
+  );
 
   return (
     <SessionContext.Provider
