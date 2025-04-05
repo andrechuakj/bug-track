@@ -78,7 +78,7 @@ const BugSideBar: React.FC = () => {
                   items: categoryMenuItems,
                   selectable: true,
                   defaultSelectedKeys: [
-                    bugReport ? bugReport.category_id.toString() : '',
+                    bugReport?.category_id?.toString() ?? '',
                   ],
                   style: {
                     overflowY: 'scroll',

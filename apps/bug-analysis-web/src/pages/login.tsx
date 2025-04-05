@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
+import { toPromise } from '../utils/promises';
 import { BugTrackColors } from '../utils/theme';
 
 type LoginFormValues = {
@@ -44,7 +45,7 @@ const Login: React.FC = () => {
       email: values.email,
       password: values.password,
     };
-    login(authValues)
+    toPromise(login)(authValues)
       .then((success) => {
         if (success) {
           messageApi.success('Login successful!');

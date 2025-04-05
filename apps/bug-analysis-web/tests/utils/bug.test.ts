@@ -9,40 +9,66 @@ import { FilterBugCategory } from '../../src/utils/types';
 
 describe('categoriseBugs', () => {
   it('should categorise bugs by category', () => {
-    const mockBugReports = [
-      {
-        id: 1,
-        dbms_id: 101,
-        category_id: 0,
-        title: 'UI Bug 1',
-        url: 'http://example.com/bug1',
-        description: 'Button misalignment',
-      },
-      {
-        id: 2,
-        dbms_id: 102,
-        category_id: 2,
-        title: 'Backend Bug 1',
-        url: 'http://example.com/bug2',
-        description: 'API timeout',
-      },
-      {
-        id: 3,
-        dbms_id: 103,
-        category_id: 0,
-        title: 'UI Bug 2',
-        url: 'http://example.com/bug3',
-        description: 'Text overflow issue',
-      },
-      {
-        id: 4,
-        dbms_id: 104,
-        category_id: 5,
-        title: 'Performance Bug 1',
-        url: 'http://example.com/bug4',
-        description: 'Slow page load',
-      },
-    ];
+    const mockBugReports: BugReports = {
+      bug_reports: [
+        {
+          id: 1,
+          dbms_id: 101,
+          category_id: 0,
+          title: 'UI Bug 1',
+          url: 'http://example.com/bug1',
+          description: 'Button misalignment',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
+        },
+        {
+          id: 2,
+          dbms_id: 102,
+          category_id: 2,
+          title: 'Backend Bug 1',
+          url: 'http://example.com/bug2',
+          description: 'API timeout',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
+        },
+        {
+          id: 3,
+          dbms_id: 103,
+          category_id: 0,
+          title: 'UI Bug 2',
+          url: 'http://example.com/bug3',
+          description: 'Text overflow issue',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
+        },
+        {
+          id: 4,
+          dbms_id: 104,
+          category_id: 5,
+          title: 'Performance Bug 1',
+          url: 'http://example.com/bug4',
+          description: 'Slow page load',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
+        },
+      ],
+    };
 
     const expectedCategorisedBugs = {
       categories: [
@@ -80,7 +106,7 @@ describe('categoriseBugs', () => {
       ],
     };
 
-    const result = categoriseBugs({ bug_reports: mockBugReports });
+    const result = categoriseBugs(mockBugReports);
 
     expect(result).toEqual(expectedCategorisedBugs);
   });
@@ -101,6 +127,12 @@ describe('setBugExplore', () => {
           category_id: 0,
           title: 'UI Bug 1',
           description: 'Button misalignment',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
         {
           id: 2,
@@ -109,6 +141,12 @@ describe('setBugExplore', () => {
           category_id: 0,
           title: 'UI Bug 2',
           description: 'Text overflow issue',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
       ],
     };
@@ -127,7 +165,9 @@ describe('setBugExplore', () => {
 
     expect(setBugReports).toHaveBeenCalled();
     // Note: this gets the first argument of the first call
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const functionCall = setBugReports.mock.calls[0][0];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const updatedReports = functionCall({});
 
     expect(updatedReports).toEqual({
@@ -156,7 +196,7 @@ describe('setBugExplore', () => {
     const setBugExploreDistribution = vi.fn();
     const setBugReports = vi.fn();
 
-    const mockBugReportsDelta = {
+    const mockBugReportsDelta: BugReports = {
       bug_reports: [
         {
           id: 1,
@@ -165,6 +205,12 @@ describe('setBugExplore', () => {
           category_id: 0,
           title: 'UI Bug 1',
           description: 'Button misalignment',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
         {
           id: 2,
@@ -173,6 +219,12 @@ describe('setBugExplore', () => {
           category_id: 4,
           title: 'Backend Bug 1',
           description: 'API timeout',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
       ],
     };
@@ -223,6 +275,12 @@ describe('bugReportToBugSearchResult', () => {
           title: 'UI Bug 1',
           url: 'http://example.com/bug1',
           description: 'Button misalignment',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
         {
           id: 2,
@@ -231,6 +289,12 @@ describe('bugReportToBugSearchResult', () => {
           title: 'Backend Bug 1',
           url: 'http://example.com/bug2',
           description: 'API timeout',
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
       ],
     };
@@ -263,6 +327,12 @@ describe('bugReportToBugSearchResult', () => {
           title: 'UI Bug 1',
           url: 'http://example.com/bug1',
           description: null,
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
         {
           id: 2,
@@ -271,6 +341,12 @@ describe('bugReportToBugSearchResult', () => {
           title: 'Backend Bug 1',
           url: 'http://example.com/bug2',
           description: null,
+          dbms: '',
+          category: null,
+          issue_created_at: '',
+          issue_updated_at: null,
+          issue_closed_at: null,
+          is_closed: false,
         },
       ],
     };

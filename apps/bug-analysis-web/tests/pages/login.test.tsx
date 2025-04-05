@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginRequestDto, SignupRequestDto } from '../../src/api/auth';
 import { AuthContext, AuthContextType } from '../../src/contexts/AuthContext';
 import Login from '../../src/pages/login';
+import { MaybePromise } from '../../src/utils/promises';
 
 if (typeof window !== 'undefined' && !window.matchMedia) {
   // @ts-expect-error creating mock to make antd's Grid.useBreakpoint work,
@@ -29,13 +30,11 @@ vi.mock('next/router', () => ({
   }),
 }));
 
-const loginMock = vi.fn(async (_details: LoginRequestDto) => {
-  return true;
-});
+const loginMock = vi.fn((_details: LoginRequestDto) => true);
 
 type TestAuthProviderProps = {
   children: React.ReactNode;
-  login?: (details: LoginRequestDto) => Promise<boolean>;
+  login?: (details: LoginRequestDto) => MaybePromise<boolean>;
 };
 
 export const MockAuthProviderForLogin: React.FC<TestAuthProviderProps> = ({
@@ -45,9 +44,9 @@ export const MockAuthProviderForLogin: React.FC<TestAuthProviderProps> = ({
   const testContextValue: AuthContextType = {
     isAuthenticated: false,
     login: login || loginMock,
-    signup: async (_details: SignupRequestDto) => true,
+    signup: (_details: SignupRequestDto) => true,
     logout: () => {},
-    refreshToken: async () => true,
+    refreshToken: () => true,
     loading: false,
   };
 
@@ -60,7 +59,7 @@ export const MockAuthProviderForLogin: React.FC<TestAuthProviderProps> = ({
 
 const renderPage = (
   login:
-    | ((details: LoginRequestDto) => Promise<boolean>)
+    | ((details: LoginRequestDto) => MaybePromise<boolean>)
     | undefined = undefined
 ): RenderResult => {
   return render(

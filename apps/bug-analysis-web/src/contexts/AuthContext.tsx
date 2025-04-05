@@ -8,13 +8,14 @@ import React, {
   useState,
 } from 'react';
 import authService, { LoginRequestDto, SignupRequestDto } from '../api/auth';
+import { MaybePromise } from '../utils/promises';
 
 export type AuthContextType = {
   isAuthenticated: boolean;
-  login: (details: LoginRequestDto) => Promise<boolean>;
-  signup: (details: SignupRequestDto) => Promise<boolean>;
-  logout: () => Promise<void>;
-  refreshToken: () => Promise<boolean>;
+  login: (details: LoginRequestDto) => MaybePromise<boolean>;
+  signup: (details: SignupRequestDto) => MaybePromise<boolean>;
+  logout: () => MaybePromise<void>;
+  refreshToken: () => MaybePromise<boolean>;
   loading: boolean;
 };
 

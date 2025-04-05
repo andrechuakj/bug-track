@@ -28,16 +28,17 @@ const BugHeader: React.FC = () => {
         <BugStatusIcon isClosed={bugReport.is_closed} />
       </div>
       <div className="w-1/4 flex flex-col xl:flex-row xl:justify-end gap-4">
-        {bugReport.github_url && (
+        {bugReport.url && (
           <Button type="primary" href={bugReport.url} target="_blank">
             View on GitHub
           </Button>
         )}
-        {bugReport.url && (
-          <Button type="default" href={bugReport.url} target="_blank">
+        {/* TODO: Get DBMS URL from schema */}
+        {/* {bugReport.url && (
+          <Button type="default" href={bugReport.dbms} target="_blank">
             View Repository
           </Button>
-        )}
+        )} */}
       </div>
     </div>
   );
