@@ -16,3 +16,4 @@ class SignupRequestDto(BaseModel):
 class AuthResponseDto(BaseResponseModel):
     access_token: str
     refresh_token: str
+    user_id: int

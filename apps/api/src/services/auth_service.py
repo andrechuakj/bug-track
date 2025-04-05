@@ -45,6 +45,7 @@ class _AuthService(Service):
     class TokensViewModel(BaseModel):
         access_token: str
         refresh_token: str
+        user_id: int
 
     def create_user_tokens(self, user: User) -> TokensViewModel:
         """Generate a JWT token"""
@@ -76,6 +77,7 @@ class _AuthService(Service):
                 constants.JWT_SECRET_KEY,
                 algorithm=_AuthService._ALGORITHM,
             ),
+            user_id=user.id,
         )
 
     def refresh_user_tokens(self, refresh_token_str: str) -> TokensViewModel:
