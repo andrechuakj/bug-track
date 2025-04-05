@@ -42,7 +42,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
       key: '1',
       icon: <BugOutlined />,
       label: 'Bug Report',
-      onClick: () => router.push('/home'),
+      onClick: () => void router.push('/home'),
     },
   ];
 
@@ -61,8 +61,8 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
   }, []);
 
-  const handleLogout = useCallback(() => {
-    logout();
+  const handleLogout = useCallback(async () => {
+    await logout();
     messageApi.success('Successfully logged out');
   }, []);
 
