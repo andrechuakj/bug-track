@@ -33,13 +33,14 @@ const Comment: React.FC<CommentProps> = ({ name, content, timestamp, idx }) => {
               backgroundColor:
                 BugTrackColorsArr[idx % BugTrackColorsArr.length],
               marginRight: '12px',
+              flexShrink: 0,
             }}
           >
             {getInitials(name)}
           </Avatar>
-          <div>
+          <div className="flex-1">
             <Typography.Text strong>{name}</Typography.Text>
-            <Typography.Paragraph style={{ margin: 0 }}>
+            <Typography.Paragraph className="m-0">
               {content}
             </Typography.Paragraph>
           </div>
