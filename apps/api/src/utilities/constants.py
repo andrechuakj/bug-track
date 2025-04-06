@@ -1,4 +1,5 @@
 import os
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -8,6 +9,9 @@ class _Constants(BaseSettings, frozen=True):
     OPENAI_API_KEY: str
     JWT_SECRET_KEY: str
     MODE: str = "production"
+    GITHUB_TOKEN: str
+    REDIS_BROKER_URL: str
+    CELERY_BEAT_SCHEDULE: str
 
     def __init__(self):
         # TODO: Investigate if there is a better way

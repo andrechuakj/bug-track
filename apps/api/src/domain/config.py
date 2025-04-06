@@ -30,8 +30,13 @@ def get_db(request: Request) -> Session:
     return request.state.db
 
 
+def get_session() -> Session:
+    return session()
+
+
 __all__ = [
     "engine",
     "db_txn_manager_generator",
     "get_db",
+    "get_session",
 ]

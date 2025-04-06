@@ -6,45 +6,62 @@ import markdown
 import numpy as np
 import spacy
 from bs4 import BeautifulSoup
+from domain.models.BugCategory import get_bug_category_id_by_name
+from domain.models.BugReport import get_unclassified_bugs, save_bug_report
 from fuzzywuzzy import fuzz
+from sklearn.calibration import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sqlmodel import Session
 from utilities.category_keywords import CATEGORY_KEYWORDS
 from utilities.classes import Service
-
-# Load spaCy model
-nlp = spacy.load("en_core_web_lg")
-
-# Load trained ML model
-MODEL_DIR = Path(__file__).parent.parent / "model"
-
-FUZZY_WEIGHT = 0.4
-SPACY_WEIGHT = 0.4
-TOKEN_OVERLAP_WEIGHT = 0.2
-
-with open(MODEL_DIR / "bug_classifier_model.pkl", "rb") as model_file:
-    model: LogisticRegression = pickle.load(model_file)
-
-with open(MODEL_DIR / "label_encoder.pkl", "rb") as encoder_file:
-    label_encoder = pickle.load(encoder_file)
-
-with open(MODEL_DIR / "tfidf_vectorizer.pkl", "rb") as vectorizer_file:
-    vectorizer: TfidfVectorizer = pickle.load(vectorizer_file)
 
 
 class _BugClassifierService(Service):
     """Service for classifying bug reports."""
 
-    def __init__(self):
-        # Custom stopwords (keep useful words like 'error', 'failure', etc.)
-        self.custom_stopwords = nlp.Defaults.stop_words - {
-            "error",
-            "failure",
-            "issue",
-            "bug",
-        }
+    # Load spaCy model
+    NLP = spacy.load("en_core_web_lg")
 
-    def preprocess_text(self, text: str) -> str:
+    # Custom stopwords (keep useful words like 'error', 'failure', etc.)
+    CUSTOM_STOPWORDS = NLP.Defaults.stop_words - {
+        "error",
+        "failure",
+        "issue",
+        "bug",
+    }
+
+    # Set weights for classification scoring
+    FUZZY_WEIGHT = 0.4
+    SPACY_WEIGHT = 0.4
+    TOKEN_OVERLAP_WEIGHT = 0.2
+
+    # Load trained ML model
+    MODEL_DIR = Path(__file__).parent.parent / "model"
+
+    def __init__(self):
+        try:
+            with open(
+                _BugClassifierService.MODEL_DIR / "bug_classifier_model.pickle", "rb"
+            ) as model_file:
+                self.model: LogisticRegression = pickle.load(model_file)
+
+            with open(
+                _BugClassifierService.MODEL_DIR / "label_encoder.pickle", "rb"
+            ) as encoder_file:
+                self.label_encoder: LabelEncoder = pickle.load(encoder_file)
+
+            with open(
+                _BugClassifierService.MODEL_DIR / "tfidf_vectorizer.pickle", "rb"
+            ) as vectorizer_file:
+                self.vectorizer: TfidfVectorizer = pickle.load(vectorizer_file)
+
+            self.logger.info("Successfully loaded bug classifier models and resources")
+        except (FileNotFoundError, pickle.UnpicklingError) as e:
+            self.logger.error(f"Failed to load bug classifier model: {e}")
+            raise
+
+    def _preprocess_text(self, text: str) -> str:
         """Preprocess text"""
         if not text:
             return ""
@@ -63,21 +80,22 @@ class _BugClassifierService(Service):
         text = re.sub(r"\s+", " ", text).strip()
 
         # Process with SpaCy
-        doc = nlp(text.lower())
+        doc = _BugClassifierService.NLP(text.lower())
 
         # Remove Stopwords, Lemmatize
         return " ".join(
             [
                 token.lemma_
                 for token in doc
-                if token.is_alpha and token.text not in self.custom_stopwords
+                if token.is_alpha
+                and token.text not in _BugClassifierService.CUSTOM_STOPWORDS
             ]
         )
 
-    def get_category_by_keywords(self, issue_title: str) -> str | None:
+    def _get_category_by_keywords(self, issue_title: str) -> str | None:
         """Finds category using exact, fuzzy, and semantic similarity matching (title only)."""
         issue_title = issue_title.lower()
-        issue_doc = nlp(issue_title)
+        issue_doc = _BugClassifierService.NLP(issue_title)
 
         best_match = None
         best_score = 0.0
@@ -85,7 +103,7 @@ class _BugClassifierService(Service):
         for category, keywords in CATEGORY_KEYWORDS.items():
             for keyword in keywords:
                 keyword_lower = keyword.lower()
-                keyword_doc = nlp(keyword_lower)
+                keyword_doc = _BugClassifierService.NLP(keyword_lower)
 
                 # Exact Match (Highest Priority)
                 if keyword_lower in issue_title:
@@ -119,9 +137,13 @@ class _BugClassifierService(Service):
                     len(issue_title) / 100, 1
                 )  # Normalize length impact
                 combined_score = (
-                    (FUZZY_WEIGHT * fuzzy_score)
-                    + (SPACY_WEIGHT * spacy_score)
-                    + (TOKEN_OVERLAP_WEIGHT * common_token_score * length_factor)
+                    (_BugClassifierService.FUZZY_WEIGHT * fuzzy_score)
+                    + (_BugClassifierService.SPACY_WEIGHT * spacy_score)
+                    + (
+                        _BugClassifierService.TOKEN_OVERLAP_WEIGHT
+                        * common_token_score
+                        * length_factor
+                    )
                 )
 
                 # Update best match
@@ -131,29 +153,53 @@ class _BugClassifierService(Service):
 
         return best_match
 
-    def predict_bug_category(self, title: str, body: str) -> str:
+    def _predict_bug_category(self, title: str, body: str) -> str:
         """Predicts the category using the saved model and vectorizer."""
 
         # Try keyword-based classification first (only on title)
-        keyword_category = self.get_category_by_keywords(title)
+        keyword_category = self._get_category_by_keywords(title)
         if keyword_category:
             return keyword_category  # If keyword match is found, use it directly
 
         # If no keyword match, use ML model
-        processed_text = self.preprocess_text(title + " " + body)
-        text_tfidf = vectorizer.transform([processed_text])
+        processed_text = self._preprocess_text(title + " " + body)
+        text_tfidf = self.vectorizer.transform([processed_text])
 
         # Predict probabilities
-        probabilities = model.predict_proba(text_tfidf)
+        probabilities = self.model.predict_proba(text_tfidf)
         max_prob = np.max(probabilities)
 
         predicted_encoded = np.argmax(probabilities)
-        predicted_label = label_encoder.inverse_transform([predicted_encoded])[0]
+        predicted_label = self.label_encoder.inverse_transform([predicted_encoded])[0]
 
         # Use a percentile-based threshold to adapt confidence dynamically
         confidence_threshold = np.percentile(probabilities, 10)
 
         return predicted_label if max_prob >= confidence_threshold else "Others"
+
+    def classify_unclassified_bugs(self, tx: Session) -> int:
+        """Classifies all unclassified bug reports in the database."""
+        unclassified_bugs = get_unclassified_bugs(tx)
+
+        classified_count = 0
+        for bug in unclassified_bugs:
+            predicted_category_name = self._predict_bug_category(
+                bug.title, bug.description or ""
+            )
+
+            bug.category_id = get_bug_category_id_by_name(tx, predicted_category_name)
+
+            if bug.category_id:
+                save_bug_report(tx, bug)
+                classified_count += 1
+                self.logger.info(
+                    f"Classified bug ID {bug.id} as {predicted_category_name}"
+                )
+            else:
+                self.logger.warning(
+                    f"Category {predicted_category_name} not found in database for bug ID {bug.id}"
+                )
+        return classified_count
 
 
 BugClassifierService = _BugClassifierService()

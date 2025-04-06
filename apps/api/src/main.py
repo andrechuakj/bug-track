@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from internal.errors import register_error_handler
 from internal.middleware.middleware import register_custom_middleware
 from internal.middleware.secured_endpoints import secured_endpoints_middleware
+from workers.celery_app import start_celery_workers
 
 app = FastAPI(
     title="bug-analysis-api",
@@ -24,6 +25,7 @@ app = FastAPI(
         configure_startup_info,
         configure_database,
         configure_openai,
+        post_config_hook=start_celery_workers,
     ),
     dependencies=[
         Depends(db_txn_manager_generator),

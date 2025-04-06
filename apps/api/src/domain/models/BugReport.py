@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from operator import is_
 
 from domain.helpers.Timestampable import Timestampable
 from domain.models.BugCategory import BugCategory, get_bug_category_by_id
@@ -126,10 +127,27 @@ def get_bug_report_by_search_and_cat(
     return tx.exec(query, params={"per_category_limit": per_category_limit}).all()
 
 
+def get_latest_bug_report_time(tx: Session, dbms_id: int):
+    return tx.scalar(
+        select(BugReport.issue_created_at)
+        .where(BugReport.dbms_id == dbms_id)
+        .order_by(BugReport.issue_created_at.desc())
+        .limit(1)
+    )
+
+
+def get_unclassified_bugs(tx: Session):
+    return tx.exec(select(BugReport).where(is_(BugReport.category_id, None))).all()
+
+
 def save_bug_report(tx: Session, bug_report: BugReport):
-    tx.add(bug_report)
-    tx.commit()
-    return bug_report
+    try:
+        tx.add(bug_report)
+        tx.commit()
+        return bug_report
+    except Exception as e:
+        tx.rollback()
+        raise
 
 
 def delete_bug_report(tx: Session, bug_report_id: int):

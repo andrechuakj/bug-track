@@ -5,6 +5,7 @@ beautifulsoup4==4.13.3
 black==25.1.0
 blis==1.2.0
 catalogue==2.0.10
+celery==5.4.0
 certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
@@ -54,6 +55,7 @@ pycparser==2.22
 pydantic==2.10.6
 pydantic-settings==2.7.1
 pydantic_core==2.27.2
+PyGithub==2.6.1
 Pygments==2.19.1
 PyJWT==2.10.1
 pytest==8.3.5
@@ -63,6 +65,7 @@ python-Levenshtein==0.26.1
 python-multipart==0.0.20
 PyYAML==6.0.2
 RapidFuzz==3.12.2
+redis==5.2.1
 requests==2.32.3
 rich==13.9.4
 rich-toolkit==0.13.2
