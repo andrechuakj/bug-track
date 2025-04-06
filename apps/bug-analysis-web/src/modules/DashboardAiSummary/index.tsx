@@ -32,6 +32,7 @@ const DashboardAiSummaryModule: React.FC<Props> = ({ dbmsId }) => {
       <div className="h-[5vh] flex justify-between flex-wrap overflow-y-scroll">
         <img
           src={isDarkMode ? 'ai_summary_white.png' : 'ai_summary_black.png'}
+          alt={isDarkMode ? 'ai_summary_white' : 'ai_summary_black'}
           className="h-[5vh]"
         />
         <Button
@@ -44,7 +45,7 @@ const DashboardAiSummaryModule: React.FC<Props> = ({ dbmsId }) => {
           disabled={isLoading}
           onClick={reload}
         >
-          AI Summary
+          {isLoading && 'Loading'} AI Summary
         </Button>
       </div>
       <Card
@@ -64,7 +65,7 @@ const DashboardAiSummaryModule: React.FC<Props> = ({ dbmsId }) => {
               <Skeleton active />
             </div>
           )}
-          {summary && <p className="fade-in-text ">{summary}</p>}
+          {summary && <p className="fade-in-text">{summary}</p>}
         </Typography.Title>
       </Card>
     </Card>
