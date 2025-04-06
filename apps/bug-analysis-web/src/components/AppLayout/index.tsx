@@ -157,16 +157,14 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
                 <>
                   <p className="text-white">Selected DBMS:</p>
                   <DatabaseDropdown />
+                  <Button
+                    onClick={() => {
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </Button>
                 </>
-              )}
-              {isAuthenticated && (
-                <Button
-                  onClick={() => {
-                    handleLogout();
-                  }}
-                >
-                  Logout
-                </Button>
               )}
               <Switch
                 checkedChildren={<MoonOutlined />}
