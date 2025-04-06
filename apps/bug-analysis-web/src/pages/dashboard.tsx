@@ -34,6 +34,7 @@ import {
   loadMoreBugsByCategory,
   searchBugReports,
 } from '../api/dbms';
+import AutocompleteTitle from '../components/AutocompleteTitle';
 import CategoryTag from '../components/CategoryTag';
 import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
@@ -290,21 +291,6 @@ const HomePage: React.FC = (): ReactNode => {
 
   // Mock BugTallyInstance data
 
-  const Title: React.FC<Readonly<{ title?: string }>> = (props: {
-    title?: string;
-  }) => (
-    <Flex align="center" justify="space-between">
-      {props.title}
-      <a
-        href="https://www.google.com/search?q=antd"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        more
-      </a>
-    </Flex>
-  );
-
   // TODO: Investigate eslint warning
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderItem = (title: string, bugReportId: number, _count: number) => ({
@@ -326,7 +312,7 @@ const HomePage: React.FC = (): ReactNode => {
   const generateOptions = useCallback(
     (result: AcBugSearchResultStruct) => {
       return result.categories.map((cat: AcBugSearchResultCategory) => ({
-        label: <Title title={cat.title} />,
+        label: <AutocompleteTitle title={cat.title} />,
         options:
           cat.options?.map((opt: AcBugSearchResult) =>
             renderItem(opt.display, opt.bugReportId, 1000)
