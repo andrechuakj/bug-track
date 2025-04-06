@@ -171,9 +171,8 @@ export const setBugExplore = (
 
 export const setBugSearchResults = (
   setBugSearchReports: Dispatch<SetStateAction<BugSearchResultStruct>>,
-  bugReports: BugReports
+  { bug_reports: reports }: BugReports
 ): void => {
-  const reports = bugReports.bug_reports;
   const bugSearchResult: BugSearchResultStruct = {};
 
   for (const {
