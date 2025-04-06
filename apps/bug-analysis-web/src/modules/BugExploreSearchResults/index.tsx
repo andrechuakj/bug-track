@@ -6,7 +6,7 @@ import SearchResultListItem from '../../components/SearchResultListItem';
 import { useAppContext } from '../../contexts/AppContext';
 import { BugSearchResultStruct } from '../../utils/bug';
 
-type BugExploreSearchResultsModuleProps = {
+type Props = {
   bugReports: BugSearchResultStruct;
   bugSearchReports: BugSearchResultStruct;
   handleBugExploreLoadMore: (tenantId: number, categoryId: number) => void;
@@ -18,19 +18,16 @@ type BugExploreSearchResultsModuleProps = {
 export const BUG_EXPLORE_KEY = '1';
 export const SEARCH_RESULTS_KEY = '2';
 
-const BugExploreSearchResultsModule: React.FC<
-  BugExploreSearchResultsModuleProps
-> = (props: BugExploreSearchResultsModuleProps) => {
+const BugExploreSearchResultsModule: React.FC<Props> = ({
+  bugReports,
+  bugSearchReports,
+  handleBugExploreLoadMore,
+  activeKey,
+  setActiveKey,
+  isFetchingSearchResult,
+}) => {
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
-  const {
-    bugReports,
-    bugSearchReports,
-    handleBugExploreLoadMore,
-    activeKey,
-    setActiveKey,
-    isFetchingSearchResult,
-  } = props;
 
   const bugSearchResults: ReactNode = useMemo(
     () => (
