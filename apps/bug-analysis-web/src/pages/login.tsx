@@ -1,14 +1,6 @@
-import {
-  Button,
-  Form,
-  FormInstance,
-  Grid,
-  Input,
-  message,
-  Typography,
-} from 'antd';
+import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { toPromise } from '../utils/promises';
@@ -19,25 +11,18 @@ type LoginFormValues = {
   password: string;
 };
 
-const formIsValid = (form: FormInstance<LoginFormValues>) => {
-  const requiredFields: Array<keyof LoginFormValues> = ['email', 'password'];
-  const allFieldsFilled = requiredFields.every((field) => {
-    const value = form.getFieldValue(field) as string | undefined;
-    return !!value;
-  });
-
-  const errors = form.getFieldsError(requiredFields);
-  const hasErrors = errors.some(({ errors }) => errors.length > 0);
-
-  return allFieldsFilled && !hasErrors;
-};
-
 const Login: React.FC = () => {
   const router = useRouter();
   const [form] = Form.useForm<LoginFormValues>();
-  const { login, loading } = useAuth();
+  const { isAuthenticated, login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
 
   const onFormSubmit = (values: LoginFormValues) => {
     setLoginError(null);

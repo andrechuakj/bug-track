@@ -1,7 +1,7 @@
 import { LeftCircleFilled } from '@ant-design/icons';
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SignupRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -15,8 +15,14 @@ type SignupFormValues = {
 const Signup: React.FC = () => {
   const router = useRouter();
   const [form] = Form.useForm<SignupFormValues>();
-  const { signup, loading } = useAuth();
+  const { isAuthenticated, signup, loading } = useAuth();
   const [signupError, setSignupError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
 
   const screens = Grid.useBreakpoint();
 
