@@ -85,6 +85,10 @@ class AuthService {
     }
   }
 
+  logout(): void {
+    clearTokens();
+  }
+
   getCurrentToken(): string | null {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('user_token');
