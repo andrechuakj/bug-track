@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { List, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSession } from '../../contexts/SessionContext';
 import { BugSearchResult, BugSearchResultCategory } from '../../utils/bug';
 
@@ -19,13 +19,13 @@ const SearchResultListItem: React.FC<Props> = ({
   const { currentTenant } = useSession();
   const router = useRouter();
 
-  const handleClickLoadMore = () => {
+  const handleClickLoadMore = useCallback(() => {
     setIsLoading(true);
     if (currentTenant) {
       handleLoadMore?.(currentTenant.id, searchResultCategory.categoryId);
     }
     setIsLoading(false);
-  };
+  }, [currentTenant, handleLoadMore, searchResultCategory.categoryId]);
 
   return (
     <List.Item className="flex flex-col">
