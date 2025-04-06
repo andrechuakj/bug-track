@@ -45,8 +45,6 @@ import DashboardAiSummaryModule from '../modules/DashboardAiSummary';
 import DashboardBugDistributionChartModule from '../modules/DashboardBugDistribution';
 import DbmsDetails from '../modules/DbmsDetails';
 import {
-  AcBugSearchResult,
-  AcBugSearchResultCategory,
   AcBugSearchResultStruct,
   BUG_CATEGORIES,
   BugSearchResultStruct,
@@ -292,24 +290,20 @@ const HomePage: React.FC = (): ReactNode => {
   // Parse bugReports into options
   const generateOptions = useCallback(
     (result: AcBugSearchResultStruct) => {
-      return result.categories.map((cat: AcBugSearchResultCategory) => ({
+      return result.categories.map((cat) => ({
         label: <AutocompleteTitle title={cat.title} />,
         options:
-          cat.options?.map((opt: AcBugSearchResult) =>
-            renderItem(opt.display, opt.bugReportId, 1000)
+          cat.options?.map(({ display, bugReportId }) =>
+            renderItem(display, bugReportId, 1000)
           ) ?? [],
       }));
     },
     [renderItem]
   );
 
-  const searchResultStruct: AcBugSearchResultStruct = useMemo(
-    () => categoriseBugs(acBugReports.bug_reports),
-    [acBugReports]
-  );
   const options = useMemo(
-    () => generateOptions(searchResultStruct),
-    [generateOptions, searchResultStruct]
+    () => generateOptions(categoriseBugs(acBugReports.bug_reports)),
+    [acBugReports.bug_reports, generateOptions]
   );
 
   const filterModal = useMemo(
