@@ -43,11 +43,11 @@ def classify_bugs_task(self, bug_ids=None):
                     if classified_count > 0:
                         continue
 
-                    # Check if scraper is still running
-                    if not coordinator.is_scraper_running():
+                    # Check if fetcher is still running
+                    if not coordinator.is_fetcher_running():
                         break
 
-                    logger.info("Waiting for more bugs from scraper...")
+                    logger.info("Waiting for more bugs from fetcher...")
                     time.sleep(5)
 
         coordinator.set_classifier_running(False)

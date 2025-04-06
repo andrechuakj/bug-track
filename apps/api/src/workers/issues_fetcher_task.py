@@ -12,7 +12,7 @@ from github import (
     RateLimitExceededException,
 )
 from utilities.constants import constants
-from workers.bug_classifier_worker import classify_bugs_task
+from workers.bug_classifier_task import classify_bugs_task
 from workers.celery_app import celery_app
 from workers.task_coordinator import TaskCoordinator
 
@@ -35,7 +35,7 @@ def fetch_github_issues_task(self):
     """Fetches new GitHub issues and stores them in the database."""
     logger = get_logger()
     coordinator = TaskCoordinator()
-    coordinator.set_scraper_running(True)
+    coordinator.set_fetcher_running(True)
     logger.info("Starting fetch github issues task")
 
     try:
@@ -44,15 +44,15 @@ def fetch_github_issues_task(self):
             dbms_systems = get_dbms_systems(session)
         if not dbms_systems:
             logger.warning("No DBMS IDs found. Exiting task.")
-            coordinator.set_scraper_running(False)
+            coordinator.set_fetcher_running(False)
             return
     except BadCredentialsException:
         logger.error("Invalid GitHub Token! Task will not retry.")
-        coordinator.set_scraper_running(False)
+        coordinator.set_fetcher_running(False)
         return
     except Exception as e:
         logger.exception(f"Failed to initialize GitHub client or load DBMS IDs: {e}")
-        coordinator.set_scraper_running(False)
+        coordinator.set_fetcher_running(False)
         raise self.retry(exc=e, countdown=30)
 
     total_issues_count = self.request.get("total_issues_count", 0)
@@ -142,7 +142,7 @@ def fetch_github_issues_task(self):
             raise self.retry(exc=e, countdown=30)
 
         finally:
-            coordinator.set_scraper_running(False)
+            coordinator.set_fetcher_running(False)
 
     logger.info(
         f"Finished fetching issues. Total new issues stored: {total_issues_count}."

@@ -15,7 +15,7 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True,
     worker_pool="solo" if os.name == "nt" else "prefork",
-    imports=["workers.issues_scraper_worker"],
+    imports=["workers.issues_fetcher_task"],
 )
 
 
@@ -40,10 +40,10 @@ def start_beat():
 
 
 def setup_beat_schedule():
-    from workers.issues_scraper_worker import fetch_github_issues_task
+    from workers.issues_fetcher_task import fetch_github_issues_task
 
     celery_app.conf.beat_schedule = {
-        "fetch-github-issues": {
+        "periodic-fetch-github-issues": {
             "task": fetch_github_issues_task.name,
             "schedule": crontab(
                 minute=constants.CELERY_BEAT_SCHEDULE.split()[0],

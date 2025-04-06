@@ -18,17 +18,17 @@ class TaskCoordinator:
         with cls._lock:
             if cls._instance is None:
                 cls._instance = super(TaskCoordinator, cls).__new__(cls)
-                cls._instance._scraper_running = False
+                cls._instance._fetcher_running = False
                 cls._instance._classifier_running = False
             return cls._instance
 
-    def set_scraper_running(self, value):
-        """Set the scraper running state."""
-        self._scraper_running = value
+    def set_fetcher_running(self, value):
+        """Set the fetcher running state."""
+        self._fetcher_running = value
 
-    def is_scraper_running(self):
-        """Check if the scraper is currently running."""
-        return self._scraper_running
+    def is_fetcher_running(self):
+        """Check if the fetcher is currently running."""
+        return self._fetcher_running
 
     def set_classifier_running(self, value):
         """Set the classifier running state."""
