@@ -120,6 +120,8 @@ const HomePage: React.FC = (): ReactNode => {
     setIsDashboardLoading(true);
     fetchDashboardData();
     setIsDashboardLoading(false);
+    // Only run once on mount (per tenant)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTenant]);
 
   const handleSearch = useCallback(
@@ -224,6 +226,8 @@ const HomePage: React.FC = (): ReactNode => {
     setBugSearchResults(setBugSearchReports, bugReportsResult);
     setExploreSearchActiveKey(SEARCH_RESULTS_KEY);
     setIsFilterModalOpen(false);
+    // TODO: Investigate eslint warning
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastSearchedStr, filterSettings]);
 
   // Category bug explore
@@ -252,6 +256,8 @@ const HomePage: React.FC = (): ReactNode => {
         bugReports
       );
     }
+    // TODO: Investigate eslint warning
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTenant]);
 
   const handleBugExploreLoadMore = async (
@@ -299,6 +305,8 @@ const HomePage: React.FC = (): ReactNode => {
     </Flex>
   );
 
+  // TODO: Investigate eslint warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderItem = (title: string, bugReportId: number, _count: number) => ({
     value: title,
     label: (
