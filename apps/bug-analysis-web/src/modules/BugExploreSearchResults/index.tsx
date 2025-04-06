@@ -57,6 +57,8 @@ const BugExploreSearchResultsModule: React.FC<
     [bugSearchReports, isDarkMode, isFetchingSearchResult]
   );
 
+  // TODO: Investigate lint warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const bugExplore: ReactNode = (
     <>
       {isFetchingSearchResult && <LoadingOutlined />}
