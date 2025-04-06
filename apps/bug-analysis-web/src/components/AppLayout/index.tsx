@@ -42,7 +42,9 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
       key: '1',
       icon: <BugOutlined />,
       label: 'Bug Report',
-      onClick: () => void router.push('/home'),
+      onClick: () => {
+        router.push('/home');
+      },
     },
   ];
 
@@ -146,7 +148,13 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
                 </>
               )}
               {isAuthenticated && (
-                <Button onClick={void handleLogout}>Logout</Button>
+                <Button
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                >
+                  Logout
+                </Button>
               )}
               <Switch
                 checkedChildren={<MoonOutlined />}
