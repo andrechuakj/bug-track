@@ -14,7 +14,7 @@ export enum FilterBugCategory {
   NONE_SELECTED = 'None Selected',
 }
 
-const categoryToIdMap: { [cat in FilterBugCategory]?: number } =
+export const categoryToIdMap: { [cat in FilterBugCategory]?: number } =
   Object.fromEntries(
     Object.values(FilterBugCategory).map((value, index) => [value, index])
   );

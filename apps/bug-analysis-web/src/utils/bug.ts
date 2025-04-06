@@ -171,8 +171,9 @@ export const setBugExplore = (
 
 export const setBugSearchResults = (
   setBugSearchReports: Dispatch<SetStateAction<BugSearchResultStruct>>,
-  bugReports: BugReport[]
+  bugReports: BugReports
 ): void => {
+  const reports = bugReports.bug_reports;
   const bugSearchResult: BugSearchResultStruct = {};
 
   for (const {
@@ -180,7 +181,7 @@ export const setBugSearchResults = (
     title: display,
     category_id: categoryId,
     description,
-  } of bugReports) {
+  } of reports) {
     if (categoryId == null) {
       console.error(
         `Bug report ${bugReportId} has no category ID. This should not happen.`
