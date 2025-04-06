@@ -143,8 +143,9 @@ const HomePage: React.FC = (): ReactNode => {
     [currentTenant, filterSettings]
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearchDebounce = useCallback(
-    debounce(async (searchStr: string) => {
+    debounce((searchStr: string) => {
       if (!currentTenant) return;
       if (searchStr.length >= 3) {
         handleSearch(searchStr);
@@ -361,7 +362,9 @@ const HomePage: React.FC = (): ReactNode => {
                       ref={searchFieldRef}
                       size="large"
                       placeholder="Search for bug"
-                      onSearch={handlePopulateSearchResults}
+                      onSearch={() => {
+                        handlePopulateSearchResults();
+                      }}
                     />
                   </AutoComplete>
                 </Form.Item>
@@ -385,7 +388,9 @@ const HomePage: React.FC = (): ReactNode => {
             <BugExploreSearchResultsModule
               bugReports={bugReports}
               bugSearchReports={bugSearchReports}
-              handleBugExploreLoadMore={handleBugExploreLoadMore}
+              handleBugExploreLoadMore={(tenantId, categoryId) => {
+                handleBugExploreLoadMore(tenantId, categoryId);
+              }}
               activeKey={exploreSearchActiveKey}
               setActiveKey={setExploreSearchActiveKey}
               isFetchingSearchResult={
@@ -458,7 +463,9 @@ const HomePage: React.FC = (): ReactNode => {
         isModalOpen={isFilterModalOpen}
         setIsModalOpen={setIsFilterModalOpen}
         modalItems={filterModalItems}
-        handleOk={handleApplyFilter}
+        handleOk={() => {
+          handleApplyFilter();
+        }}
       />
     </>
   );
