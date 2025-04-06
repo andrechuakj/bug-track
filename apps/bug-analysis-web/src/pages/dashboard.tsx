@@ -11,10 +11,8 @@ import {
   Row,
   SelectProps,
   Skeleton,
-  Typography,
 } from 'antd';
 import { debounce } from 'lodash';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import {
   ReactNode,
@@ -25,7 +23,6 @@ import {
   useState,
 } from 'react';
 import {
-  BugCategory,
   BugExploreReports,
   BugReports,
   DbmsResponseDto,
@@ -35,10 +32,8 @@ import {
   searchBugReports,
 } from '../api/dbms';
 import AutocompleteTitle from '../components/AutocompleteTitle';
-import CategoryTag from '../components/CategoryTag';
 import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
-import { useAppContext } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useSession } from '../contexts/SessionContext';
 import BugExploreSearchResultsModule, {
@@ -47,6 +42,7 @@ import BugExploreSearchResultsModule, {
 } from '../modules/BugExploreSearchResults';
 import BugTrendModule from '../modules/BugTrend';
 import DashboardAiSummaryModule from '../modules/DashboardAiSummary';
+import DashboardBugDistributionChartModule from '../modules/DashboardBugDistribution';
 import DbmsDetails from '../modules/DbmsDetails';
 import {
   AcBugSearchResult,
@@ -58,17 +54,12 @@ import {
   setBugExplore,
   setBugSearchResults,
 } from '../utils/bug';
-import { generateBugDistrBar } from '../utils/chart';
-import { antdTagPresets } from '../utils/theme';
 import {
   FilterBugCategory,
   FilterBugPriority,
   FilterSettings,
   getCategoryId,
 } from '../utils/types';
-
-// Dynamically import ECharts for client-side rendering only
-const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 const HomePage: React.FC = (): ReactNode => {
   const { isAuthenticated, loading } = useAuth();
@@ -287,8 +278,6 @@ const HomePage: React.FC = (): ReactNode => {
     );
   };
 
-  const { theme } = useAppContext();
-
   // Mock BugTallyInstance data
 
   // TODO: Investigate eslint warning
@@ -417,36 +406,9 @@ const HomePage: React.FC = (): ReactNode => {
               )}
             </Col>
             <Col xs={24} md={14}>
-              <Card className="h-[40vh] w-[100%]">
-                <div className="h-[5vh]">
-                  <Typography.Title level={4}>
-                    Bug Distribution (by category)
-                  </Typography.Title>
-                </div>
-
-                <EChartsReact
-                  option={generateBugDistrBar(
-                    dbmsData.bug_categories,
-                    theme ?? 'dark'
-                  )}
-                  style={{ height: '20vh' }}
-                />
-                <div className="overflow-y-scroll p-1 flex flex-wrap">
-                  {dbmsData?.bug_categories?.map(
-                    (cat: BugCategory, idx: number) =>
-                      cat.count > 0 ? (
-                        <CategoryTag
-                          key={idx}
-                          color={antdTagPresets[idx % antdTagPresets.length]}
-                          text={`${cat.name} | ${cat.count}`}
-                          className="mt-2"
-                        />
-                      ) : (
-                        <></>
-                      )
-                  )}
-                </div>
-              </Card>
+              <DashboardBugDistributionChartModule
+                categories={dbmsData.bug_categories}
+              />
             </Col>
           </Row>
         </div>
