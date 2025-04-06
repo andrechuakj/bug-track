@@ -25,12 +25,10 @@ import {
   useState,
 } from 'react';
 import {
-  AiSummary,
   BugCategory,
   BugExploreReports,
   BugReports,
   DbmsResponseDto,
-  fetchAiSummary,
   fetchBugTrend,
   fetchDbmsData,
   loadMoreBugsByCategory,
@@ -62,7 +60,6 @@ import {
 import { generateBugDistrBar } from '../utils/chart';
 import { antdTagPresets } from '../utils/theme';
 import {
-  AppTheme,
   categoryToIdMap,
   FilterBugCategory,
   FilterBugPriority,
@@ -77,9 +74,7 @@ const HomePage: React.FC = (): ReactNode => {
   const { currentTenant } = useSession();
   const router = useRouter();
   const [dbmsData, setDbmsData] = useState<DbmsResponseDto>();
-  const [aiSummary, setAiSummary] = useState<AiSummary>();
   const [bugTrend, setBugTrend] = useState<number[]>([]);
-  const [aiButtonLoading, setAiButtonLoading] = useState(false);
   const [isDashboardLoading, setIsDashboardLoading] = useState(false);
   const [lastSearchedStr, setLastSearchedStr] = useState('');
   // Filter states
@@ -118,7 +113,6 @@ const HomePage: React.FC = (): ReactNode => {
       fetchBugExplore(),
       fetchDbmsData(currentTenant.id).then((res) => setDbmsData(res)),
       fetchBugTrend(currentTenant.id).then((res) => setBugTrend(res)),
-      handleLoadAiSummary(),
     ]);
   };
 
@@ -288,19 +282,7 @@ const HomePage: React.FC = (): ReactNode => {
     );
   };
 
-  // AI logic
-  const handleLoadAiSummary = async () => {
-    if (!currentTenant) return;
-    setAiSummary(undefined);
-    setAiButtonLoading(true);
-    await fetchAiSummary(currentTenant.id).then((res: AiSummary) =>
-      setAiSummary(res)
-    );
-    setAiButtonLoading(false);
-  };
-
   const { theme } = useAppContext();
-  const isDarkMode = theme === 'dark';
 
   // Mock BugTallyInstance data
 
@@ -449,7 +431,7 @@ const HomePage: React.FC = (): ReactNode => {
                 <EChartsReact
                   option={generateBugDistrBar(
                     dbmsData.bug_categories,
-                    (theme as AppTheme) ?? 'dark'
+                    theme ?? 'dark'
                   )}
                   style={{ height: '20vh' }}
                 />
