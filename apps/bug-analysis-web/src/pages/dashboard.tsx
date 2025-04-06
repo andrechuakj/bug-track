@@ -55,6 +55,8 @@ import {
   setBugSearchResults,
 } from '../utils/bug';
 import {
+  BUG_CATEGORY_FILTERS,
+  BUG_PRIORITY_FILTERS,
   FilterBugCategory,
   FilterBugPriority,
   FilterSettings,
@@ -169,42 +171,32 @@ const HomePage: React.FC = (): ReactNode => {
   };
 
   // Filter
-  const bugCategoryFilterOptions = Object.values(
-    FilterBugCategory
-  ) as FilterBugCategory[];
 
-  const bugPriorityFilterOptions = Object.values(
-    FilterBugPriority
-  ) as FilterBugPriority[];
-
-  const filterModalItems: React.JSX.Element[] = [
-    <FilterSelection
-      key="filter-sel-1"
-      filterPrefix={<p className="font-light">Category:</p>}
-      filterSetting={filterSettings.category}
-      filterOptions={bugCategoryFilterOptions}
-      filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
-        setFilterSettings((settings) => ({
-          ...settings,
-          category: val as FilterBugCategory,
-        }));
-      }}
-      filterPlaceholder="Select Bug Category"
-    />,
-    <FilterSelection
-      key="filter-sel-1"
-      filterPrefix={<p className="font-light">Priority:</p>}
-      filterSetting={filterSettings.priority}
-      filterOptions={bugPriorityFilterOptions}
-      filterOnChange={(val: FilterBugCategory | FilterBugPriority) => {
-        setFilterSettings((settings) => ({
-          ...settings,
-          priority: val as FilterBugPriority,
-        }));
-      }}
-      filterPlaceholder="Select Bug Priority"
-    />,
-  ];
+  const filterModalItems: React.JSX.Element[] = useMemo(
+    () => [
+      <FilterSelection<'category'>
+        key="filter-sel-category"
+        filterPrefix={<p className="font-light">Category:</p>}
+        filterSetting={filterSettings.category}
+        filterOptions={BUG_CATEGORY_FILTERS}
+        filterOnChange={(val) => {
+          setFilterSettings((settings) => ({ ...settings, category: val }));
+        }}
+        filterPlaceholder="Select Bug Category"
+      />,
+      <FilterSelection<'priority'>
+        key="filter-sel-priority"
+        filterPrefix={<p className="font-light">Priority:</p>}
+        filterSetting={filterSettings.priority}
+        filterOptions={BUG_PRIORITY_FILTERS}
+        filterOnChange={(val) => {
+          setFilterSettings((settings) => ({ ...settings, priority: val }));
+        }}
+        filterPlaceholder="Select Bug Priority"
+      />,
+    ],
+    [filterSettings.category, filterSettings.priority]
+  );
 
   const handleApplyFilter = useCallback(async () => {
     let bugReportsResult: BugReports = acBugReports;
@@ -320,6 +312,22 @@ const HomePage: React.FC = (): ReactNode => {
     [generateOptions, searchResultStruct]
   );
 
+  const filterModal = useMemo(
+    () => (
+      <DynamicModal
+        modalTitle="Filter settings"
+        modalOkButtonText="Apply filters"
+        isModalOpen={isFilterModalOpen}
+        setIsModalOpen={setIsFilterModalOpen}
+        modalItems={filterModalItems}
+        handleOk={() => {
+          handleApplyFilter();
+        }}
+      />
+    ),
+    [filterModalItems, handleApplyFilter, isFilterModalOpen]
+  );
+
   if (!dbmsData) {
     return <Skeleton active round />;
   }
@@ -414,16 +422,7 @@ const HomePage: React.FC = (): ReactNode => {
           </Col>
         </Row>
       </div>
-      <DynamicModal
-        modalTitle="Filter settings"
-        modalOkButtonText="Apply filters"
-        isModalOpen={isFilterModalOpen}
-        setIsModalOpen={setIsFilterModalOpen}
-        modalItems={filterModalItems}
-        handleOk={() => {
-          handleApplyFilter();
-        }}
-      />
+      {filterModal}
     </>
   );
 };
