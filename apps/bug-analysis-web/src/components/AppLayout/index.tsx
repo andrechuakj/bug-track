@@ -23,13 +23,20 @@ import Grid from 'antd/es/card/Grid';
 import Sider from 'antd/es/layout/Sider';
 import { Content, Header } from 'antd/es/layout/layout';
 import { useRouter } from 'next/router';
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import {
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { useAppContext } from '../../contexts/AppContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { APP_THEME } from '../../utils/theme';
 import { AppTheme } from '../../utils/types';
 import DatabaseDropdown from '../DatabaseDropdown';
 import styles from './index.module.css';
+import { MessageContext } from '../../contexts/MessageContext';
 
 const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [siderCollapse, setSiderCollapse] = useState<boolean>(false);
@@ -57,7 +64,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   const isDarkMode = themeSetting === 'dark';
   const logo = siderCollapse ? '/favicon.ico' : '/bug_track_logo.png';
   const logoStyle = siderCollapse ? 'h-3/6' : 'h-5/6';
-  const [messageApi, contextHolder] = message.useMessage();
+  const messageApi = useContext(MessageContext);
 
   useEffect(() => {
     updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
@@ -65,7 +72,9 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
 
   const handleLogout = useCallback(async () => {
     await logout();
-    messageApi.success('Successfully logged out');
+    if (messageApi) {
+      messageApi.success('Successfully logged out');
+    }
   }, [logout, messageApi]);
 
   return (
@@ -80,7 +89,6 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
         },
       }}
     >
-      {contextHolder}
       <Layout className={'h-screen overflow-hidden'}>
         <Sider
           trigger={null}

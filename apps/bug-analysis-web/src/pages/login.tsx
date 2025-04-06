@@ -1,10 +1,11 @@
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { toPromise } from '../utils/promises';
 import { RightCircleFilled } from '@ant-design/icons';
+import { MessageContext } from '../contexts/MessageContext';
 
 type LoginFormValues = {
   email: string;
@@ -16,13 +17,16 @@ const Login: React.FC = () => {
   const [form] = Form.useForm<LoginFormValues>();
   const { isAuthenticated, login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [messageApi, contextHolder] = message.useMessage();
+  const messageApi = useContext(MessageContext);
 
   useEffect(() => {
     if (isAuthenticated) {
+      if (messageApi) {
+        messageApi.success('Already logged in');
+      }
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, []);
 
   const onFormSubmit = (values: LoginFormValues) => {
     setLoginError(null);
@@ -33,7 +37,10 @@ const Login: React.FC = () => {
     toPromise(login)(authValues)
       .then((success) => {
         if (success) {
-          messageApi.success('Login successful!');
+          if (messageApi) {
+            messageApi.success('Login successful!');
+          }
+          router.push('/');
         } else {
           setLoginError('Invalid email or password. Please try again.');
         }
