@@ -24,7 +24,7 @@ type Props = {
 
 export const BugReportProvider: React.FC<Props> = ({ children }) => {
   const [bugReport, setBugReport] = useState<BugReport | null>(null);
-  const [isBugLoading, setIsBugLoading] = useState(false);
+  const [isBugLoading, setIsBugLoading] = useState(true);
 
   const fetchBugReport = useCallback(async (bugId: number) => {
     setIsBugLoading(true);
