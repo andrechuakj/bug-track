@@ -29,6 +29,32 @@ const BugExploreSearchResultsModule: React.FC<Props> = ({
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
 
+  const bugExplore: ReactNode = useMemo(
+    () => (
+      <>
+        {isFetchingSearchResult && <LoadingOutlined />}
+        {!isFetchingSearchResult && bugReports && (
+          <List
+            size="large"
+            bordered
+            dataSource={Object.entries(bugReports)}
+            renderItem={([_, value]) => (
+              <SearchResultListItem
+                searchResultCategory={value}
+                handleLoadMore={handleBugExploreLoadMore}
+              />
+            )}
+            className={clsx(
+              'h-[40vh] overflow-y-scroll',
+              isDarkMode ? 'bg-black' : 'bg-white'
+            )}
+          />
+        )}
+      </>
+    ),
+    [bugReports, handleBugExploreLoadMore, isDarkMode, isFetchingSearchResult]
+  );
+
   const bugSearchResults: ReactNode = useMemo(
     () => (
       <>
@@ -52,31 +78,6 @@ const BugExploreSearchResultsModule: React.FC<Props> = ({
       </>
     ),
     [bugSearchReports, isDarkMode, isFetchingSearchResult]
-  );
-
-  // TODO: Investigate lint warning
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const bugExplore: ReactNode = (
-    <>
-      {isFetchingSearchResult && <LoadingOutlined />}
-      {!isFetchingSearchResult && bugReports && (
-        <List
-          size="large"
-          bordered
-          dataSource={Object.entries(bugReports)}
-          renderItem={([_, value]) => (
-            <SearchResultListItem
-              searchResultCategory={value}
-              handleLoadMore={handleBugExploreLoadMore}
-            />
-          )}
-          className={clsx(
-            'h-[40vh] overflow-y-scroll',
-            isDarkMode ? 'bg-black' : 'bg-white'
-          )}
-        />
-      )}
-    </>
   );
 
   const items = useMemo(
