@@ -111,8 +111,6 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
               <img src={logo} className={logoStyle} alt={'BugTrack logo'} />
             </div>
 
-            {isAuthenticated && <DatabaseDropdown />}
-
             <Menu
               theme="dark"
               mode="inline"
