@@ -56,7 +56,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
   ];
 
   const pathNameToKeyMap: { [pathName: string]: string } = {
-    ['/home']: '1',
+    ['/']: '1',
   };
 
   const { Text } = Typography;

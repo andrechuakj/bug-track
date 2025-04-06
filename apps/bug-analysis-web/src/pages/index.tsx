@@ -3,7 +3,7 @@ import { ReactNode, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Dashboard from './dashboard';
 
-// This is the main page of the application. It checks if the user is authenticated. This is the layer that abstracts out he authentication logic.
+// This is the main page of the application. It checks if the user is authenticated. This is the layer that abstracts out the authentication logic.
 const Homepage: React.FC = (): ReactNode => {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
