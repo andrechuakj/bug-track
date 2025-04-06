@@ -2,15 +2,15 @@ import { Dispatch, SetStateAction } from 'react';
 import FilterSelection from '../../components/FilterSelection';
 import { BUG_CATEGORY_FILTERS, FilterSettings } from '../../utils/types';
 
-export interface CategoryFilterProps {
+type Props = {
   filterSettings: FilterSettings;
   setFilterSettings: Dispatch<SetStateAction<FilterSettings>>;
-}
+};
 
-const CategoryFilter = ({
+const CategoryFilter: React.FC<Props> = ({
   filterSettings,
   setFilterSettings,
-}: CategoryFilterProps) => {
+}) => {
   return (
     <FilterSelection<'category'>
       key="filter-sel-category"

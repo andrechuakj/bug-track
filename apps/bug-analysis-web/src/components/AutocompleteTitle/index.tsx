@@ -1,12 +1,10 @@
 import { Flex } from 'antd';
 
-export interface AutocompleteTitleProps {
+type Props = {
   title?: string;
-}
+};
 
-const AutocompleteTitle: React.FC<Readonly<AutocompleteTitleProps>> = ({
-  title,
-}) => (
+const AutocompleteTitle: React.FC<Props> = ({ title }) => (
   <Flex align="center" justify="space-between">
     {title}
   </Flex>
