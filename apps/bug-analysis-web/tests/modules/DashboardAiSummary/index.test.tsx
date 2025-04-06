@@ -28,10 +28,6 @@ describe('DashboardAiSummaryModule', () => {
   });
 
   it('renders loading state correctly', () => {
-    // Mock the fetch function to return unresolved promise
-    // vi.mock('../../../src/api/dbms', () => ({
-    //   fetchAiSummary: vi.fn().mockReturnValue(new Promise(() => {})),
-    // }));
     const { getByText, getByRole } = render(
       <DashboardAiSummaryModule dbmsId={1} />
     );
