@@ -292,10 +292,9 @@ const HomePage: React.FC = (): ReactNode => {
     (result: AcBugSearchResultStruct) => {
       return result.categories.map((cat) => ({
         label: <AutocompleteTitle title={cat.title} />,
-        options:
-          cat.options?.map(({ display, bugReportId }) =>
-            renderItem(display, bugReportId, 1000)
-          ) ?? [],
+        options: cat.options.map(({ display, bugReportId }) =>
+          renderItem(display, bugReportId, 1000)
+        ),
       }));
     },
     [renderItem]
