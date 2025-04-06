@@ -60,10 +60,10 @@ import {
 import { generateBugDistrBar } from '../utils/chart';
 import { antdTagPresets } from '../utils/theme';
 import {
-  categoryToIdMap,
   FilterBugCategory,
   FilterBugPriority,
   FilterSettings,
+  getCategoryId,
 } from '../utils/types';
 
 // Dynamically import ECharts for client-side rendering only
@@ -125,10 +125,7 @@ const HomePage: React.FC = (): ReactNode => {
   const handleSearch = useCallback(
     async (searchStr: string) => {
       if (!currentTenant) return;
-      const category =
-        filterSettings.category !== FilterBugCategory.NONE_SELECTED
-          ? categoryToIdMap[filterSettings.category]
-          : undefined;
+      const category = getCategoryId(filterSettings);
 
       const bugReports: BugReports = await searchBugReports(
         currentTenant.id,
