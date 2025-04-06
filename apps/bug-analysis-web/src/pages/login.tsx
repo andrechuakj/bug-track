@@ -8,11 +8,11 @@ import {
   Typography,
 } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { toPromise } from '../utils/promises';
-import { BugTrackColors } from '../utils/theme';
+import { RightCircleFilled } from '@ant-design/icons';
 
 type LoginFormValues = {
   email: string;
@@ -69,107 +69,66 @@ const Login: React.FC = () => {
 
   const screens = Grid.useBreakpoint();
 
-  const [fieldsHeight, setFieldsHeight]: [
-    number,
-    React.Dispatch<React.SetStateAction<number>>,
-  ] = useState(0);
-  const fieldsRef = useRef<HTMLDivElement | null>(null);
-  useLayoutEffect(() => {
-    if (fieldsRef.current) {
-      setFieldsHeight(fieldsRef.current.scrollHeight);
-    }
-  }, [screens.md]);
-
   const handleSignUpOnClick = useCallback(
     () => router.push('/signup'),
     [router]
   );
 
   return (
-    <div className="flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center">
-      {contextHolder}
-      <img
-        src="/bug_track_logo.png"
-        alt="Logo"
-        className={`w-full lg:w-1/2 max-w-xl mb-6 lg:-translate-y-[24px]`}
-      />
+    <div
+      className={`flex flex-col lg:flex-row items-center overflow-x-hidden min-h-full lg:max-h-full justify-center`}
+    >
+      <div
+        className={`flex flex-col w-full lg:w-1/2 max-w-xl mb-6 items-center lg:-translate-y-[24px]`}
+      >
+        <img src="/bug_track_logo.png" alt="Logo" className={`w-full `} />
+      </div>
+      <div />
       <Form<LoginFormValues>
+        form={form}
         name="login_form"
         layout={screens.md ? 'horizontal' : 'vertical'}
-        labelCol={screens.md ? { span: 6 } : undefined}
-        wrapperCol={screens.md ? { span: 16 } : undefined}
-        initialValues={{ remember: true }}
+        labelCol={screens.md ? { span: 8 } : undefined}
+        wrapperCol={screens.md ? { span: 12 } : undefined}
         className={`w-2/3 lg:w-1/2 flex flex-col items-center`}
-        form={form}
         onFinish={onFormSubmit}
         onFinishFailed={onLoginFail}
       >
-        <div // for setting boundaries for visible children in transition, and resizing
-          className={`w-full max-w-xs md:max-w-md overflow-hidden flex items-end`}
-          style={{ height: fieldsHeight }}
-        >
-          <div // for moving vertically for small and large screens
-            ref={fieldsRef}
-            className="w-full pointer-events-auto"
-          >
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: 'Please enter your email!' }]}
-            >
-              <Input placeholder="Enter your Email" />
-            </Form.Item>
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                { required: true, message: 'Please enter your password!' },
-              ]}
-            >
-              <Input.Password placeholder="Enter your Password" />
-            </Form.Item>
-          </div>
-        </div>
-        {loginError && (
-          <Typography.Text type="danger" className="mb-4">
-            {loginError}
-          </Typography.Text>
-        )}
-        <Form.Item
-          className="w-full max-w-xs mt-4 transition-none"
-          wrapperCol={screens.md ? { offset: 0, span: 24 } : undefined}
-          shouldUpdate
-        >
-          {() => {
-            const isDisabled = !formIsValid(form) || loading;
-            return (
-              <div className="flex justify-center">
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="transition-none w-[256px]"
-                    disabled={isDisabled}
-                    loading={loading}
-                    style={{ background: BugTrackColors.GREEN }}
-                  >
-                    Log In
-                  </Button>
-                  <Button
-                    type="primary"
-                    className="transition-none"
-                    loading={loading}
-                    style={{ background: BugTrackColors.ORANGE }}
-                    onClick={() => {
-                      handleSignUpOnClick();
-                    }}
-                  >
-                    Sign up
-                  </Button>
-                </div>
-              </div>
-            );
+        <div
+          className="mb-2 cursor-pointer"
+          onClick={() => {
+            handleSignUpOnClick();
           }}
+        >
+          <span className="mr-2">Sign up</span>
+          <RightCircleFilled />
+        </div>
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            { required: true, message: 'Please enter your email!' },
+            { type: 'email', message: 'Please enter a valid email!' },
+          ]}
+          className={`w-full max-w-xs md:max-w-xl`}
+        >
+          <Input placeholder="Email" />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: 'Please enter your password!' }]}
+          className={`w-full max-w-xs md:max-w-xl`}
+        >
+          <Input.Password placeholder="Password" />
+        </Form.Item>
+        {loginError && (
+          <Typography.Text type="danger">{loginError}</Typography.Text>
+        )}
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Log In
+          </Button>
         </Form.Item>
       </Form>
     </div>

@@ -80,7 +80,7 @@ const Signup: React.FC = () => {
           }}
         >
           <LeftCircleFilled />
-          <span className="ml-2">Back to login</span>
+          <span className="ml-2">Log in</span>
         </div>
         <Form.Item
           label="Email"
