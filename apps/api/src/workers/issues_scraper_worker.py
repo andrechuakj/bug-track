@@ -14,6 +14,7 @@ from github import (
 from utilities.constants import constants
 from workers.bug_classifier_worker import classify_bugs_task
 from workers.celery_app import celery_app
+from workers.task_coordinator import TaskCoordinator
 
 
 def get_github_client():
@@ -33,6 +34,9 @@ def build_github_query(repo: str, latest_issue_time: datetime | None) -> str:
 def fetch_github_issues_task(self):
     """Fetches new GitHub issues and stores them in the database."""
     logger = get_logger()
+    coordinator = TaskCoordinator()
+    coordinator.set_scraper_running(True)
+    logger.info("Starting fetch github issues task")
 
     try:
         g = get_github_client()
@@ -40,15 +44,18 @@ def fetch_github_issues_task(self):
             dbms_systems = get_dbms_systems(session)
         if not dbms_systems:
             logger.warning("No DBMS IDs found. Exiting task.")
+            coordinator.set_scraper_running(False)
             return
     except BadCredentialsException:
         logger.error("Invalid GitHub Token! Task will not retry.")
+        coordinator.set_scraper_running(False)
         return
     except Exception as e:
         logger.exception(f"Failed to initialize GitHub client or load DBMS IDs: {e}")
+        coordinator.set_scraper_running(False)
         raise self.retry(exc=e, countdown=30)
 
-    total_issues_count = 0
+    total_issues_count = self.request.get("total_issues_count", 0)
 
     for dbms in dbms_systems:
         repo = dbms.repository
@@ -66,9 +73,6 @@ def fetch_github_issues_task(self):
 
             page = 0
             while True:
-                logger.info(
-                    f"[DBMS {dbms_id}] Fetching page {page + 1} of GitHub issues..."
-                )
                 with get_session() as session:
                     page_issues = search_results.get_page(page)
                     if not page_issues:
@@ -99,6 +103,9 @@ def fetch_github_issues_task(self):
                             )
                             BugReport.save_bug_report(session, bug_report)
                             total_issues_count += 1
+                            self.update_state(
+                                state={"total_issues_count": total_issues_count}
+                            )
                             logger.info(
                                 f"[DBMS {dbms_id}] Stored issue: {issue.title} (ID: {bug_report.id})"
                             )
@@ -107,7 +114,9 @@ def fetch_github_issues_task(self):
                                 f"[DBMS {dbms_id}] Failed to save issue: {issue.title} - {save_error}"
                             )
 
-                classify_bugs_task.delay()
+                if not coordinator.is_classifier_running():
+                    classify_bugs_task.delay()
+
                 page += 1
                 time.sleep(2)
 
@@ -131,6 +140,9 @@ def fetch_github_issues_task(self):
                 f"[DBMS {dbms_id}] Unexpected error: {e}. Retrying in 30s..."
             )
             raise self.retry(exc=e, countdown=30)
+
+        finally:
+            coordinator.set_scraper_running(False)
 
     logger.info(
         f"Finished fetching issues. Total new issues stored: {total_issues_count}."

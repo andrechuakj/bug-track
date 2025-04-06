@@ -15,6 +15,7 @@ celery_app.conf.update(
     timezone="UTC",
     enable_utc=True,
     worker_pool="solo" if os.name == "nt" else "prefork",
+    imports=["workers.issues_scraper_worker"],
 )
 
 

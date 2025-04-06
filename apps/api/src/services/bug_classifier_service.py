@@ -1,7 +1,7 @@
-import pickle
 import re
 from pathlib import Path
 
+import joblib
 import markdown
 import numpy as np
 import spacy
@@ -44,20 +44,20 @@ class _BugClassifierService(Service):
             with open(
                 _BugClassifierService.MODEL_DIR / "bug_classifier_model.pickle", "rb"
             ) as model_file:
-                self.model: LogisticRegression = pickle.load(model_file)
+                self.model: LogisticRegression = joblib.load(model_file)
 
             with open(
                 _BugClassifierService.MODEL_DIR / "label_encoder.pickle", "rb"
             ) as encoder_file:
-                self.label_encoder: LabelEncoder = pickle.load(encoder_file)
+                self.label_encoder: LabelEncoder = joblib.load(encoder_file)
 
             with open(
                 _BugClassifierService.MODEL_DIR / "tfidf_vectorizer.pickle", "rb"
             ) as vectorizer_file:
-                self.vectorizer: TfidfVectorizer = pickle.load(vectorizer_file)
+                self.vectorizer: TfidfVectorizer = joblib.load(vectorizer_file)
 
             self.logger.info("Successfully loaded bug classifier models and resources")
-        except (FileNotFoundError, pickle.UnpicklingError) as e:
+        except (FileNotFoundError, Exception) as e:
             self.logger.error(f"Failed to load bug classifier model: {e}")
             raise
 
