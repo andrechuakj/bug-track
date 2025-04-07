@@ -1,7 +1,13 @@
 import { LeftCircleFilled } from '@ant-design/icons';
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { SignupRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { MessageContext } from '../contexts/MessageContext';
@@ -19,15 +25,16 @@ const Signup: React.FC = () => {
   const { isAuthenticated, signup, loading } = useAuth();
   const [signupError, setSignupError] = useState<string | null>(null);
   const messageApi = useContext(MessageContext);
+  const successfulSignup = useRef(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading && !successfulSignup.current) {
       if (messageApi) {
         messageApi.success('Already logged in');
       }
       router.push('/');
     }
-  }, []);
+  }, [isAuthenticated, messageApi, router, loading]);
 
   const screens = Grid.useBreakpoint();
 
@@ -48,6 +55,7 @@ const Signup: React.FC = () => {
         if (messageApi) {
           messageApi.success('Signup successful!');
         }
+        successfulSignup.current = true;
         router.push('/');
       } else {
         setSignupError('Signup failed. Please try again.');

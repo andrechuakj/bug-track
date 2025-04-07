@@ -12,7 +12,6 @@ import {
   Layout,
   Menu,
   MenuProps,
-  message,
   Row,
   Space,
   Switch,

@@ -1,6 +1,12 @@
 import { Button, Form, Grid, Input, message, Typography } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { LoginRequestDto } from '../api/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { toPromise } from '../utils/promises';
@@ -18,15 +24,16 @@ const Login: React.FC = () => {
   const { isAuthenticated, login, loading } = useAuth();
   const [loginError, setLoginError] = useState<string | null>(null);
   const messageApi = useContext(MessageContext);
+  const successfulLogin = useRef(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading && !successfulLogin.current) {
       if (messageApi) {
         messageApi.success('Already logged in');
       }
       router.push('/');
     }
-  }, []);
+  }, [isAuthenticated, messageApi, router, loading]);
 
   const onFormSubmit = (values: LoginFormValues) => {
     setLoginError(null);
@@ -40,6 +47,7 @@ const Login: React.FC = () => {
           if (messageApi) {
             messageApi.success('Login successful!');
           }
+          successfulLogin.current = true;
           router.push('/');
         } else {
           setLoginError('Invalid email or password. Please try again.');
