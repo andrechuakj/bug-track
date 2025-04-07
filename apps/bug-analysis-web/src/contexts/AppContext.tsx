@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { AppTheme } from '../utils/types';
 import { AuthProvider } from './AuthContext';
-import { MessageContext } from './MessageContext';
+import { MessageContext, MessageProvider } from './MessageContext';
 import { message } from 'antd';
 
 type AppContextType = {
@@ -37,10 +37,7 @@ export const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <AppContext.Provider value={{ theme, updateTheme }}>
       <AuthProvider>
-        <MessageContext.Provider value={messageApi}>
-          {contextHolder}
-          {children}
-        </MessageContext.Provider>
+        <MessageProvider>{children}</MessageProvider>
       </AuthProvider>
     </AppContext.Provider>
   );
