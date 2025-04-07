@@ -111,8 +111,9 @@ def fetch_github_issues_task(self):
                             )
                         except Exception as save_error:
                             logger.exception(
-                                f"[DBMS {dbms_id}] Failed to save issue: {issue.title} - {save_error}"
+                                f"[DBMS {dbms_id}] Failed to save issue: {issue.title} - {save_error}. Retrying in 30s..."
                             )
+                            raise self.retry(exc=e, countdown=30)
 
                 if not coordinator.is_classifier_running():
                     classify_bugs_task.delay()

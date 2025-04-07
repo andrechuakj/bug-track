@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from operator import is_
 
 from domain.helpers.Timestampable import Timestampable
 from domain.models.BugCategory import BugCategory, get_bug_category_by_id
@@ -7,6 +6,7 @@ from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
 from pydantic import ValidationInfo, field_validator
 from sqlalchemy.sql import func
+from sqlalchemy.sql.operators import is_
 from sqlmodel import TIMESTAMP, Field, Relationship, Session, select, text
 
 
