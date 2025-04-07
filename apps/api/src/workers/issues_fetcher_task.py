@@ -35,6 +35,9 @@ def fetch_github_issues_task(self):
     """Fetches new GitHub issues and stores them in the database."""
     logger = get_logger()
     coordinator = TaskCoordinator()
+    if coordinator.is_fetcher_running():
+        logger.info("Fetcher is already running. Exiting task.")
+        return
     coordinator.set_fetcher_running(True)
     logger.info("Starting fetch github issues task")
 
