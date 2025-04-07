@@ -53,6 +53,9 @@ jobs:
           echo OPENAI_API_KEY=dummy_openai_key >> .env.local
           echo DATABASE_URL=postgresql://fake:fake@localhost:5432/fake >> .env.local
           echo JWT_SECRET_KEY=dummy_jwt_secret_key >> .env.local
+          echo REDIS_BROKER_URL=redis://localhost:6379/0 >> .env.local
+          echo GITHUB_TOKEN=dummy_github_token >> .env.local
+          echo CELERY_BEAT_SCHEDULE="dummy_cron" >> .env.local
           yarn generate
       - name: Check lint
         run: yarn lint
