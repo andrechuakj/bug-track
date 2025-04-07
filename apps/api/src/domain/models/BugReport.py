@@ -141,13 +141,9 @@ def get_unclassified_bugs(tx: Session):
 
 
 def save_bug_report(tx: Session, bug_report: BugReport):
-    try:
-        tx.add(bug_report)
-        tx.commit()
-        return bug_report
-    except Exception as e:
-        tx.rollback()
-        raise
+    tx.add(bug_report)
+    tx.commit()
+    return bug_report
 
 
 def delete_bug_report(tx: Session, bug_report_id: int):
