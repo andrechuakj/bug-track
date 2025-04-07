@@ -10,6 +10,7 @@ import { LoginRequestDto, SignupRequestDto } from '../../src/api/auth';
 import { AuthContext, AuthContextType } from '../../src/contexts/AuthContext';
 import Login from '../../src/pages/login';
 import { MaybePromise } from '../../src/utils/promises';
+import { MessageContext } from '../../src/contexts/MessageContext';
 
 if (typeof window !== 'undefined' && !window.matchMedia) {
   // @ts-expect-error creating mock to make antd's Grid.useBreakpoint work,
@@ -83,20 +84,19 @@ describe('Login', () => {
     expect(getByPlaceholderText(/password/i)).toBeInTheDocument();
 
     expect(getByRole('button', { name: /log.?in/i })).toBeInTheDocument();
-    expect(getByRole('button', { name: /sign.?up/i })).toBeInTheDocument();
   });
 
-  it('contains button that redirects to signup', () => {
-    const { getByRole } = renderPage();
+  it('contains element that redirects to signup', () => {
+    const { getByText } = renderPage();
 
-    const signup = getByRole('button', { name: /sign.?up/i });
+    const signup = getByText(/sign.?up/i);
     expect(signup).toBeInTheDocument();
     fireEvent.click(signup);
     expect(pushMock).toHaveBeenCalledWith('/signup');
   });
 
-  it('errors when missing email', () => {
-    const { getByRole, getByPlaceholderText } = renderPage();
+  it('errors when missing email', async () => {
+    const { getByRole, getByPlaceholderText, getByText } = renderPage();
 
     const passwordField = getByPlaceholderText(/password/i);
     expect(passwordField).toBeInTheDocument();
@@ -107,11 +107,15 @@ describe('Login', () => {
       target: { value: 'some password' },
     });
 
-    expect(loginButton).toBeDisabled();
+    fireEvent.click(loginButton);
+
+    await waitFor(() =>
+      expect(getByText(/please enter your email/i)).toBeInTheDocument()
+    );
   });
 
-  it('errors when missing password', () => {
-    const { getByRole, getByPlaceholderText } = renderPage();
+  it('errors when missing password', async () => {
+    const { getByRole, getByPlaceholderText, getByText } = renderPage();
 
     const emailField = getByPlaceholderText(/email/i);
     expect(emailField).toBeInTheDocument();
@@ -122,27 +126,11 @@ describe('Login', () => {
       target: { value: 'some email' },
     });
 
-    expect(loginButton).toBeDisabled();
-  });
+    fireEvent.click(loginButton);
 
-  it('enables login button when provided email and password', () => {
-    const { getByRole, getByPlaceholderText } = renderPage();
-
-    const emailField = getByPlaceholderText(/email/i);
-    expect(emailField).toBeInTheDocument();
-    const passwordField = getByPlaceholderText(/password/i);
-    expect(passwordField).toBeInTheDocument();
-    const loginButton = getByRole('button', { name: /log.?in/i });
-    expect(loginButton).toBeInTheDocument();
-
-    fireEvent.change(emailField, {
-      target: { value: 'valid_email@email.com' },
-    });
-    fireEvent.change(passwordField, {
-      target: { value: 'valid password' },
-    });
-
-    expect(loginButton).toBeEnabled();
+    await waitFor(() =>
+      expect(getByText(/please enter your password/i)).toBeInTheDocument()
+    );
   });
 
   it('submits a login request with email and password', async () => {
@@ -153,7 +141,7 @@ describe('Login', () => {
     const loginButton = getByRole('button', { name: /log.?in/i });
 
     fireEvent.change(emailField, {
-      target: { value: 'valid_email@email.com' }, // this is not a valid email
+      target: { value: 'valid_email@email.com' },
     });
     fireEvent.change(passwordField, {
       target: { value: 'valid_password' },
