@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from domain.enums import PriorityLevel
 from utilities.views import BaseResponseModel
 
 
@@ -42,6 +43,7 @@ class BugReportResponseDto(BaseResponseModel):
     issue_updated_at: datetime | None
     issue_closed_at: datetime | None
     is_closed: bool
+    priority: PriorityLevel
 
 
 class BugSearchResponseDto(BaseResponseModel):

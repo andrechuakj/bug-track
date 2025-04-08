@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from domain.enums import PriorityLevel
 from domain.models.BugReport import (
     get_bug_report_by_id,
     get_bug_reports,
@@ -30,6 +31,7 @@ class _BugReportService(Service):
         issue_updated_at: datetime | None
         issue_closed_at: datetime | None
         is_closed: bool
+        priority: PriorityLevel
 
     def get_bug_report_by_id(
         self,
