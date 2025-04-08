@@ -40,10 +40,6 @@ const Signup: React.FC = () => {
 
   const onFinish = async (values: SignupFormValues): Promise<void> => {
     setSignupError(null);
-    if (values.password !== values.confirmPassword) {
-      setSignupError('Passwords do not match.');
-      return;
-    }
     try {
       const authValues: SignupRequestDto = {
         email: values.email,
