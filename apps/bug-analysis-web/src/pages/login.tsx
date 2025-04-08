@@ -55,7 +55,7 @@ const Login: React.FC = () => {
       })
       .catch((error) => {
         console.error('Login error:', error);
-        setLoginError('An error occurred during login.');
+        setLoginError('Unexpected error occurred during login.');
       });
   };
 
@@ -81,7 +81,7 @@ const Login: React.FC = () => {
       <div
         className={`flex flex-col w-full lg:w-1/2 max-w-xl mb-6 items-center lg:-translate-y-[24px]`}
       >
-        <img src="/bug_track_logo.png" alt="Logo" className={`w-full `} />
+        <img src="/bug_track_logo.png" alt="Logo" className={`w-full`} />
       </div>
       <div />
       <Form<LoginFormValues>
