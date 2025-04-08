@@ -48,17 +48,14 @@ export const MockAuthProvider: React.FC<MockAuthProviderProps> = ({
     loading: loadingOverride ?? false,
   };
 
-  React.useEffect(() => {
-    if (contextValue.login === defaultLoginMock) defaultLoginMock.mockClear();
-    if (contextValue.signup === defaultSignupMock)
-      defaultSignupMock.mockClear();
-    if (contextValue.logout === defaultLogoutMock)
-      defaultLogoutMock.mockClear();
-    if (contextValue.refreshToken === defaultRefreshTokenMock)
-      defaultRefreshTokenMock.mockClear();
-  }, [contextValue]);
-
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
+};
+
+export const clearAuthMocks = () => {
+  defaultLoginMock.mockClear();
+  defaultSignupMock.mockClear();
+  defaultLogoutMock.mockClear();
+  defaultRefreshTokenMock.mockClear();
 };

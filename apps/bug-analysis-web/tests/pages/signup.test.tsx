@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SignupRequestDto } from '../../src/api/auth';
 import Signup from '../../src/pages/signup';
 import { MaybePromise } from '../../src/utils/promises';
-import { MockAuthProvider } from '../contexts/MockAuthProvider';
+import { clearAuthMocks, MockAuthProvider } from '../contexts/MockAuthProvider';
 import {
   clearMessageMocks,
   mockMessageApi,
@@ -80,6 +80,7 @@ describe('Signup', () => {
   beforeEach(() => {
     pushMock.mockReset();
     clearMessageMocks();
+    clearAuthMocks();
   });
   afterEach(() => {
     restoreScreenSize();

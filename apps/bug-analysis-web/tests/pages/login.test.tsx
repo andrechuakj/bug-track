@@ -13,7 +13,7 @@ import {
   mockMessageApi,
   MockMessageProvider,
 } from '../contexts/MockMessageProvider';
-import { MockAuthProvider } from '../contexts/MockAuthProvider';
+import { clearAuthMocks, MockAuthProvider } from '../contexts/MockAuthProvider';
 import { screen } from '@testing-library/react';
 
 if (typeof window !== 'undefined' && !window.matchMedia) {
@@ -79,6 +79,7 @@ describe('Login', () => {
   beforeEach(() => {
     pushMock.mockReset();
     clearMessageMocks();
+    clearAuthMocks();
   });
   afterEach(() => {
     restoreScreenSize();
