@@ -10,6 +10,13 @@ import {
 import { useBugReport } from '../../contexts/BugReportContext';
 import CategoryTag from '../CategoryTag';
 
+const priorityColorMap: Record<string, string> = {
+  High: 'red',
+  Medium: 'orange',
+  Low: 'green',
+  Unassigned: 'default',
+};
+
 const BugSideBar: React.FC = () => {
   const { bugReport, setBugReport, isBugLoading } = useBugReport();
   const [isCategoryUpdating, setIsCategoryUpdating] = useState(false);
@@ -108,6 +115,21 @@ const BugSideBar: React.FC = () => {
           ) : (
             'Not categorised'
           ))}
+      </div>
+
+      <Divider />
+
+      <div className="flex flex-col gap-1">
+        <Typography.Title level={5}>Bug Priority</Typography.Title>
+        {isBugLoading && <Skeleton.Input active size="small" />}
+        {!isBugLoading && (
+          <Tag
+            color={priorityColorMap[bugReport?.priority ?? 'Unassigned']}
+            className="w-fit"
+          >
+            {bugReport?.priority ? bugReport.priority : 'Not specified'}
+          </Tag>
+        )}
       </div>
 
       <Divider />
