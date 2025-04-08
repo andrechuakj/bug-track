@@ -7,8 +7,7 @@ import {
 } from 'react';
 import { AppTheme } from '../utils/types';
 import { AuthProvider } from './AuthContext';
-import { MessageContext, MessageProvider } from './MessageContext';
-import { message } from 'antd';
+import { MessageProvider } from './MessageContext';
 
 type AppContextType = {
   theme: AppTheme;
@@ -27,7 +26,6 @@ export const useAppContext = (): AppContextType => {
 
 export const AppProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [theme, setTheme] = useState<AppTheme>('dark');
-  const [messageApi, contextHolder] = message.useMessage();
 
   const updateTheme = useCallback((newTheme: AppTheme) => {
     setTheme(newTheme);

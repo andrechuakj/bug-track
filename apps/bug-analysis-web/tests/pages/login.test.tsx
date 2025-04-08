@@ -12,8 +12,8 @@ import {
   clearMessageMocks,
   mockMessageApi,
   MockMessageProvider,
-} from './MockMessageProvider';
-import { MockAuthProvider } from './MockAuthProvider';
+} from '../contexts/MockMessageProvider';
+import { MockAuthProvider } from '../contexts/MockAuthProvider';
 import { screen } from '@testing-library/react';
 
 if (typeof window !== 'undefined' && !window.matchMedia) {
@@ -32,29 +32,16 @@ const mdQuery = '(min-width: 768px)'; // Ant Design's default md breakpoint quer
 
 const setScreenSize = (size: 'small' | 'large') => {
   if (size === 'small') {
-    // Mock for SMALL: Always return false for matches
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    window.matchMedia = vi.fn().mockImplementation((_query) => ({
       matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      addListener: () => {},
+      removeListener: () => {},
     }));
   } else {
-    // 'large' (or 'medium', anything >= md)
-    // Mock for LARGE: Return true only if the query IS the 'md' breakpoint query
     window.matchMedia = vi.fn().mockImplementation((query) => ({
-      matches: query === mdQuery, // The core logic!
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
+      matches: query === mdQuery,
+      addListener: () => {},
+      removeListener: () => {},
     }));
   }
 };
@@ -123,7 +110,7 @@ describe('Login', () => {
 
   it('changes layout based on screen size', () => {
     setScreenSize('small');
-    let { unmount } = renderPage();
+    const { unmount } = renderPage();
     let loginButton = screen.getByRole('button', { name: /log.?in/i });
     let formElement = loginButton.closest('form');
     expect(formElement).toBeInTheDocument();
@@ -225,9 +212,9 @@ describe('Login', () => {
 
   it('catches unexpected errors', async () => {
     const MOCK_ERROR_MESSAGE = 'Internal Server Error';
-    const loginMock = vi.fn(async () => {
-      throw new Error(MOCK_ERROR_MESSAGE);
-    });
+    const loginMock = vi.fn(() =>
+      Promise.reject(new Error(MOCK_ERROR_MESSAGE))
+    );
 
     const { getByRole, getByPlaceholderText, findByText } = renderPage({
       login: loginMock,
