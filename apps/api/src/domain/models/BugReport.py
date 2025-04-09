@@ -195,3 +195,13 @@ def get_bug_trend_last_k_days(tx: Session, dbms_id: int, k: int):
         trend_data.append(count.one())
 
     return trend_data[::-1]
+
+def update_bug_priority(tx: Session, bug_report_id: int, priority: PriorityLevel):
+    bug_report = tx.get(BugReport, bug_report_id)
+    if not bug_report:
+        raise NotFoundError(f"BugReport with id {bug_report_id} not found")
+
+    bug_report.priority = priority
+    tx.add(bug_report)
+    tx.commit()
+    return bug_report

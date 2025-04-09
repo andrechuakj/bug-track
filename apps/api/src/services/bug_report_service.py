@@ -5,6 +5,7 @@ from domain.models.BugReport import (
     get_bug_report_by_id,
     get_bug_reports,
     update_bug_category,
+    update_bug_priority
 )
 from pydantic import BaseModel
 from sqlmodel import Session
@@ -54,6 +55,17 @@ class _BugReportService(Service):
             f"Updating bug report with id {bug_report_id} to category {category_id}"
         )
         br = update_bug_category(tx, bug_report_id, category_id)
+        return _BugReportService.BugReportViewModel(
+            **br.model_dump(),
+            dbms=br.dbms.name,
+            category=br.category.name,
+        )
+    
+    def update_bug_priority(self, tx: Session, bug_report_id: int, priority: PriorityLevel):
+        self.logger.info(
+            f"Updating bug report with id {bug_report_id} to priority {priority}"
+        )
+        br = update_bug_priority(tx, bug_report_id, priority)
         return _BugReportService.BugReportViewModel(
             **br.model_dump(),
             dbms=br.dbms.name,

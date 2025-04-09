@@ -19,6 +19,10 @@ class BugCategoryUpdateDto(BaseResponseModel):
     category_id: int
 
 
+class BugPriorityUpdateDto(BaseResponseModel):
+    priority_level: PriorityLevel
+
+
 class DbmsResponseDto(BaseResponseModel):
     id: int
     name: str
