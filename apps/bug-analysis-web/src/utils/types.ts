@@ -22,6 +22,13 @@ const categoryToIdMap: { [cat in FilterBugCategory]?: number } =
 export const BUG_CATEGORY_FILTERS: ReadonlyArray<FilterBugCategory> =
   Object.values(FilterBugCategory);
 
+export enum BugPriority {
+  LOW = 'Low',
+  MEDIUM = 'Medium',
+  HIGH = 'High',
+  UNASSIGNED = 'Unassigned',
+}
+
 export enum FilterBugPriority {
   LOW = 'Low',
   MEDIUM = 'Medium',
