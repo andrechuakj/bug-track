@@ -69,11 +69,10 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     updateTheme((localStorage.getItem('theme') ?? themeSetting) as AppTheme);
   }, [themeSetting, updateTheme]);
 
-  const handleLogout = useCallback(async () => {
-    await logout();
-    if (messageApi) {
-      messageApi.success('Successfully logged out');
-    }
+  const handleLogout = useCallback(() => {
+    logout();
+    messageApi?.success('Successfully logged out');
+    (() => {})();
   }, [logout, messageApi]);
 
   return (

@@ -66,7 +66,7 @@ const Login: React.FC = () => {
   const screens = Grid.useBreakpoint();
 
   const handleSignUpOnClick = useCallback(
-    () => router.push('/signup'),
+    () => void router.push('/signup'),
     [router]
   );
 

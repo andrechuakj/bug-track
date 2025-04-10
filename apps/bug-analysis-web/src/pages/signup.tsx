@@ -36,33 +36,35 @@ const Signup: React.FC = () => {
 
   const screens = Grid.useBreakpoint();
 
-  const onFinish = async (values: SignupFormValues): Promise<void> => {
+  const onFinish = (values: SignupFormValues): void => {
     setSignupError(null);
-    try {
-      const authValues: SignupRequestDto = {
-        email: values.email,
-        name: values.name,
-        password: values.password,
-      };
-      const success = await signup(authValues);
-      if (success) {
-        messageApi?.success('Signup successful!');
-        successfulSignup.current = true;
-        router.push('/');
-      } else {
-        setSignupError('Signup failed. Please try again.');
+    (async () => {
+      try {
+        const authValues: SignupRequestDto = {
+          email: values.email,
+          name: values.name,
+          password: values.password,
+        };
+        const success = await signup(authValues);
+        if (success) {
+          messageApi?.success('Signup successful!');
+          successfulSignup.current = true;
+          void router.push('/');
+        } else {
+          setSignupError('Signup failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        setSignupError('An error occurred during signup.');
       }
-    } catch (error) {
-      console.error('Signup error:', error);
-      setSignupError('An error occurred during signup.');
-    }
+    })();
   };
 
   const onFinishFailed = (_errorInfo: any): void => {
     message.error('Please check the form for errors.');
   };
 
-  const onBackLogin = useCallback(() => router.push('/login'), [router]);
+  const onBackLogin = useCallback(() => void router.push('/login'), [router]);
 
   return (
     <div

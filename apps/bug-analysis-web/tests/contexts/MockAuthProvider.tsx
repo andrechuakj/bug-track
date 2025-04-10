@@ -12,9 +12,7 @@ const defaultSignupMock = vi.fn<
   (details: SignupRequestDto) => MaybePromise<boolean>
 >((_details) => Promise.resolve(true));
 
-const defaultLogoutMock = vi.fn<() => MaybePromise<void>>(() =>
-  Promise.resolve(undefined)
-);
+const defaultLogoutMock = vi.fn<() => void>(() => {});
 
 const defaultRefreshTokenMock = vi.fn<() => MaybePromise<boolean>>(() =>
   Promise.resolve(true)
@@ -25,7 +23,7 @@ type MockAuthProviderProps = {
   isAuthenticated?: boolean;
   login?: (details: LoginRequestDto) => MaybePromise<boolean>;
   signup?: (details: SignupRequestDto) => MaybePromise<boolean>;
-  logout?: () => MaybePromise<void>;
+  logout?: () => void;
   refreshToken?: () => MaybePromise<boolean>;
   loading?: boolean;
 };
