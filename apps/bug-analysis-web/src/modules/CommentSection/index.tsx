@@ -55,6 +55,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
 
   useEffect(() => {
     fetchComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bugReportId]);
 
   const handleAddCommentClick = () => {

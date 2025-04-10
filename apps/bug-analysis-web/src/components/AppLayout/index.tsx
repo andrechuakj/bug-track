@@ -42,7 +42,9 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
       key: '1',
       icon: <BugOutlined />,
       label: 'Bug Dashboard',
-      onClick: () => router.push('/'),
+      onClick: () => {
+        router.push('/');
+      },
     },
   ];
 
@@ -94,7 +96,9 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
             <div
               role="img"
               className="flex justify-center h-16 items-center cursor-pointer"
-              onClick={() => router.push('/')}
+              onClick={() => {
+                router.push('/');
+              }}
             >
               <img src={logo} className={logoStyle} alt={'BugTrack logo'} />
             </div>
