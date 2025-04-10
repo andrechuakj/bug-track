@@ -6,8 +6,10 @@ import {
   BugCategoryResponseDto,
   fetchAllCategories,
   updateBugCategory,
+  updateBugPriority,
 } from '../../api/bugReport';
 import { useBugReport } from '../../contexts/BugReportContext';
+import { BugPriority } from '../../utils/types';
 import CategoryTag from '../CategoryTag';
 
 const priorityColorMap: Record<string, string> = {
@@ -20,6 +22,7 @@ const priorityColorMap: Record<string, string> = {
 const BugSideBar: React.FC = () => {
   const { bugReport, setBugReport, isBugLoading } = useBugReport();
   const [isCategoryUpdating, setIsCategoryUpdating] = useState(false);
+  const [isPriorityUpdating, setIsPriorityUpdating] = useState(false);
   const [categoryMenuItems, setCategoryMenuItems] = useState<
     MenuProps['items']
   >([]);
@@ -37,6 +40,29 @@ const BugSideBar: React.FC = () => {
       }
     },
     [setBugReport]
+  );
+
+  const handleUpdatePriority = useCallback(
+    async (bug_id: number, priority: BugPriority) => {
+      setIsPriorityUpdating(true);
+      try {
+        const updatedReport = await updateBugPriority(bug_id, priority);
+        setBugReport(updatedReport);
+      } catch (error) {
+        console.error('Failed to update priority:', error);
+      } finally {
+        setIsPriorityUpdating(false);
+      }
+    },
+    [setBugReport]
+  );
+
+  const priorityMenuItems: MenuProps['items'] = Object.entries(BugPriority).map(
+    ([key, value]) => ({
+      label: value,
+      key: key,
+      onClick: () => handleUpdatePriority(bugReport!.id, value as BugPriority),
+    })
   );
 
   useEffect(() => {
@@ -120,11 +146,34 @@ const BugSideBar: React.FC = () => {
       <Divider />
 
       <div className="flex flex-col gap-1">
-        <Typography.Title level={5}>Bug Priority</Typography.Title>
+        <div className="flex items-center justify-between">
+          <Typography.Title level={5}>Bug Priority</Typography.Title>
+          {!isBugLoading && (
+            <Dropdown
+              menu={{
+                items: priorityMenuItems,
+                selectable: true,
+                defaultSelectedKeys: [bugReport?.priority ?? 'Unassigned'],
+                style: {
+                  overflowY: 'scroll',
+                  maxHeight: '200px',
+                },
+              }}
+              trigger={['click']}
+              placement="bottomRight"
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                {isPriorityUpdating ? <LoadingOutlined /> : <EditOutlined />}
+              </a>
+            </Dropdown>
+          )}
+        </div>
         {isBugLoading && <Skeleton.Input active size="small" />}
         {!isBugLoading && (
           <Tag
-            color={priorityColorMap[bugReport?.priority ?? 'Unassigned']}
+            color={
+              priorityColorMap[bugReport?.priority ?? BugPriority.UNASSIGNED]
+            }
             className="w-fit"
           >
             {bugReport?.priority ? bugReport.priority : 'Not specified'}
