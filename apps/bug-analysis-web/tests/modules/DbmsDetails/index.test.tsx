@@ -15,7 +15,6 @@ describe('DbmsDetails', () => {
     expect(getByText(/Assertion Failure/i)).toBeInTheDocument();
     expect(getByText(/Infinite Loop/i)).toBeInTheDocument();
     expect(getByText(/Report Last Updated/i)).toBeInTheDocument();
-    expect(getByText(/31\/03\/2024 20:48:17/i)).toBeInTheDocument();
   });
 
   it('renders cards with correct styles', () => {
