@@ -1,12 +1,26 @@
-import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  EditOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Divider, Dropdown, Skeleton, Tag, Typography } from 'antd';
+import {
+  Divider,
+  Dropdown,
+  Form,
+  Input,
+  Skeleton,
+  Tag,
+  Typography,
+} from 'antd';
+import { Store } from 'antd/es/form/interface';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   BugCategoryResponseDto,
   fetchAllCategories,
   updateBugCategory,
   updateBugPriority,
+  updateBugVersionsAffected,
 } from '../../api/bugReport';
 import { useBugReport } from '../../contexts/BugReportContext';
 import { BugPriority } from '../../utils/types';
@@ -23,9 +37,12 @@ const BugSideBar: React.FC = () => {
   const { bugReport, setBugReport, isBugLoading } = useBugReport();
   const [isCategoryUpdating, setIsCategoryUpdating] = useState(false);
   const [isPriorityUpdating, setIsPriorityUpdating] = useState(false);
+  const [isVersionsUpdating, setIsVersionsUpdating] = useState(false);
+  const [isEditingVersions, setIsEditingVersions] = useState(false);
   const [categoryMenuItems, setCategoryMenuItems] = useState<
     MenuProps['items']
   >([]);
+  const [form] = Form.useForm();
 
   const handleUpdateCategory = useCallback(
     async (bug_id: number, category_id: number) => {
@@ -65,6 +82,26 @@ const BugSideBar: React.FC = () => {
       onClick: () => handleUpdatePriority(bugReport.id, value as BugPriority),
     }));
   }, [bugReport, handleUpdatePriority]);
+
+  const handleUpdateVersions = useCallback(
+    async (bug_id: number, formFields: Store) => {
+      setIsVersionsUpdating(true);
+      const updatedVersions = formFields.updatedVersions as string;
+      try {
+        const updatedReport = await updateBugVersionsAffected(
+          bug_id,
+          updatedVersions
+        );
+        setBugReport(updatedReport);
+      } catch (error) {
+        console.error('Failed to update priority:', error);
+      } finally {
+        setIsEditingVersions(false);
+        setIsVersionsUpdating(false);
+      }
+    },
+    [setBugReport]
+  );
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -187,19 +224,51 @@ const BugSideBar: React.FC = () => {
       <Divider />
 
       <div className="flex flex-col gap-1">
-        <Typography.Title level={5}>Versions affected</Typography.Title>
+        <div className="flex items-center justify-between">
+          <Typography.Title level={5}>Versions affected</Typography.Title>
+          {!isBugLoading &&
+            (isVersionsUpdating ? (
+              <LoadingOutlined />
+            ) : isEditingVersions ? (
+              <CheckOutlined
+                className="hover:cursor-pointer"
+                onClick={() => form.submit()}
+              />
+            ) : (
+              <EditOutlined
+                className="hover:cursor-pointer"
+                onClick={() => setIsEditingVersions(true)}
+              />
+            ))}
+        </div>
         {isBugLoading && <Skeleton.Input active size="small" />}
-        {!isBugLoading &&
-          // TODO: Add this field to schema
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          ((bugReport as any)?.versionsAffected ? (
-            <Typography.Text>
-              {/* TODO: Update dynamically */}
-              1.0.1
-            </Typography.Text>
-          ) : (
-            'Not specified'
-          ))}
+        {!isBugLoading && !isEditingVersions && (
+          <Typography.Text>
+            {bugReport?.versions_affected
+              ? bugReport.versions_affected
+              : 'Not specified'}
+          </Typography.Text>
+        )}
+        {!isBugLoading && isEditingVersions && (
+          <Form
+            form={form}
+            onFinish={(values) =>
+              handleUpdateVersions(bugReport!.id, values as Store)
+            }
+          >
+            <Form.Item
+              name="updatedVersions"
+              rules={[{ required: false }]}
+              className="mb-0"
+            >
+              <Input
+                autoFocus
+                onPressEnter={() => form.submit()}
+                defaultValue={bugReport?.versions_affected ?? ''}
+              />
+            </Form.Item>
+          </Form>
+        )}
       </div>
 
       <Divider />
