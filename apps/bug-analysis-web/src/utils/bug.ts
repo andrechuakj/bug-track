@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction } from 'react';
 import { BugReport, BugReports } from '../api/dbms';
 import { FilterBugCategory } from './types';
 
-// TODO: shift options logic to the BE. We are no planning to change the categories soon, and thus prioritise working code.
-
 export const BUG_CATEGORIES = Object.values(
   FilterBugCategory
 ) as FilterBugCategory[];

@@ -20,3 +20,7 @@ export const getTokens = (): TokenState => {
 export const clearTokens = () => {
   localStorage.removeItem('token');
 };
+
+export const saveUser = (id: number) => {
+  localStorage.setItem('userId', id.toString());
+};

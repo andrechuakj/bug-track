@@ -17,6 +17,7 @@ export type AuthContextType = {
   logout: () => MaybePromise<void>;
   refreshToken: () => MaybePromise<boolean>;
   loading: boolean;
+  loggedInUser?: number;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -26,6 +27,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loggedInUser, setLoggedInUser] = useState<number>();
   const router = useRouter();
 
   // Check if the user is authenticated on initial load
@@ -47,12 +49,13 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const login = async (details: LoginRequestDto): Promise<boolean> => {
     setLoading(true);
     try {
-      const success = await authService.login(details);
-      if (success) {
+      const userId = await authService.login(details);
+      if (userId) {
         setIsAuthenticated(true);
+        setLoggedInUser(userId);
         await router.push('/');
       }
-      return success;
+      return !!userId;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -103,7 +106,15 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, signup, logout, refreshToken, loading }}
+      value={{
+        isAuthenticated,
+        login,
+        signup,
+        logout,
+        refreshToken,
+        loading,
+        loggedInUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

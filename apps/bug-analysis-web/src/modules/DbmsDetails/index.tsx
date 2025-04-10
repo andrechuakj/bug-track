@@ -57,11 +57,12 @@ const DbmsDetails: React.FC = () => {
               borderRadius: '12px',
               backgroundColor: `${BugTrackColors.GREEN}40`,
               maxHeight: '19vh',
+              overflow: 'hidden',
             }}
           >
             <Typography.Title level={4}>Report Last Updated</Typography.Title>
             <Typography.Title level={4} className="!font-light">
-              31/03/2024 20:48:17
+              31/03/24
             </Typography.Title>
           </Card>
         </div>
