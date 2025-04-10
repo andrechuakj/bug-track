@@ -9,7 +9,7 @@ import {
   Typography,
 } from 'antd';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   addBugReportComment,
   DiscussionResponseDto,
@@ -18,11 +18,13 @@ import {
 import Thread from '../../components/Thread';
 import { useAuth } from '../../contexts/AuthContext';
 
-interface CommentSectionProps {
+export type CommentSectionProps = {
   bugReportId: number;
-}
+};
 
-const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
+export const CommentSection: React.FC<CommentSectionProps> = ({
+  bugReportId,
+}) => {
   // Get discussions
   const [discussions, setDiscussions] = useState<DiscussionResponseDto[]>([]);
   const [isFetchingDiscussions, setIsFetchingDiscussions] = useState(false);
@@ -40,7 +42,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
   // Ref for the newly added thread (scroll & highlight behaviour)
   const newThreadRef = useRef<HTMLDivElement | null>(null);
 
-  const fetchComments = () => {
+  const fetchComments = useCallback(() => {
     setIsFetchingDiscussions(true);
     fetchDiscussions(bugReportId)
       .then((data) => {
@@ -51,16 +53,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
         console.error('Error fetching discussions:', error);
         setIsFetchingDiscussions(false);
       });
-  };
+  }, [bugReportId]);
 
   useEffect(() => {
     fetchComments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bugReportId]);
 
-  const handleAddCommentClick = () => {
+  const handleAddCommentClick = useCallback(() => {
     setIsModalVisible(true);
-  };
+  }, []);
 
   const handleModalOk = () => {
     if (!newComment.trim()) return;
@@ -116,10 +118,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
       });
   };
 
-  const handleModalCancel = () => {
+  const handleModalCancel = useCallback(() => {
     setIsModalVisible(false);
     setNewComment('');
-  };
+  }, []);
 
   const addComment = (
     <span
@@ -192,5 +194,3 @@ const CommentSection: React.FC<CommentSectionProps> = ({ bugReportId }) => {
     </Card>
   );
 };
-
-export default CommentSection;

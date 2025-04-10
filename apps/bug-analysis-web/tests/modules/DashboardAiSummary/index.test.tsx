@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchAiSummary } from '../../../src/api/dbms';
-import DashboardAiSummaryModule from '../../../src/modules/DashboardAiSummary';
+import { DashboardAiSummary } from '../../../src/modules';
 
 describe('DashboardAiSummaryModule', () => {
   beforeAll(() => {
@@ -28,9 +28,7 @@ describe('DashboardAiSummaryModule', () => {
   });
 
   it('renders loading state correctly', () => {
-    const { getByText, getByRole } = render(
-      <DashboardAiSummaryModule dbmsId={1} />
-    );
+    const { getByText, getByRole } = render(<DashboardAiSummary dbmsId={1} />);
     expect(fetchAiSummary).toHaveBeenCalledTimes(1);
     expect(fetchAiSummary).toHaveBeenCalledWith(1);
     const button = getByRole('button', { name: /AI Summary/i });
@@ -40,7 +38,7 @@ describe('DashboardAiSummaryModule', () => {
 
   it('renders summary when data is loaded', async () => {
     const mockSummary = 'This is a test summary.';
-    const { findByText } = render(<DashboardAiSummaryModule dbmsId={1} />);
+    const { findByText } = render(<DashboardAiSummary dbmsId={1} />);
     expect(fetchAiSummary).toHaveBeenCalledTimes(2);
     expect(fetchAiSummary).toHaveBeenCalledWith(1);
     const summaryElement = await findByText(mockSummary);
@@ -49,9 +47,7 @@ describe('DashboardAiSummaryModule', () => {
 
   it('reloads data when the button is clicked', async () => {
     const mockSummary = 'Updated summary.';
-    const { getByRole, findByText } = render(
-      <DashboardAiSummaryModule dbmsId={1} />
-    );
+    const { getByRole, findByText } = render(<DashboardAiSummary dbmsId={1} />);
     const button = getByRole('button', { name: /AI Summary/i });
     button.click();
     expect(fetchAiSummary).toHaveBeenCalledTimes(3);
@@ -61,7 +57,7 @@ describe('DashboardAiSummaryModule', () => {
   });
 
   it('displays the correct image based on theme', () => {
-    const { getByAltText } = render(<DashboardAiSummaryModule dbmsId={1} />);
+    const { getByAltText } = render(<DashboardAiSummary dbmsId={1} />);
     const lightImage = getByAltText(/ai_summary_white/i);
     expect(lightImage).toBeInTheDocument();
   });

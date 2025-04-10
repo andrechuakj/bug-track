@@ -9,11 +9,11 @@ import { antdTagPresets } from '../../utils/theme';
 // Dynamically import ECharts for client-side rendering only
 const EChartsReact = dynamic(() => import('echarts-for-react'), { ssr: false });
 
-type Props = {
+export type BugDistributionProps = {
   categories: BugCategory[];
 };
 
-const DashboardBugDistributionChartModule: React.FC<Props> = ({
+export const BugDistribution: React.FC<BugDistributionProps> = ({
   categories,
 }) => {
   const { theme } = useAppContext();
@@ -46,5 +46,3 @@ const DashboardBugDistributionChartModule: React.FC<Props> = ({
     </Card>
   );
 };
-
-export default DashboardBugDistributionChartModule;

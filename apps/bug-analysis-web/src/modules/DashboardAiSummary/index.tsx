@@ -5,11 +5,13 @@ import { AiSummary, fetchAiSummary } from '../../api/dbms';
 import { useAppContext } from '../../contexts/AppContext';
 import { BugTrackColors } from '../../utils/theme';
 
-type Props = {
+export type DashboardAiSummaryProps = {
   dbmsId: number;
 };
 
-const DashboardAiSummaryModule: React.FC<Props> = ({ dbmsId }) => {
+export const DashboardAiSummary: React.FC<DashboardAiSummaryProps> = ({
+  dbmsId,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState<string>();
   const { theme } = useAppContext();
@@ -71,5 +73,3 @@ const DashboardAiSummaryModule: React.FC<Props> = ({ dbmsId }) => {
     </Card>
   );
 };
-
-export default DashboardAiSummaryModule;

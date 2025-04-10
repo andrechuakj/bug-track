@@ -8,7 +8,7 @@ import {
   BugReportProvider,
   useBugReport,
 } from '../../contexts/BugReportContext';
-import CommentSection from '../../modules/CommentSection';
+import { CommentSection } from '../../modules';
 
 const BugReportPage: React.FC = () => {
   const { fetchBugReport } = useBugReport();

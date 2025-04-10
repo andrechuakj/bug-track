@@ -4,7 +4,7 @@ import CategoryTag from '../../components/CategoryTag';
 import { antdTagPresets, BugTrackColors } from '../../utils/theme';
 import { FilterBugCategory } from '../../utils/types';
 
-const DbmsDetails: React.FC = () => {
+export const DbmsDetails: React.FC = () => {
   return (
     <div className="overflow-y-scoll">
       <Typography.Title level={4}>Key Issues</Typography.Title>
@@ -70,5 +70,3 @@ const DbmsDetails: React.FC = () => {
     </div>
   );
 };
-
-export default DbmsDetails;

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import DbmsDetails from '../../../src/modules/DbmsDetails';
+import { DbmsDetails } from '../../../src/modules';
 
 describe('DbmsDetails', () => {
   it('renders the component with correct titles and data', () => {

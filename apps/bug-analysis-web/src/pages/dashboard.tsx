@@ -36,14 +36,15 @@ import DynamicModal from '../components/DynamicModal';
 import FilterSelection from '../components/FilterSelection';
 import { useAuth } from '../contexts/AuthContext';
 import { useSession } from '../contexts/SessionContext';
-import BugExploreSearchResultsModule, {
+import {
   BUG_EXPLORE_KEY,
+  BugDistribution,
+  BugSearch,
+  BugTrend,
+  DashboardAiSummary,
+  DbmsDetails,
   SEARCH_RESULTS_KEY,
-} from '../modules/BugExploreSearchResults';
-import BugTrendModule from '../modules/BugTrend';
-import DashboardAiSummaryModule from '../modules/DashboardAiSummary';
-import DashboardBugDistributionChartModule from '../modules/DashboardBugDistribution';
-import DbmsDetails from '../modules/DbmsDetails';
+} from '../modules';
 import {
   AcBugSearchResultStruct,
   BUG_CATEGORIES,
@@ -371,7 +372,7 @@ const HomePage: React.FC = (): ReactNode => {
           </div>
         </Form>
         <Card className="mb-4 h-[52.5vh]">
-          <BugExploreSearchResultsModule
+          <BugSearch
             bugReports={bugReports}
             bugSearchReports={bugSearchReports}
             handleBugExploreLoadMore={(tenantId, categoryId) => {
@@ -388,10 +389,7 @@ const HomePage: React.FC = (): ReactNode => {
           <Col xs={24} md={14}>
             <Row>
               <Card className="w-full h-[35vh] overflow-y-scroll">
-                <BugTrendModule
-                  bugTrend={bugTrend}
-                  bugCount={dbmsData.bug_count}
-                />
+                <BugTrend bugTrend={bugTrend} bugCount={dbmsData.bug_count} />
               </Card>
             </Row>
           </Col>
@@ -404,14 +402,10 @@ const HomePage: React.FC = (): ReactNode => {
         </Row>
         <Row className="mt-4" gutter={[16, 16]}>
           <Col xs={24} md={10}>
-            {currentTenant && (
-              <DashboardAiSummaryModule dbmsId={currentTenant.id} />
-            )}
+            {currentTenant && <DashboardAiSummary dbmsId={currentTenant.id} />}
           </Col>
           <Col xs={24} md={14}>
-            <DashboardBugDistributionChartModule
-              categories={dbmsData.bug_categories}
-            />
+            <BugDistribution categories={dbmsData.bug_categories} />
           </Col>
         </Row>
       </div>

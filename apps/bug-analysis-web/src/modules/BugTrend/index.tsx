@@ -2,12 +2,12 @@ import { Typography } from 'antd';
 import EChartsReact from 'echarts-for-react';
 import { generateBugTrendChart } from '../../utils/chart';
 
-type Props = {
+export type BugTrendProps = {
   bugTrend: number[];
   bugCount: number;
 };
 
-const BugTrendModule: React.FC<Props> = ({ bugTrend, bugCount }) => {
+export const BugTrend: React.FC<BugTrendProps> = ({ bugTrend, bugCount }) => {
   const bugTrendLen = bugTrend.length;
   const bugTallyInstances = bugTrend.map((count, index) => {
     const date = new Date();
@@ -41,5 +41,3 @@ const BugTrendModule: React.FC<Props> = ({ bugTrend, bugCount }) => {
     </>
   );
 };
-
-export default BugTrendModule;
