@@ -16,17 +16,6 @@ import {
 import { clearAuthMocks, MockAuthProvider } from '../contexts/MockAuthProvider';
 import { screen } from '@testing-library/react';
 
-if (typeof window !== 'undefined' && !window.matchMedia) {
-  // @ts-expect-error creating mock to make antd's Grid.useBreakpoint work,
-  //   which allows Login to render.
-  //   Does not implement all other methods otherwise expected.
-  window.matchMedia = () => ({
-    matches: false,
-    addListener: () => {},
-    removeListener: () => {},
-  });
-}
-
 const originalMatchMedia = window.matchMedia;
 const mdQuery = '(min-width: 768px)'; // Ant Design's default md breakpoint query
 
