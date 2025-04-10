@@ -106,7 +106,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     setIsAuthenticated(false);
     setLoggedInUser(NOT_LOGGED_IN_STATE);
     authService.logout();
-    router.push('/login');
+    await router.push('/login');
   }, [router]);
 
   return (
