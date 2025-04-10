@@ -20,6 +20,8 @@ export type AuthContextType = {
   loggedInUser?: number;
 };
 
+const NOT_LOGGED_IN_STATE = undefined;
+
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
@@ -95,12 +97,14 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     } catch (error) {
       console.error('Token refresh error:', error);
       setIsAuthenticated(false);
+      setLoggedInUser(NOT_LOGGED_IN_STATE);
       return false;
     }
   }, []);
 
   const logout = useCallback(async () => {
     setIsAuthenticated(false);
+    setLoggedInUser(NOT_LOGGED_IN_STATE);
     await router.push('/login');
   }, [router]);
 
