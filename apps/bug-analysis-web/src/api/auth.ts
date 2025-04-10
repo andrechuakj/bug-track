@@ -31,7 +31,7 @@ class AuthService {
     }
   }
 
-  async signup(user: SignupRequestDto): Promise<boolean> {
+  async signup(user: SignupRequestDto): Promise<number> {
     try {
       const { data, error, response } = await api.POST(
         '/public/api/v1/auth/signup',
@@ -41,17 +41,18 @@ class AuthService {
       );
 
       if (!response.ok || error) {
-        return false;
+        return 0;
       }
 
       saveTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
       });
-      return true;
+      saveUser(data.user_id);
+      return data.user_id;
     } catch (error) {
       console.error('Signup failed:', error);
-      return false;
+      return 0;
     }
   }
 

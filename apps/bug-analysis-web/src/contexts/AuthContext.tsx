@@ -68,12 +68,12 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     async (details: SignupRequestDto): Promise<boolean> => {
       setLoading(true);
       try {
-        const success = await authService.signup(details);
-        if (success) {
+        const userId = await authService.signup(details);
+        if (userId) {
           setIsAuthenticated(true);
           await router.push('/');
         }
-        return success;
+        return !!userId;
       } catch (error) {
         console.error('Login error:', error);
         return false;
