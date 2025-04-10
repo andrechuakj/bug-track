@@ -5,6 +5,8 @@ import { api } from './client';
 export type LoginRequestDto = RequestBody<'LoginRequestDto'>;
 export type SignupRequestDto = RequestBody<'SignupRequestDto'>;
 
+const NO_USER = 0;
+
 class AuthService {
   async login(user: LoginRequestDto): Promise<number> {
     try {
@@ -16,7 +18,7 @@ class AuthService {
       );
 
       if (!response.ok || error) {
-        return 0;
+        return NO_USER;
       }
 
       saveTokens({
@@ -27,7 +29,7 @@ class AuthService {
       return data.user_id;
     } catch (error) {
       console.error('Login failed:', error);
-      return 0;
+      return NO_USER;
     }
   }
 
@@ -41,7 +43,7 @@ class AuthService {
       );
 
       if (!response.ok || error) {
-        return 0;
+        return NO_USER;
       }
 
       saveTokens({
@@ -52,7 +54,7 @@ class AuthService {
       return data.user_id;
     } catch (error) {
       console.error('Signup failed:', error);
-      return 0;
+      return NO_USER;
     }
   }
 
