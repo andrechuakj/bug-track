@@ -28,9 +28,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && !loading && !successfulLogin.current) {
-      if (messageApi) {
-        messageApi.success('Already logged in');
-      }
+      messageApi?.success('Already logged in');
       router.push('/');
     }
   }, [isAuthenticated, messageApi, router, loading]);
@@ -44,9 +42,7 @@ const Login: React.FC = () => {
     toPromise(login)(authValues)
       .then((success) => {
         if (success) {
-          if (messageApi) {
-            messageApi.success('Login successful!');
-          }
+          messageApi?.success('Login successful!');
           successfulLogin.current = true;
           router.push('/');
         } else {
@@ -94,12 +90,7 @@ const Login: React.FC = () => {
         onFinish={onFormSubmit}
         onFinishFailed={onLoginFail}
       >
-        <div
-          className="mb-2 cursor-pointer"
-          onClick={() => {
-            handleSignUpOnClick();
-          }}
-        >
+        <div className="mb-2 cursor-pointer" onClick={handleSignUpOnClick}>
           <span className="mr-2">Sign up</span>
           <RightCircleFilled />
         </div>

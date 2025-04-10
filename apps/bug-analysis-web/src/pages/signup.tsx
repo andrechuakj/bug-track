@@ -29,9 +29,7 @@ const Signup: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated && !loading && !successfulSignup.current) {
-      if (messageApi) {
-        messageApi.success('Already logged in');
-      }
+      messageApi?.success('Already logged in');
       router.push('/');
     }
   }, [isAuthenticated, messageApi, router, loading]);
@@ -48,9 +46,7 @@ const Signup: React.FC = () => {
       };
       const success = await signup(authValues);
       if (success) {
-        if (messageApi) {
-          messageApi.success('Signup successful!');
-        }
+        messageApi?.success('Signup successful!');
         successfulSignup.current = true;
         router.push('/');
       } else {
@@ -86,17 +82,10 @@ const Signup: React.FC = () => {
         labelCol={screens.md ? { span: 8 } : undefined}
         wrapperCol={screens.md ? { span: 12 } : undefined}
         className={`w-2/3 lg:w-1/2 flex flex-col items-center`}
-        onFinish={(values) => {
-          onFinish(values);
-        }}
+        onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
-        <div
-          className="mb-2 cursor-pointer"
-          onClick={() => {
-            onBackLogin();
-          }}
-        >
+        <div className="mb-2 cursor-pointer" onClick={onBackLogin}>
           <LeftCircleFilled />
           <span className="ml-2">Log in</span>
         </div>

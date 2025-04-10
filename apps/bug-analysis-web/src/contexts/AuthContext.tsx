@@ -102,11 +102,11 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }, []);
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(() => {
     setIsAuthenticated(false);
     setLoggedInUser(NOT_LOGGED_IN_STATE);
     authService.logout();
-    await router.push('/login');
+    router.push('/login');
   }, [router]);
 
   return (

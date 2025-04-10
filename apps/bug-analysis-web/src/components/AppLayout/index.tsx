@@ -110,6 +110,8 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
               <img src={logo} className={logoStyle} alt={'BugTrack logo'} />
             </div>
 
+            {isAuthenticated && <DatabaseDropdown />}
+
             <Menu
               theme="dark"
               mode="inline"
@@ -156,13 +158,7 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
                 <>
                   <p className="text-white">Selected DBMS:</p>
                   <DatabaseDropdown />
-                  <Button
-                    onClick={() => {
-                      handleLogout();
-                    }}
-                  >
-                    Logout
-                  </Button>
+                  <Button onClick={handleLogout}>Logout</Button>
                 </>
               )}
               <Switch
