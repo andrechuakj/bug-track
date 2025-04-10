@@ -41,10 +41,8 @@ const AppLayout: React.FC<PropsWithChildren<unknown>> = ({ children }) => {
     {
       key: '1',
       icon: <BugOutlined />,
-      label: 'Bug Report',
-      onClick: () => {
-        router.push('/home');
-      },
+      label: 'Bug Dashboard',
+      onClick: () => router.push('/'),
     },
   ];
 
