@@ -1,12 +1,12 @@
 import { RequestBody } from '~api';
-import { clearTokens, getTokens, saveTokens } from '../utils/auth';
+import { clearTokens, getTokens, saveTokens, saveUser } from '../utils/auth';
 import { api } from './client';
 
 export type LoginRequestDto = RequestBody<'LoginRequestDto'>;
 export type SignupRequestDto = RequestBody<'SignupRequestDto'>;
 
 class AuthService {
-  async login(user: LoginRequestDto): Promise<boolean> {
+  async login(user: LoginRequestDto): Promise<number> {
     try {
       const { data, error, response } = await api.POST(
         '/public/api/v1/auth/login',
@@ -16,17 +16,18 @@ class AuthService {
       );
 
       if (!response.ok || error) {
-        return false;
+        return 0;
       }
 
       saveTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
       });
-      return true;
+      saveUser(data.user_id);
+      return data.user_id;
     } catch (error) {
       console.error('Login failed:', error);
-      return false;
+      return 0;
     }
   }
 
