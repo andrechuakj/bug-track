@@ -28,7 +28,10 @@ export async function fetchAllCategories(): Promise<BugCategoryResponseDto[]> {
   return data;
 }
 
-export async function updateBugCategory(bug_id: number, category_id: number) {
+export async function updateBugCategory(
+  bug_id: number,
+  category_id: number
+): Promise<BugReport> {
   const { data, response } = await api.PATCH(
     '/api/v1/bug_reports/{bug_id}/category',
     {
@@ -44,7 +47,10 @@ export async function updateBugCategory(bug_id: number, category_id: number) {
   return data;
 }
 
-export async function updateBugPriority(bug_id: number, priority: BugPriority) {
+export async function updateBugPriority(
+  bug_id: number,
+  priority: BugPriority
+): Promise<BugReport> {
   const { data, response } = await api.PATCH(
     '/api/v1/bug_reports/{bug_id}/priority',
     {
@@ -75,6 +81,25 @@ export async function fetchBugReportAiSummary(
       response
     );
     throw new Error(`Error fetching AI summary for bug report ${bug_id}!`);
+  }
+  return data;
+}
+
+export async function updateBugVersionsAffected(
+  bug_id: number,
+  updatedVersions: string
+): Promise<BugReport> {
+  const { data, response } = await api.PATCH(
+    '/api/v1/bug_reports/{bug_id}/versions_affected',
+    {
+      params: { path: { bug_id } },
+      body: { updated_versions: updatedVersions },
+    }
+  );
+
+  if (!data) {
+    console.error('Error updating versions affected!', response);
+    throw new Error('Error updating versions affected!');
   }
   return data;
 }
