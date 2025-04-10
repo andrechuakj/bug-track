@@ -6,6 +6,7 @@ from domain.models.BugReport import (
     get_bug_reports,
     update_bug_category,
     update_bug_priority,
+    update_bug_versions_affected,
 )
 import openai
 from pydantic import BaseModel
@@ -37,6 +38,7 @@ class _BugReportService(Service):
         is_closed: bool
         priority: PriorityLevel
         repository: str
+        versions_affected: str | None
 
     def get_bug_report_by_id(
         self,
@@ -100,6 +102,19 @@ class _BugReportService(Service):
             return summary
         except Exception as e:
             raise NotFoundError("AI Summary not found")
+
+    def update_bug_versions_affected(
+        self, tx: Session, bug_report_id: int, updated_versions: str
+    ):
+        self.logger.info(
+            f"Updating bug report with id {bug_report_id} to versions affected: {updated_versions}"
+        )
+        br = update_bug_versions_affected(tx, bug_report_id, updated_versions)
+        return _BugReportService.BugReportViewModel(
+            **br.model_dump(),
+            dbms=br.dbms.name,
+            category=br.category.name,
+        )
 
 
 BugReportService = _BugReportService()

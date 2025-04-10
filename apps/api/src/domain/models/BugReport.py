@@ -46,6 +46,7 @@ class BugReport(Timestampable, table=True):
         nullable=False,
         default=PriorityLevel.Unassigned,
     )
+    versions_affected: str = Field(nullable=True, default=None)
 
     @field_validator("issue_closed_at", mode="before")
     @classmethod
@@ -203,6 +204,19 @@ def update_bug_priority(tx: Session, bug_report_id: int, priority: PriorityLevel
         raise NotFoundError(f"BugReport with id {bug_report_id} not found")
 
     bug_report.priority = priority
+    tx.add(bug_report)
+    tx.commit()
+    return bug_report
+
+
+def update_bug_versions_affected(
+    tx: Session, bug_report_id: int, updated_versions: str
+):
+    bug_report = tx.get(BugReport, bug_report_id)
+    if not bug_report:
+        raise NotFoundError(f"BugReport with id {bug_report_id} not found")
+
+    bug_report.versions_affected = updated_versions
     tx.add(bug_report)
     tx.commit()
     return bug_report

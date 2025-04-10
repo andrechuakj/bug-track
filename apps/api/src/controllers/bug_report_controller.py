@@ -4,6 +4,7 @@ from domain.views.dbms import (
     BugCategoryUpdateDto,
     BugReportResponseDto,
     BugPriorityUpdateDto,
+    BugVersionsAffectedUpdateDto,
 )
 from fastapi import APIRouter, Request
 from internal.errors import NotFoundError
@@ -53,6 +54,17 @@ async def get_bug_report_ai_summary(bug_id: int, r: Request) -> AiSummaryRespons
         raise NotFoundError("Bug report {bug_id} has no description")
     summary = BugReportService.get_ai_summary(bug_report)
     return AiSummaryResponseDto(summary=summary)
+
+
+@router.patch("/{bug_id}/versions_affected")
+async def update_bug_versions_affected(
+    bug_id: int, dto: BugVersionsAffectedUpdateDto, r: Request
+) -> BugReportResponseDto:
+    tx = get_db(r)
+    bug_report = BugReportService.update_bug_versions_affected(
+        tx, bug_id, dto.updated_versions
+    )
+    return bug_report
 
 
 __all__ = ["router"]

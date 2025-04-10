@@ -23,6 +23,10 @@ class BugPriorityUpdateDto(BaseResponseModel):
     priority_level: PriorityLevel
 
 
+class BugVersionsAffectedUpdateDto(BaseResponseModel):
+    updated_versions: str
+
+
 class DbmsResponseDto(BaseResponseModel):
     id: int
     name: str
@@ -49,6 +53,7 @@ class BugReportResponseDto(BaseResponseModel):
     is_closed: bool
     priority: PriorityLevel
     repository: str
+    versions_affected: str | None
 
 
 class BugSearchResponseDto(BaseResponseModel):
