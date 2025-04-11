@@ -47,7 +47,7 @@ const AiSummary: React.FC = () => {
   return (
     <Collapse
       expandIconPosition="end"
-      onChange={fetchAiSummary}
+      onChange={() => void fetchAiSummary()}
       items={[
         {
           key: 'ai-summary',
@@ -58,7 +58,7 @@ const AiSummary: React.FC = () => {
               {!isFetchSuccess && (
                 <ReloadOutlined
                   className="cursor-pointer"
-                  onClick={fetchAiSummary}
+                  onClick={() => void fetchAiSummary()}
                 />
               )}
             </div>
