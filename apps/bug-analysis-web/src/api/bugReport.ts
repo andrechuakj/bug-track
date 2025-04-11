@@ -103,3 +103,21 @@ export async function updateBugVersionsAffected(
   }
   return data;
 }
+
+export async function fetchSimilarBugs(bug_id: number, limit: number) {
+  const { data, response } = await api.GET(
+    '/api/v1/bug_reports/{bug_id}/similar_bugs',
+    {
+      params: {
+        path: { bug_id },
+        query: { limit },
+      },
+    }
+  );
+
+  if (!data) {
+    console.error('Error fetching similar bugs!', response);
+    throw new Error('Error fetching similar bugs!');
+  }
+  return data;
+}
