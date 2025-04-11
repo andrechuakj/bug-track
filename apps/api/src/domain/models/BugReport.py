@@ -46,7 +46,8 @@ class BugReport(Timestampable, table=True):
         nullable=False,
         default=PriorityLevel.Unassigned,
     )
-    versions_affected: str = Field(nullable=True, default=None)
+    versions_affected: str | None = Field(nullable=True, default=None)
+    vector: bytes | None = Field(default=None, nullable=True)
 
     @field_validator("issue_closed_at", mode="before")
     @classmethod
@@ -146,6 +147,10 @@ def get_latest_bug_report_time(tx: Session, dbms_id: int):
 
 def get_unclassified_bugs(tx: Session):
     return tx.exec(select(BugReport).where(is_(BugReport.category_id, None))).all()
+
+
+def get_unvectorized_bugs(tx: Session):
+    return tx.exec(select(BugReport).where(is_(BugReport.vector, None))).all()
 
 
 def save_bug_report(tx: Session, bug_report: BugReport):

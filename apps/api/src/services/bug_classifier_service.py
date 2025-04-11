@@ -6,8 +6,13 @@ import markdown
 import numpy as np
 import spacy
 from bs4 import BeautifulSoup
+import pickle
 from domain.models.BugCategory import get_bug_category_id_by_name
-from domain.models.BugReport import get_unclassified_bugs, save_bug_report
+from domain.models.BugReport import (
+    get_unclassified_bugs,
+    save_bug_report,
+    get_unvectorized_bugs,
+)
 from fuzzywuzzy import fuzz
 from sklearn.calibration import LabelEncoder
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -197,6 +202,43 @@ class _BugClassifierService(Service):
                     f"Category {predicted_category_name} not found in database for bug ID {bug.id}"
                 )
         return classified_count
+
+    def vectorize_no_vector_bug_reports(self, tx: Session) -> int:
+        """Vectorizes reports that have no vector representation."""
+        unvectorized_bugs = get_unvectorized_bugs(tx)
+        self.logger.info(
+            f"Vectorizing {len(unvectorized_bugs)} bug reports with no vector representation"
+        )
+
+        vectorized_count = 0
+        for bug in unvectorized_bugs:
+            try:
+                doc = _BugClassifierService.NLP(
+                    bug.title + " " + (bug.description or "")
+                )
+                vector = np.mean(
+                    [token.vector for token in doc if token.has_vector], axis=0
+                )
+
+                if vector is None or vector.shape[0] == 0:
+                    self.logger.warning(
+                        f"Could not generate vector for bug ID {bug.id}"
+                    )
+                    continue
+
+                vector_binary = pickle.dumps(vector)
+                bug.vector = vector_binary
+                save_bug_report(tx, bug)
+                vectorized_count += 1
+
+                self.logger.info(f"Vectorized bug ID {bug.id}")
+            except Exception as e:
+                self.logger.error(f"Failed to vectorize bug ID {bug.id}: {e}")
+
+        self.logger.info(
+            f"Completed vectorization. Total vectorized: {vectorized_count}"
+        )
+        return vectorized_count
 
 
 BugClassifierService = _BugClassifierService()
