@@ -5,7 +5,7 @@ const DatabaseDropdown: React.FC = () => {
   const { currentTenant, tenantList, setCurrentTenant } = useSession();
 
   return (
-    <div className={'w-full'}>
+    <div className={'w-full px-1'}>
       <Select
         placeholder="Select a Database"
         onChange={setCurrentTenant}
