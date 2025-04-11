@@ -1,7 +1,7 @@
 import { EditOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Divider, Dropdown, Skeleton, Tag, Typography } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   BugCategoryResponseDto,
   fetchAllCategories,
@@ -57,13 +57,14 @@ const BugSideBar: React.FC = () => {
     [setBugReport]
   );
 
-  const priorityMenuItems: MenuProps['items'] = Object.entries(BugPriority).map(
-    ([key, value]) => ({
+  const priorityMenuItems = useMemo(() => {
+    if (!bugReport) return [];
+    return Object.entries(BugPriority).map(([key, value]) => ({
       label: value,
-      key: key,
-      onClick: () => handleUpdatePriority(bugReport!.id, value as BugPriority),
-    })
-  );
+      key,
+      onClick: () => handleUpdatePriority(bugReport.id, value as BugPriority),
+    }));
+  }, [bugReport, handleUpdatePriority]);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -153,7 +154,9 @@ const BugSideBar: React.FC = () => {
               menu={{
                 items: priorityMenuItems,
                 selectable: true,
-                defaultSelectedKeys: [bugReport?.priority ?? 'Unassigned'],
+                defaultSelectedKeys: [
+                  bugReport?.priority ?? BugPriority.UNASSIGNED,
+                ],
                 style: {
                   overflowY: 'scroll',
                   maxHeight: '200px',
@@ -176,7 +179,7 @@ const BugSideBar: React.FC = () => {
             }
             className="w-fit"
           >
-            {bugReport?.priority ? bugReport.priority : 'Not specified'}
+            {bugReport.priority ?? BugPriority.UNASSIGNED}
           </Tag>
         )}
       </div>
