@@ -1,5 +1,9 @@
 from datetime import datetime
 
+import pickle
+from scipy.spatial.distance import cosine
+
+from domain.views.dbms import BugReportResponseDto
 from domain.enums import PriorityLevel
 from domain.models.BugReport import (
     get_bug_report_by_id,
@@ -116,6 +120,38 @@ class _BugReportService(Service):
             repository=br.dbms.repository,
             category=br.category.name,
         )
+
+    def get_similar_bug_reports(
+        self, tx: Session, bug_id: int, top_n=3
+    ) -> list[BugReportResponseDto]:
+        self.logger.info(
+            f"Fetching similar bug reports for bug report with id {bug_id}"
+        )
+
+        target_report = get_bug_report_by_id(tx, bug_id)
+        if target_report is None:
+            self.logger.warning(f"Bug report with id {bug_id} not found")
+            return []
+
+        all_reports = get_bug_reports(tx)
+        similar_reports = []
+        target_report_vector = pickle.loads(target_report.vector)
+        for report in all_reports:
+            if report.id == bug_id or report.vector is None:
+                continue
+            report_vector = pickle.loads(report.vector)
+            similarity = 1 - cosine(target_report_vector, report_vector)
+            similar_reports.append((report, similarity))
+
+        similar_reports.sort(key=lambda x: x[1], reverse=True)
+        return [
+            _BugReportService.BugReportViewModel(
+                **br.model_dump(),
+                dbms=br.dbms.name,
+                category=br.category.name,
+            )
+            for br, _ in similar_reports[:top_n]
+        ]
 
 
 BugReportService = _BugReportService()
