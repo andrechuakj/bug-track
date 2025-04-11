@@ -27,14 +27,16 @@ const BugReportPage: React.FC = () => {
       <div className="flex gap-4">
         <div className="w-full lg:w-3/4">
           <BugContentContainer />
+          <Divider />
+
+          {id && !isNaN(Number(id)) && (
+            <CommentSection bugReportId={Number(id)} />
+          )}
         </div>
         <div className="hidden lg:block w-1/4">
           <BugSideBar />
         </div>
       </div>
-      <Divider />
-
-      {id && !isNaN(Number(id)) && <CommentSection bugReportId={Number(id)} />}
     </div>
   );
 };
