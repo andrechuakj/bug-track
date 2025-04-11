@@ -11,6 +11,19 @@
 1. Set your default formatter to 'Prettier - Code formatter' and check the setting `Editor: Format on Save`
 1. Try to shift the code around, to test the auto-formatting. Also try to trigger eslint errors to see if your IDE highlights them
 
+## Setup Redis
+Redis needs to be running for the backend to work.
+
+1. Make sure you have docker installed.
+1. Run the following command:
+   ```bash
+   docker run -d -p 6379:6379 --name bugtrack-redis redis
+   ```
+1. Later, run the following command to stop the docker container:
+   ```bash
+   docker stop bugtrack-redis
+   ```
+
 ## Setup FastAPI
 
 1. Navigate to `apps/api/` directory by running `cd apps/api/`
