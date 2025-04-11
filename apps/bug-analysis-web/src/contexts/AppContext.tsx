@@ -14,7 +14,7 @@ type AppContextType = {
   updateTheme: (newTheme: AppTheme) => void;
 };
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const useAppContext = (): AppContextType => {
   const context = useContext(AppContext);

@@ -3,8 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import React from 'react';
 import Homepage from '../../src/pages';
 import { MockAuthProvider } from '../contexts/MockAuthProvider';
-import { LoginRequestDto } from '../../src/api/auth';
-import { MaybePromise } from '../../src/utils/promises';
 
 const pushMock = vi.fn();
 
@@ -36,7 +34,6 @@ const renderPage = (options: RenderPageOptions = {}): RenderResult => {
 describe('index', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
   });
 
   it('renders the dashboard if authenticated', async () => {

@@ -16,7 +16,9 @@ type SessionContext = {
   setCurrentTenant: (tenantId: number) => void;
 };
 
-const SessionContext = createContext<SessionContext | undefined>(undefined);
+export const SessionContext = createContext<SessionContext | undefined>(
+  undefined
+);
 
 export const useSession = (): SessionContext => {
   const context = useContext(SessionContext);
@@ -33,6 +35,7 @@ const SessionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [currentTenant, setCurrentTenant] = useState<
     DbmsListResponseDto | undefined
   >(undefined);
+
   useEffect(() => {
     if (!isAuthenticated) {
       setTenantList([]);

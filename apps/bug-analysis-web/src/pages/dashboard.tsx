@@ -62,7 +62,7 @@ import {
   getCategoryId,
 } from '../utils/types';
 
-const HomePage: React.FC = (): ReactNode => {
+const Dashboard: React.FC = (): ReactNode => {
   const { isAuthenticated, loading } = useAuth();
   const { currentTenant } = useSession();
   const router = useRouter();
@@ -414,4 +414,4 @@ const HomePage: React.FC = (): ReactNode => {
   );
 };
 
-export default HomePage;
+export default Dashboard;
