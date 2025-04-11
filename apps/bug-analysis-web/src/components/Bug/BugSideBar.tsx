@@ -25,6 +25,7 @@ import {
 import { useBugReport } from '../../contexts/BugReportContext';
 import { BugPriority } from '../../utils/types';
 import CategoryTag from '../CategoryTag';
+import SimilarBugs from './SimilarBugs';
 
 const priorityColorMap: Record<string, string> = {
   High: 'red',
@@ -270,6 +271,8 @@ const BugSideBar: React.FC = () => {
       </div>
 
       <Divider />
+
+      <SimilarBugs/>
     </div>
   );
 };
