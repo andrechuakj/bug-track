@@ -67,4 +67,16 @@ async def update_bug_versions_affected(
     return bug_report
 
 
+@router.get("/{bug_id}/similar_bugs")
+async def get_similar_bug_reports(
+    bug_id: int,
+    r: Request,
+    # Query parameters
+    limit: int,
+) -> list[BugReportResponseDto]:
+    tx = get_db(r)
+    similar_bugs = BugReportService.get_similar_bug_reports(tx, bug_id, top_n=limit)
+    return similar_bugs
+
+
 __all__ = ["router"]
