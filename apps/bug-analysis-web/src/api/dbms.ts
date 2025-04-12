@@ -103,3 +103,17 @@ export async function fetchBugTrend(
   }
   return data;
 }
+
+export async function fetchNumReportsToday(dbms_id: number): Promise<number> {
+  const { data, response } = await api.GET(
+    '/api/v1/dbms/{dbms_id}/new_reports',
+    {
+      params: { path: { dbms_id } },
+    }
+  );
+  if (data === undefined || data === null) {
+    console.error('Error fetching number of reports today!', response);
+    throw new Error('Error fetching number of reports today!');
+  }
+  return data;
+}
