@@ -8,7 +8,7 @@ from celery.schedules import crontab
 from configuration.logger import get_logger
 from utilities.constants import constants
 
-celery_app = Celery("tasks", broker=constants.REDIS_BROKER_URL)
+celery_app = Celery("tasks", broker=constants.REDIS_BROKER_URL.unicode_string())
 
 celery_app.conf.update(
     task_serializer="json",

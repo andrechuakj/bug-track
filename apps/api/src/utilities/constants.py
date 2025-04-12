@@ -1,5 +1,6 @@
 import os
 
+from pydantic import RedisDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,7 +11,7 @@ class _Constants(BaseSettings, frozen=True):
     JWT_SECRET_KEY: str
     MODE: str = "production"
     GITHUB_TOKEN: str
-    REDIS_BROKER_URL: str
+    REDIS_BROKER_URL: RedisDsn
     CELERY_BEAT_SCHEDULE: str
 
     def __init__(self):
