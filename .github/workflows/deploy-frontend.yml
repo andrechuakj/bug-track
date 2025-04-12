@@ -64,11 +64,11 @@ jobs:
         with:
           deploy_key: ${{ secrets.GH_ACTIONS_DEPLOY_PRIVATE_KEY }}
           external_repository: ${{ secrets.GH_ACTIONS_DEPLOY_REPO }}
-          publish_dir: ./apps/bug-analysis-web/.next
+          publish_dir: ./apps/bug-analysis-web/out
           publish_branch: deploy-frontend
       - name: Push to deployment branch (mirror)
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./apps/bug-analysis-web/.next
+          publish_dir: ./apps/bug-analysis-web/out
           publish_branch: deploy-frontend
