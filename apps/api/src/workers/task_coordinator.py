@@ -38,7 +38,7 @@ class TaskCoordinator:
     def set_vectorizer_running(self, value):
         """Set the vectorizer running state."""
         self._vectorizer_running = value
-    
+
     def is_vectorizer_running(self):
         """Check if the vectorizer is already running."""
         return self._vectorizer_running

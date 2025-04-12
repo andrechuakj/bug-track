@@ -15,7 +15,6 @@ class _BugVectorizerService(Service):
     # Load spaCy model
     NLP = spacy.load("en_core_web_lg")
 
-
     def vectorize_no_vector_bug_reports(self, tx: Session) -> int:
         """Vectorizes reports that have no vector representation."""
         unvectorized_bugs = get_unvectorized_bugs(tx)
