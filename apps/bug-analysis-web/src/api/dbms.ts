@@ -117,3 +117,19 @@ export async function fetchNumReportsToday(dbms_id: number): Promise<number> {
   }
   return data;
 }
+
+export async function fetchNewBugReportCategoriesToday(
+  dbms_id: number
+): Promise<BugCategory[]> {
+  const { data, response } = await api.GET(
+    `/api/v1/dbms/{dbms_id}/new_report_categories`,
+    {
+      params: { path: { dbms_id } },
+    }
+  );
+  if (!data) {
+    console.error('Error fetching new bug report categories!', response);
+    throw new Error('Error fetching new bug report categories!');
+  }
+  return data;
+}
