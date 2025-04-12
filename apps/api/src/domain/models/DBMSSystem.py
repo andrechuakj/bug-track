@@ -12,6 +12,7 @@ class DBMSSystem(Timestampable, table=True):
     website_url: str | None = Field(nullable=True, default=None)
     logo_url: str | None = Field(nullable=True, default=None)
     repository: str = Field(nullable=False, min_length=1)
+    label: str | None = Field(nullable=True, default=None)
 
     @computed_field(return_type=str)
     @property

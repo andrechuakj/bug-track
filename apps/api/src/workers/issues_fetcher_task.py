@@ -23,8 +23,16 @@ def get_github_client():
     return Github(constants.GITHUB_TOKEN, per_page=100)
 
 
-def build_github_query(repo: str, latest_issue_time: datetime | None) -> str:
-    base_query = f"repo:{repo} is:issue label:fuzz/sqlancer"
+def build_github_query(
+    repo: str, latest_issue_time: datetime | None, label: str | None
+) -> str:
+    base_query = f"repo:{repo} is:issue"
+    if label:
+        base_query += f" label:{label}"
+        if "sqlancer" not in label.lower():
+            base_query += " sqlancer"
+    else:
+        base_query += " sqlancer"
     if latest_issue_time:
         base_query += f" created:>{latest_issue_time.isoformat()}"
     return base_query
@@ -63,6 +71,7 @@ def fetch_github_issues_task(self):
     for dbms in dbms_systems:
         repo = dbms.repository
         dbms_id = dbms.id
+        label = dbms.label
 
         try:
             with get_session() as session:
@@ -70,7 +79,7 @@ def fetch_github_issues_task(self):
                     session, dbms_id
                 )
 
-            query = build_github_query(repo, latest_issue_time)
+            query = build_github_query(repo, latest_issue_time, label)
             logger.info(f"[DBMS {dbms_id}] Searching with query: {query}")
             search_results = g.search_issues(query, sort="created", order="asc")
 
