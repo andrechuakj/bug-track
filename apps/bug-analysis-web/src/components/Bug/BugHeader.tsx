@@ -33,12 +33,11 @@ const BugHeader: React.FC = () => {
             View on GitHub
           </Button>
         )}
-        {/* TODO: Get DBMS URL from schema */}
-        {/* {bugReport.url && (
-          <Button type="default" href={bugReport.dbms} target="_blank">
+        {bugReport.repository && (
+          <Button type="default" href={`https://github.com/${bugReport.repository}`} target="_blank">
             View Repository
           </Button>
-        )} */}
+        )}
       </div>
     </div>
   );
