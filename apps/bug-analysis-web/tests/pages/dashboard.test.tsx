@@ -15,6 +15,7 @@ import {
   DbmsResponseDto,
 } from '../../src/api/dbms';
 import { MockAppProvider } from '../contexts/MockAppProvider';
+import { expectComponentCalledWithPropsContaining } from '../TestUtils';
 
 const { mockSearchBugReports, mockFetchBugTrend, mockFetchDbmsData } =
   vi.hoisted(() => ({
@@ -123,19 +124,6 @@ type RenderPageOptions = {
   isAuthenticated?: boolean;
   isLoading?: boolean;
   currentTenant?: DbmsListResponseDto;
-};
-
-const expectComponentCalledWithPropsContaining = (
-  mockComponent: Mock,
-  expectedProps: Record<string, unknown>
-) => {
-  expect(mockComponent).toHaveBeenCalled();
-  const lastCallArgs = mockComponent.mock.lastCall;
-  expect(lastCallArgs).toBeDefined();
-  if (lastCallArgs) {
-    const receivedProps = lastCallArgs[0] as unknown;
-    expect(receivedProps).toEqual(expect.objectContaining(expectedProps));
-  }
 };
 
 const renderPage = (options: RenderPageOptions = {}): RenderResult => {
