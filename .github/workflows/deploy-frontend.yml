@@ -58,6 +58,8 @@ jobs:
           echo CELERY_BEAT_SCHEDULE="dummy_cron" >> .env.local
           yarn generate
       - name: Build frontend
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: yarn build
       - name: Push to deployment branch
         uses: peaceiris/actions-gh-pages@v4
