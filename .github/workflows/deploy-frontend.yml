@@ -1,0 +1,74 @@
+name: Deploy Backend
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch/Tag/SHA to deploy
+        required: true
+        default: main
+
+permissions:
+  # Allow pushing to the deployment branch
+  contents: write
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Enable Corepack for Yarn
+        run: corepack enable
+      - name: Cache Yarn dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+          cache: pip
+      - name: Install dependencies (Node.js)
+        run: yarn install --frozen-lockfile
+      - name: Install dependencies (Python)
+        working-directory: ./apps/api
+        run: pip install -r requirements.txt
+      - name: Run codegen
+        # For some reason, environment variables are not passed to the
+        # script correctly when running in Actions
+        working-directory: ./apps/api
+        # Dummy values for required environment variables
+        # as they are not needed for the codegen step
+        run: |
+          echo OPENAI_API_KEY=dummy_openai_key >> .env.local
+          echo DATABASE_URL=postgresql://fake:fake@localhost:5432/fake >> .env.local
+          echo JWT_SECRET_KEY=dummy_jwt_secret_key >> .env.local
+          echo REDIS_BROKER_URL=redis://localhost:6379/0 >> .env.local
+          echo GITHUB_TOKEN=dummy_github_token >> .env.local
+          echo CELERY_BEAT_SCHEDULE="dummy_cron" >> .env.local
+          yarn generate
+      - name: Build frontend
+        run: yarn build
+      - name: Push to deployment branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.GH_ACTIONS_DEPLOY_PRIVATE_KEY }}
+          external_repository: ${{ secrets.GH_ACTIONS_DEPLOY_REPO }}
+          publish_dir: ./apps/bug-analysis-web/.next
+          publish_branch: deploy-frontend
+      - name: Push to deployment branch (mirror)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./apps/bug-analysis-web/.next
+          publish_branch: deploy-frontend
