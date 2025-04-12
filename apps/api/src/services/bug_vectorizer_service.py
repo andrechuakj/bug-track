@@ -10,7 +10,7 @@ from utilities.classes import Service
 
 
 class _BugVectorizerService(Service):
-    """Service for classifying bug reports."""
+    """Service for vectorizing bug reports."""
 
     # Load spaCy model
     NLP = spacy.load("en_core_web_lg")
