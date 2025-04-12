@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from configuration.logger import get_logger
 from domain.config import get_session
-from domain.models import BugReport
+from domain.models.BugReport import BugReport
 from domain.models.DBMSSystem import get_dbms_systems
 from github import (
     BadCredentialsException,
@@ -112,6 +112,7 @@ def fetch_github_issues_task(self):
                                     else None
                                 ),
                                 is_closed=issue.state == "closed",
+                                priority="Unassigned",
                             )
                             BugReport.save_bug_report(session, bug_report)
                             total_issues_count += 1

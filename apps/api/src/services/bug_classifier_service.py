@@ -172,10 +172,7 @@ class _BugClassifierService(Service):
         predicted_encoded = np.argmax(probabilities)
         predicted_label = self.label_encoder.inverse_transform([predicted_encoded])[0]
 
-        # Use a percentile-based threshold to adapt confidence dynamically
-        confidence_threshold = np.percentile(probabilities, 10)
-
-        return predicted_label if max_prob >= confidence_threshold else "Others"
+        return predicted_label if max_prob >= 0.7 else "Others"
 
     def classify_unclassified_bugs(self, tx: Session) -> int:
         """Classifies all unclassified bug reports in the database."""
