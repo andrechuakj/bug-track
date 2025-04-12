@@ -131,5 +131,13 @@ class _DbmsService(Service):
 
         return trend
 
+    def get_num_reports_today(self, tx: Session, dbms_id: int) -> int:
+        """
+        Get the number of new bug reports for a given DBMS today.
+        """
+        trend = get_bug_trend_last_k_days(tx, dbms_id, 2)
+        if len(trend) == 2:
+            return trend[1] - trend[0]
+        return 0
 
 DbmsService = _DbmsService()
