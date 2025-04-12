@@ -1,9 +1,12 @@
 import { Card, Typography } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
-import { fetchNumReportsToday } from '../../api/dbms';
+import {
+  BugCategory,
+  fetchNewBugReportCategoriesToday,
+  fetchNumReportsToday,
+} from '../../api/dbms';
 import CategoryTag from '../../components/CategoryTag';
 import { antdTagPresets, BugTrackColors } from '../../utils/theme';
-import { FilterBugCategory } from '../../utils/types';
 
 // Constants for title text
 const TITLE_KEY_ISSUES = 'Bug Check';
@@ -18,6 +21,8 @@ export const DbmsDetails: React.FC<DbmsDetailsProps> = ({
   dbmsId,
 }: DbmsDetailsProps) => {
   const [newBugReports, setNewBugReports] = useState<number | null>(null);
+  const [bugCategories, setBugCategories] = useState<BugCategory[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
   const reportGeneratedDate = useMemo(() => new Date().toLocaleString(), []);
 
@@ -36,10 +41,28 @@ export const DbmsDetails: React.FC<DbmsDetailsProps> = ({
     fetchNewReports();
   }, [dbmsId]);
 
+  useEffect(() => {
+    // Fetch the categories of new bug reports for the given DBMS
+    const fetchCategories = async () => {
+      try {
+        setIsLoadingCategories(true);
+        const categories = await fetchNewBugReportCategoriesToday(dbmsId);
+        setBugCategories(categories);
+      } catch (error) {
+        console.error('Error fetching bug report categories:', error);
+        setBugCategories([]);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, [dbmsId]);
+
   return (
     <div className="overflow-y-scroll">
       <Typography.Title level={4}>{TITLE_KEY_ISSUES}</Typography.Title>
-      <Typography.Title level={4} className="!font-light !mb-4">
+      <Typography.Title level={4} className="!font-light !mb-4 sticky top-0">
         {newBugReports !== null
           ? `${newBugReports} new bugs reported today`
           : 'Loading new bug reports...'}
@@ -53,22 +76,24 @@ export const DbmsDetails: React.FC<DbmsDetailsProps> = ({
               maxHeight: '19vh',
             }}
           >
-            <Typography.Title level={4}>
+            <Typography.Title level={5}>
               {TITLE_BUG_CATEGORIES}
             </Typography.Title>
-            <div className="flex flex-wrap gap-1">
-              <CategoryTag
-                text={FilterBugCategory.CRASH}
-                color={antdTagPresets[0]}
-              />
-              <CategoryTag
-                text={FilterBugCategory.ASSERTION_FAILURE}
-                color={antdTagPresets[1]}
-              />
-              <CategoryTag
-                text={FilterBugCategory.INFINITE_LOOP}
-                color={antdTagPresets[2]}
-              />
+
+            <div className="flex flex-wrap gap-1 max-h-[9.5vh] overflow-y-scroll">
+              {isLoadingCategories ? (
+                <Typography.Text>Loading categories...</Typography.Text>
+              ) : bugCategories.length > 0 ? (
+                bugCategories.map((category, index) => (
+                  <CategoryTag
+                    key={category.id}
+                    text={`${category.name} (${category.count})`}
+                    color={antdTagPresets[index % antdTagPresets.length]}
+                  />
+                ))
+              ) : (
+                <Typography.Text>No categories reported today.</Typography.Text>
+              )}
             </div>
           </Card>
 
@@ -78,9 +103,10 @@ export const DbmsDetails: React.FC<DbmsDetailsProps> = ({
               backgroundColor: `${BugTrackColors.GREEN}40`,
               maxHeight: '19vh',
               overflow: 'hidden',
+              minWidth: '33%',
             }}
           >
-            <Typography.Title level={4}>
+            <Typography.Title level={5}>
               {TITLE_REPORT_GENERATED}
             </Typography.Title>
             <Typography.Title level={4} className="!font-light">
