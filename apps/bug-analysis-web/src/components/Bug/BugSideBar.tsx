@@ -45,10 +45,10 @@ const BugSideBar: React.FC = () => {
   const [form] = Form.useForm();
 
   const handleUpdateCategory = useCallback(
-    async (bug_id: number, category_id: number) => {
+    async (bugId: number, categoryId: number) => {
       setIsCategoryUpdating(true);
       try {
-        const updatedReport = await updateBugCategory(bug_id, category_id);
+        const updatedReport = await updateBugCategory(bugId, categoryId);
         setBugReport(updatedReport);
       } catch (error) {
         console.error('Failed to update category:', error);
@@ -60,10 +60,10 @@ const BugSideBar: React.FC = () => {
   );
 
   const handleUpdatePriority = useCallback(
-    async (bug_id: number, priority: BugPriority) => {
+    async (bugId: number, priority: BugPriority) => {
       setIsPriorityUpdating(true);
       try {
-        const updatedReport = await updateBugPriority(bug_id, priority);
+        const updatedReport = await updateBugPriority(bugId, priority);
         setBugReport(updatedReport);
       } catch (error) {
         console.error('Failed to update priority:', error);
@@ -84,12 +84,12 @@ const BugSideBar: React.FC = () => {
   }, [bugReport, handleUpdatePriority]);
 
   const handleUpdateVersions = useCallback(
-    async (bug_id: number, formFields: Store) => {
+    async (bugId: number, formFields: Store) => {
       setIsVersionsUpdating(true);
       const updatedVersions = formFields.updatedVersions as string;
       try {
         const updatedReport = await updateBugVersionsAffected(
-          bug_id,
+          bugId,
           updatedVersions
         );
         setBugReport(updatedReport);
