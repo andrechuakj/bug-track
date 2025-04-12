@@ -12,6 +12,7 @@
 1. Try to shift the code around, to test the auto-formatting. Also try to trigger eslint errors to see if your IDE highlights them
 
 ## Setup Redis
+
 Redis needs to be running for the backend to work.
 
 1. Make sure you have docker installed.
