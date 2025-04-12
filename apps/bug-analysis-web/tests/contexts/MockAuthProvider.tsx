@@ -26,6 +26,7 @@ type MockAuthProviderProps = {
   logout?: () => void;
   refreshToken?: () => MaybePromise<boolean>;
   loading?: boolean;
+  loggedInUser?: number;
 };
 
 export const MockAuthProvider: React.FC<MockAuthProviderProps> = ({
@@ -36,6 +37,7 @@ export const MockAuthProvider: React.FC<MockAuthProviderProps> = ({
   logout: logoutOverride,
   refreshToken: refreshTokenOverride,
   loading: loadingOverride,
+  loggedInUser: loggedInOverride,
 }) => {
   const contextValue: AuthContextType = {
     isAuthenticated: isAuthenticatedOverride ?? false,
@@ -44,6 +46,7 @@ export const MockAuthProvider: React.FC<MockAuthProviderProps> = ({
     logout: logoutOverride || defaultLogoutMock,
     refreshToken: refreshTokenOverride || defaultRefreshTokenMock,
     loading: loadingOverride ?? false,
+    loggedInUser: loggedInOverride,
   };
 
   return (
