@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from internal.errors import register_error_handler
 from internal.middleware.middleware import register_custom_middleware
 from internal.middleware.secured_endpoints import secured_endpoints_middleware
+from utilities.constants import constants
 from workers.celery_app import start_celery_workers
 
 app = FastAPI(
@@ -38,7 +39,9 @@ register_custom_middleware(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=(
+        ["*"] if constants.IS_DEVELOPMENT else constants.FRONTEND_ALLOWED_ORIGINS
+    ),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

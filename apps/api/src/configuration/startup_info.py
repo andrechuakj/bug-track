@@ -11,6 +11,9 @@ def configure_startup_info(app: FastAPI):
     logger = get_logger()
     if not constants.IS_DEVELOPMENT:
         logger.info("Running in production mode")
+        logger.info(f"Allowed origins ({len(constants.FRONTEND_ALLOWED_ORIGINS)}):")
+        for origin in constants.FRONTEND_ALLOWED_ORIGINS:
+            logger.info(f"  - {origin}")
     else:
         db_url = parse.urlparse(constants.DATABASE_URL)
         logger.debug("============= STARTUP INFORMATION =============")

@@ -13,6 +13,7 @@ class _Constants(BaseSettings, frozen=True):
     GITHUB_TOKEN: str
     REDIS_BROKER_URL: RedisDsn
     CELERY_BEAT_SCHEDULE: str
+    FRONTEND_ALLOWED_ORIGINS: set[str] = set()
 
     def __init__(self):
         # TODO: Investigate if there is a better way
