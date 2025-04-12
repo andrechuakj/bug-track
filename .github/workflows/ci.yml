@@ -59,5 +59,8 @@ jobs:
           yarn generate
       - name: Check lint
         run: yarn lint
+      - name: Check that frontend compiles
+        working-directory: ./apps/bug-analysis-web
+        run: yarn tsc
       - name: Run tests
         run: yarn test
