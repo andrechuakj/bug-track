@@ -7,14 +7,14 @@ import React, {
 } from 'react';
 import { BugReport, fetchBugById } from '../api/bugReport';
 
-type BugReportContextType = {
+export type BugReportContextType = {
   bugReport: BugReport | null;
   setBugReport: (bugReport: BugReport) => void;
   fetchBugReport: (bug_id: number) => Promise<void>;
   isBugLoading: boolean;
 };
 
-const BugReportContext = createContext<BugReportContextType | undefined>(
+export const BugReportContext = createContext<BugReportContextType | undefined>(
   undefined
 );
 
