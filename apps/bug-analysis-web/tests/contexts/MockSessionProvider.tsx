@@ -13,8 +13,8 @@ export const mockTenantAData: DbmsResponseDto = {
   name: 'Tenant A',
   bug_count: 42,
   bug_categories: [
-    { category: 'UI', count: 20 },
-    { category: 'Backend', count: 22 },
+    { id: 1, name: 'UI', count: 20 },
+    { id: 2, name: 'Backend', count: 22 },
   ],
 };
 
