@@ -1,6 +1,6 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import { Collapse, Skeleton, Typography } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import type { AiSummary } from '../../api/bugReport';
 import { fetchBugReportAiSummary } from '../../api/bugReport';
 import { useBugReport } from '../../contexts/BugReportContext';
@@ -8,9 +8,9 @@ import { useBugReport } from '../../contexts/BugReportContext';
 const AiSummary: React.FC = () => {
   const { bugReport } = useBugReport();
 
-  const [aiSummary, setAiSummary] = React.useState<AiSummary | null>(null);
-  const [isFetchSuccess, setIsFetchSuccess] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [aiSummary, setAiSummary] = useState<AiSummary | null>(null);
+  const [isFetchSuccess, setIsFetchSuccess] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const fetchAiSummary = async () => {
     if (isOpen) {
