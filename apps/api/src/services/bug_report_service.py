@@ -135,6 +135,9 @@ class _BugReportService(Service):
 
         all_reports = get_bug_reports(tx)
         similar_reports = []
+        if not target_report.vector:
+            self.logger.warning(f"Bug report with id {bug_id} does not have a vector")
+            return []
         target_report_vector = pickle.loads(target_report.vector)
         for report in all_reports:
             if report.id == bug_id or report.vector is None:
