@@ -5,7 +5,14 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config([
-  { ignores: ['eslint.config.mjs'] },
+  {
+    ignores: [
+      'eslint.config.mjs',
+      'next.config.mjs',
+      'tailwind.config.mjs',
+      'postcss.config.js',
+    ],
+  },
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   {
