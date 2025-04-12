@@ -272,7 +272,7 @@ const BugSideBar: React.FC = () => {
 
       <Divider />
 
-      <SimilarBugs/>
+      <SimilarBugs />
     </div>
   );
 };
