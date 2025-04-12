@@ -16,6 +16,7 @@ class TaskCoordinator:
                 cls._instance = super(TaskCoordinator, cls).__new__(cls)
                 cls._instance._fetcher_running = False
                 cls._instance._classifier_running = False
+                cls._instance._vectorizer_running = False
             return cls._instance
 
     def set_fetcher_running(self, value):
@@ -33,3 +34,11 @@ class TaskCoordinator:
     def is_classifier_running(self):
         """Check if the classifier is already running."""
         return self._classifier_running
+
+    def set_vectorizer_running(self, value):
+        """Set the vectorizer running state."""
+        self._vectorizer_running = value
+    
+    def is_vectorizer_running(self):
+        """Check if the vectorizer is already running."""
+        return self._vectorizer_running
