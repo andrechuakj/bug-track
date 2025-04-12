@@ -36,6 +36,7 @@ class _BugReportService(Service):
         issue_closed_at: datetime | None
         is_closed: bool
         priority: PriorityLevel
+        repository: str
 
     def get_bug_report_by_id(
         self,
@@ -50,6 +51,7 @@ class _BugReportService(Service):
         return _BugReportService.BugReportViewModel(
             **br.model_dump(),
             dbms=br.dbms.name,
+            repository=br.dbms.repository,
             category=br.category.name,
         )
 
@@ -61,6 +63,7 @@ class _BugReportService(Service):
         return _BugReportService.BugReportViewModel(
             **br.model_dump(),
             dbms=br.dbms.name,
+            repository=br.dbms.repository,
             category=br.category.name,
         )
 
@@ -74,6 +77,7 @@ class _BugReportService(Service):
         return _BugReportService.BugReportViewModel(
             **br.model_dump(),
             dbms=br.dbms.name,
+            repository=br.dbms.repository,
             category=br.category.name,
         )
 

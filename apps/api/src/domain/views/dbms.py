@@ -48,6 +48,7 @@ class BugReportResponseDto(BaseResponseModel):
     issue_closed_at: datetime | None
     is_closed: bool
     priority: PriorityLevel
+    repository: str
 
 
 class BugSearchResponseDto(BaseResponseModel):
