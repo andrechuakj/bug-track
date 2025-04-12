@@ -9,7 +9,10 @@ import { BugSearchResultStruct } from '../../utils/bug';
 export type BugSearchProps = {
   bugReports: BugSearchResultStruct;
   bugSearchReports: BugSearchResultStruct;
-  handleBugExploreLoadMore: (tenantId: number, categoryId: number) => void;
+  handleBugExploreLoadMore: (
+    tenantId: number,
+    categoryId: number
+  ) => Promise<void>;
   activeKey: string;
   setActiveKey: Dispatch<SetStateAction<string>>;
   isFetchingSearchResult: boolean;

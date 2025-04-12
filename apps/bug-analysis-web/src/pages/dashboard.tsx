@@ -322,93 +322,95 @@ const Dashboard: React.FC = (): ReactNode => {
     [filterModalItems, handleApplyFilter, isFilterModalOpen]
   );
 
-  if (!dbmsData) {
-    return <Skeleton active round />;
-  }
-
   return (
     <>
-      <div className="px-4">
-        <Form form={redemptionForm} onFinish={() => {}}>
-          <div className="flex flex-row flex-wrap">
-            <div className="w-3/4">
-              <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
-                <AutoComplete
-                  options={options}
-                  onSearch={handleSearchDebounce}
-                  size="large"
-                  filterOption={
-                    ((inputValue, option) =>
-                      String(option?.value)
-                        .toUpperCase()
-                        .indexOf(inputValue.toUpperCase()) !==
-                      -1) as SelectProps['filterOption']
-                  }
-                >
-                  <Input.Search
-                    ref={searchFieldRef}
+      {!dbmsData && <Skeleton active round />}
+      {dbmsData && (
+        <div className="px-4">
+          <Form form={redemptionForm} onFinish={() => {}}>
+            <div className="flex flex-row flex-wrap">
+              <div className="w-3/4">
+                <Form.Item name={['bugSearchValue']} labelCol={{ span: 24 }}>
+                  <AutoComplete
+                    options={options}
+                    onSearch={handleSearchDebounce}
                     size="large"
-                    placeholder="Search for bug"
-                    onSearch={() => {
-                      handlePopulateSearchResults();
-                    }}
-                  />
-                </AutoComplete>
-              </Form.Item>
+                    filterOption={
+                      ((inputValue, option) =>
+                        String(option?.value)
+                          .toUpperCase()
+                          .indexOf(inputValue.toUpperCase()) !==
+                        -1) as SelectProps['filterOption']
+                    }
+                  >
+                    <Input.Search
+                      ref={searchFieldRef}
+                      size="large"
+                      placeholder="Search for bug"
+                      onSearch={() => {
+                        handlePopulateSearchResults();
+                      }}
+                    />
+                  </AutoComplete>
+                </Form.Item>
+              </div>
+              <div className="w-1/8 pl-2">
+                <Button
+                  icon={<FilterOutlined />}
+                  className="h-[40px] !w-[40px]"
+                  onClick={() => setIsFilterModalOpen(true)}
+                />
+              </div>
+              <div className="w-1/8 pl-2">
+                <Button
+                  icon={<SortAscendingOutlined />}
+                  className="h-[40px] !w-[40px]"
+                />
+              </div>
             </div>
-            <div className="w-1/8 pl-2">
-              <Button
-                icon={<FilterOutlined />}
-                className="h-[40px] !w-[40px]"
-                onClick={() => setIsFilterModalOpen(true)}
-              />
-            </div>
-            <div className="w-1/8 pl-2">
-              <Button
-                icon={<SortAscendingOutlined />}
-                className="h-[40px] !w-[40px]"
-              />
-            </div>
-          </div>
-        </Form>
-        <Card className="mb-4 h-[52.5vh]">
-          <BugSearch
-            bugReports={bugReports}
-            bugSearchReports={bugSearchReports}
-            handleBugExploreLoadMore={(tenantId, categoryId) => {
-              handleBugExploreLoadMore(tenantId, categoryId);
-            }}
-            activeKey={exploreSearchActiveKey}
-            setActiveKey={setExploreSearchActiveKey}
-            isFetchingSearchResult={
-              isFetchingSearchResult || isDashboardLoading
-            }
-          />
-        </Card>
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={14}>
-            <Row>
-              <Card className="w-full h-[35vh] overflow-y-scroll">
-                <BugTrend bugTrend={bugTrend} bugCount={dbmsData.bug_count} />
-              </Card>
-            </Row>
-          </Col>
+          </Form>
+          <Card className="mb-4 h-[52.5vh]">
+            <BugSearch
+              bugReports={bugReports}
+              bugSearchReports={bugSearchReports}
+              handleBugExploreLoadMore={async (tenantId, categoryId) => {
+                await handleBugExploreLoadMore(tenantId, categoryId);
+              }}
+              activeKey={exploreSearchActiveKey}
+              setActiveKey={setExploreSearchActiveKey}
+              isFetchingSearchResult={
+                isFetchingSearchResult || isDashboardLoading
+              }
+            />
+          </Card>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={14}>
+              <Row>
+                <Card className="w-full h-[35vh] overflow-y-scroll">
+                  <BugTrend bugTrend={bugTrend} bugCount={dbmsData.bug_count} />
+                </Card>
+              </Row>
+            </Col>
 
-          <Col xs={24} md={10}>
-            <Card className="h-[35vh] overflow-y-scroll">
-              {currentTenant && <DbmsDetails dbmsId={currentTenant.id} />}
-            </Card>
-          </Col>
-        </Row>
-        <Row className="mt-4" gutter={[16, 16]}>
-          <Col xs={24} md={10}>
-            {currentTenant && <DashboardAiSummary dbmsId={currentTenant.id} />}
-          </Col>
-          <Col xs={24} md={14}>
-            <BugDistribution categories={dbmsData.bug_categories} />
-          </Col>
-        </Row>
-      </div>
+            <Col xs={24} md={10}>
+              <Card className="h-[35vh] overflow-y-scroll">
+                {currentTenant && <DbmsDetails dbmsId={currentTenant.id} />}
+              </Card>
+            </Col>
+          </Row>
+          <Row className="mt-4" gutter={[16, 16]}>
+            <Col xs={24} md={10}>
+              {currentTenant && (
+                <DashboardAiSummary dbmsId={currentTenant.id} />
+              )}
+            </Col>
+            <Col xs={24} md={14}>
+              <BugDistribution categories={dbmsData.bug_categories} />
+            </Col>
+          </Row>
+        </div>
+      )}
+
       {filterModal}
     </>
   );

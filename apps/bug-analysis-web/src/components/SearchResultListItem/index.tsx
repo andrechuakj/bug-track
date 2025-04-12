@@ -7,7 +7,7 @@ import { BugSearchResult, BugSearchResultCategory } from '../../utils/bug';
 
 type Props = {
   searchResultCategory: BugSearchResultCategory;
-  handleLoadMore?: (tenantId: number, categoryId: number) => void;
+  handleLoadMore?: (tenantId: number, categoryId: number) => Promise<void>;
 };
 
 const SearchResultListItem: React.FC<Props> = ({
@@ -22,9 +22,10 @@ const SearchResultListItem: React.FC<Props> = ({
   const handleClickLoadMore = useCallback(() => {
     setIsLoading(true);
     if (currentTenant) {
-      handleLoadMore?.(currentTenant.id, searchResultCategory.categoryId);
+      handleLoadMore?.(currentTenant.id, searchResultCategory.categoryId).then(
+        () => setIsLoading(false)
+      );
     }
-    setIsLoading(false);
   }, [currentTenant, handleLoadMore, searchResultCategory.categoryId]);
 
   return (
