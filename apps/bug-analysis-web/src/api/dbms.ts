@@ -50,7 +50,6 @@ export async function searchBugReports(
   limit: number = 10,
   category_id?: number
 ): Promise<BugReports> {
-  console.log('F');
   const { data, response } = await api.GET(
     '/api/v1/dbms/{dbms_id}/bug_search',
     {
@@ -60,7 +59,6 @@ export async function searchBugReports(
       },
     }
   );
-  console.log('G');
   if (!data) {
     console.error('Error fetching bug reports!', response);
     throw new Error('Error fetching bug reports!');

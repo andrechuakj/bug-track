@@ -37,7 +37,12 @@ Redis needs to be running for the backend to work.
 
    > On Windows, use WSL to run the commands above.
 
-1. Create a `.env.local` file in the current directory and populate `MODE`, `OPENAI_API_KEY`, `DATABASE_URL` and `JWT_SECRET_KEY` environment variables, with `MODE` set to `development`. `JWT_SECRET_KEY` can be any string of your choosing (eg randomly generated). 
+1. Create an `.env.local` file in the current directory and populate all environment variables. You may take reference from `.env.local.example`.
+   - set `MODE` to `development`.
+   - set `JWT_SECRET_KEY` to any string of your choosing (eg randomly generated). Do not share this.
+   - set `REDIS_BROKER_URL` to a url that matches with the port of the redis container in the previous section.
+   - set `GITHUB_TOKEN` to a Personal Access Token from GitHub, with permissions to read from public repositories.
+   - set `CELERY_BEAT_SCHEDULE` to a string representing the frequency of bug scraping. In the example, it occurs every 6 hours.
 1. Install dependencies and start the backend with `yarn && yarn dev`
 
 > To check that the environment is set up, run both frontend & backend, and ensure that the API is fetching correctly.
