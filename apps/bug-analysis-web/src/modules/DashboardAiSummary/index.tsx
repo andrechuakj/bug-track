@@ -12,12 +12,13 @@ export type DashboardAiSummaryProps = {
 export const DashboardAiSummary: React.FC<DashboardAiSummaryProps> = ({
   dbmsId,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState<string>();
   const { theme } = useAppContext();
   const isDarkMode = useMemo(() => theme === 'dark', [theme]);
 
   const reload = useCallback(() => {
+    setIsLoading(true);
     fetchAiSummary(dbmsId)
       .then((res: AiSummary) => setSummary(res.summary))
       .finally(() => {
@@ -47,7 +48,7 @@ export const DashboardAiSummary: React.FC<DashboardAiSummaryProps> = ({
           disabled={isLoading}
           onClick={reload}
         >
-          {isLoading && 'Loading'} AI Summary
+          AI Summary
         </Button>
       </div>
       <Card
@@ -62,12 +63,12 @@ export const DashboardAiSummary: React.FC<DashboardAiSummaryProps> = ({
           level={5}
           className="!font-light text-justify !leading-[1.75]"
         >
-          {!summary && (
+          {isLoading && (
             <div className="mr-4">
               <Skeleton active />
             </div>
           )}
-          {summary && <p className="fade-in-text">{summary}</p>}
+          {!isLoading && summary && <p className="fade-in-text">{summary}</p>}
         </Typography.Title>
       </Card>
     </Card>
