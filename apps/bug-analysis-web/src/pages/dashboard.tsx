@@ -396,7 +396,7 @@ const Dashboard: React.FC = (): ReactNode => {
 
           <Col xs={24} md={10}>
             <Card className="h-[35vh] overflow-y-scroll">
-              <DbmsDetails />
+              {currentTenant && <DbmsDetails dbmsId={currentTenant.id} />}
             </Card>
           </Col>
         </Row>
