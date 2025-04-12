@@ -65,7 +65,7 @@ async def get_ai_summary(dbms_id: int, r: Request) -> AiSummaryResponseDto:
                     "content": get_dbms_ai_summary_prompt(dbms.name, sample_desc),
                 },
             ],
-            max_tokens=100,
+            max_tokens=200,
             temperature=0.2,
         )
         summary = response["choices"][0]["message"]["content"].strip()
@@ -203,5 +203,17 @@ async def get_bug_trend(
     trend_data = DbmsService.get_bug_trend_last_k_days(tx, dbms_id, days)
     return trend_data
 
+
+@router.get("/{dbms_id}/new_reports")
+async def get_num_reports_today(dbms_id: int, r: Request) -> int:
+    """
+    Fetches the number of new bug reports for a given DBMS today.
+
+    Query parameters:
+        - dbms_id: ID of the DBMS
+    """
+    tx = get_db(r)
+    num_reports = DbmsService.get_num_reports_today(tx, dbms_id)
+    return num_reports
 
 __all__ = ["router"]
