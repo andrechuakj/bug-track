@@ -45,6 +45,7 @@ describe('useBugReport', () => {
       issue_updated_at: null,
       issue_closed_at: null,
       is_closed: false,
+      priority: 'Low',
     };
 
     act(() => {
@@ -69,6 +70,7 @@ describe('useBugReport', () => {
         issue_updated_at: null,
         issue_closed_at: null,
         is_closed: false,
+        priority: 'Low',
       } satisfies BugReport),
     }));
 

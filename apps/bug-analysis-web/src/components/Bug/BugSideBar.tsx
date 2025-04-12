@@ -179,7 +179,7 @@ const BugSideBar: React.FC = () => {
             }
             className="w-fit"
           >
-            {bugReport.priority ?? BugPriority.UNASSIGNED}
+            {bugReport?.priority ?? BugPriority.UNASSIGNED}
           </Tag>
         )}
       </div>

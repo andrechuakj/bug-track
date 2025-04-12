@@ -33,6 +33,7 @@ async function mockAuthService(refresh: boolean) {
   const mockAuthService = {
     refreshToken: vi.fn().mockResolvedValue(refresh),
     login: vi.fn().mockResolvedValue(true),
+    logout: vi.fn(),
     signup: vi.fn().mockResolvedValue(true),
     getCurrentToken: vi.fn().mockReturnValue('test-token'),
     isLoggedIn: vi.fn().mockReturnValue(true),

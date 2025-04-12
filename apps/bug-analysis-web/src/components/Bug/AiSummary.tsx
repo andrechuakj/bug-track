@@ -8,7 +8,7 @@ import { useBugReport } from '../../contexts/BugReportContext';
 const AiSummary: React.FC = () => {
   const { bugReport } = useBugReport();
 
-  const [aiSummary, setAiSummary] = useState<AiSummary | null>(null);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [isFetchSuccess, setIsFetchSuccess] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 

@@ -24,6 +24,7 @@ describe('categoriseBugs', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 2,
@@ -38,6 +39,7 @@ describe('categoriseBugs', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 3,
@@ -52,6 +54,7 @@ describe('categoriseBugs', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 4,
@@ -66,6 +69,7 @@ describe('categoriseBugs', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
       ],
     };
@@ -133,6 +137,7 @@ describe('setBugExplore', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 2,
@@ -147,6 +152,7 @@ describe('setBugExplore', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
       ],
     };
@@ -211,6 +217,7 @@ describe('setBugExplore', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 2,
@@ -225,6 +232,7 @@ describe('setBugExplore', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
       ],
     };
@@ -281,6 +289,7 @@ describe('bugReportToBugSearchResult', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 2,
@@ -295,6 +304,7 @@ describe('bugReportToBugSearchResult', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
       ],
     };
@@ -333,6 +343,7 @@ describe('bugReportToBugSearchResult', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
         {
           id: 2,
@@ -347,6 +358,7 @@ describe('bugReportToBugSearchResult', () => {
           issue_updated_at: null,
           issue_closed_at: null,
           is_closed: false,
+          priority: 'Low',
         },
       ],
     };
