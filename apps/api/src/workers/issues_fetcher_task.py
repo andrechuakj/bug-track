@@ -25,7 +25,9 @@ def get_github_client():
 
 
 def build_github_query(
-    repo: str, latest_issue_time: datetime | None, label: str | None
+    repo: str,
+    latest_issue_time: datetime | None,
+    label: str | None,
 ) -> str:
     base_query = f"repo:{repo} is:issue"
     if label:
