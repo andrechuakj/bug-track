@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react';
 import { vi } from 'vitest';
+import { BugReport } from '../../src/api/bugReport';
 import {
   BugReportContext,
   BugReportContextType,
 } from '../../src/contexts/BugReportContext';
-import { BugReport } from '../../src/api/bugReport';
 
-export const mockBugReportData: BugReport = {
+export const mockBugReportData = {
   id: 123,
   dbms_id: 1,
   dbms: 'PostgreSQL',
@@ -15,12 +15,12 @@ export const mockBugReportData: BugReport = {
   title: 'Mock Bug: Slow query on user table',
   description: 'The query to fetch user profiles takes longer than 5 seconds.',
   url: 'https://github.com/issues/123',
-  repo_url: 'https://github.com/myorg/myrepo',
   issue_created_at: new Date('2024-01-15T10:00:00Z').toISOString(),
   issue_updated_at: new Date('2024-01-16T11:30:00Z').toISOString(),
   issue_closed_at: null,
   is_closed: false,
-};
+  priority: 'Low',
+} satisfies BugReport;
 
 export const defaultSetBugReport = vi.fn();
 export const defaultFetchBugReport = vi.fn();

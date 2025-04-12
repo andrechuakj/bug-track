@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import BugSideBar from '../../../src/components/Bug/BugSideBar';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { BugCategoryResponseDto, BugReport } from '../../../src/api/bugReport';
+import BugSideBar from '../../../src/components/Bug/BugSideBar';
 import {
   mockBugReportData,
   MockBugReportProvider,
 } from '../../contexts/MockBugReportProvider';
-import { BugCategoryResponseDto, BugReport } from '../../../src/api/bugReport';
 
 const { mockFetchAllCategories, mockUpdateBugCategory } = vi.hoisted(() => ({
   mockFetchAllCategories: vi.fn(),

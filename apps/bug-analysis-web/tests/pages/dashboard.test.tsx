@@ -1,20 +1,19 @@
-import { Responses } from '~api';
 import { render, RenderResult, waitFor } from '@testing-library/react';
-import React from 'react';
-import { MockAuthProvider } from '../contexts/MockAuthProvider';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  MockSessionProvider,
-  mockTenantA,
-  mockTenantAData,
-} from '../contexts/MockSessionProvider';
-import Dashboard from '../../src/pages/dashboard';
+import { Responses } from '~api';
 import {
   BugReports,
   DbmsListResponseDto,
   DbmsResponseDto,
 } from '../../src/api/dbms';
+import Dashboard from '../../src/pages/dashboard';
 import { MockAppProvider } from '../contexts/MockAppProvider';
+import { MockAuthProvider } from '../contexts/MockAuthProvider';
+import {
+  MockSessionProvider,
+  mockTenantA,
+  mockTenantAData,
+} from '../contexts/MockSessionProvider';
 import { expectComponentCalledWithPropsContaining } from '../TestUtils';
 
 const { mockSearchBugReports, mockFetchBugTrend, mockFetchDbmsData } =
@@ -43,8 +42,8 @@ const mockBugReport: BugReportResponseDto = {
   category: 'UI',
   title: 'Mock Bug Report',
   description: 'A mock description',
-  url: null,
-  repo_url: null,
+  url: '',
+  priority: 'Low',
   issue_created_at: new Date().toISOString(),
   issue_updated_at: null,
   issue_closed_at: null,
