@@ -2,6 +2,7 @@
 
 /** @type {import('next').NextConfig} */
 const config = {
+  output: 'export',
   reactStrictMode: true,
   // Transpile our internal monorepo packages on-the-fly
   // Note next.js strict ESM resolution
