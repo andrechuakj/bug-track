@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   ci:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     concurrency:
       # Cancel previous runs (if any) from the same branch
       group: ${{ github.workflow }}-${{ github.ref }}
