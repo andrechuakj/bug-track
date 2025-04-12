@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useCallback } from 'react';
+import React, { ReactNode } from 'react';
 import { vi } from 'vitest';
 import {
   BugReportContext,

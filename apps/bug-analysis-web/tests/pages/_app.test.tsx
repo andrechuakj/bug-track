@@ -42,6 +42,10 @@ const ContextConsumingComponent: React.FC = () => {
 const defaultAppProps: AppProps = {
   Component: () => <div data-testid="mock-page">Mock Page</div>,
   pageProps: {},
+  // fully replacing router is complicated and unnecessary for this test.
+  // future tests may break, but is unlikely and can probably be mitigated by
+  // mocking other router functions.
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   router: {} as any,
 };
 

@@ -2,7 +2,7 @@ import { Responses } from '~api';
 import { render, RenderResult, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MockAuthProvider } from '../contexts/MockAuthProvider';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   MockSessionProvider,
   mockTenantA,
@@ -60,7 +60,9 @@ mockFetchDbmsData.mockImplementation((id): Promise<DbmsResponseDto> => {
   if (id === mockTenantA.id) {
     return Promise.resolve(mockTenantAData);
   }
-  return Promise.reject();
+  return Promise.reject(
+    new Error('Mock fetchDbmsData: ID not found or not mocked')
+  );
 });
 
 const {

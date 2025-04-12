@@ -1,4 +1,4 @@
-import { render, RenderResult, screen, waitFor } from '@testing-library/react';
+import { render, RenderResult, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import React from 'react';
 import Homepage from '../../src/pages';
