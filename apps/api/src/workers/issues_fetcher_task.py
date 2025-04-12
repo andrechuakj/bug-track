@@ -14,6 +14,7 @@ from github import (
 )
 from utilities.constants import constants
 from workers.bug_classifier_task import classify_bugs_task
+from workers.bug_vectorizer_task import vectorize_bugs_task
 from workers.celery_app import celery_app
 from workers.task_coordinator import TaskCoordinator
 
@@ -133,7 +134,8 @@ def fetch_github_issues_task(self):
 
                 if not coordinator.is_classifier_running():
                     classify_bugs_task.delay()
-
+                if not coordinator.is_vectorizer_running():
+                    vectorize_bugs_task.delay()
                 page += 1
                 time.sleep(2)
 
