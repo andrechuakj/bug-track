@@ -26,7 +26,8 @@ app = FastAPI(
         configure_startup_info,
         configure_database,
         configure_openai,
-        post_config_hook=start_celery_workers,
+        # In production, workers are hosted separately
+        post_config_hook=start_celery_workers if constants.IS_DEVELOPMENT else None,
     ),
     dependencies=[
         Depends(db_txn_manager_generator),
