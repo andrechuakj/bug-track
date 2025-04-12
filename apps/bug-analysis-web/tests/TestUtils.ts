@@ -12,3 +12,20 @@ export const expectComponentCalledWithPropsContaining = (
     expect(receivedProps).toEqual(expect.objectContaining(expectedProps));
   }
 };
+
+export const expectNthCallWithPropsContaining = (
+  mockComponent: Mock,
+  callIndex: number, // 1-based index
+  expectedProps: Record<string, unknown>
+) => {
+  expect(mockComponent).toHaveBeenCalled();
+  expect(mockComponent.mock.calls.length).toBeGreaterThanOrEqual(callIndex);
+
+  const nthCallArgs = mockComponent.mock.calls[callIndex - 1];
+  expect(nthCallArgs).toBeDefined();
+
+  if (nthCallArgs) {
+    const receivedProps = nthCallArgs[0] as unknown;
+    expect(receivedProps).toEqual(expect.objectContaining(expectedProps));
+  }
+};
