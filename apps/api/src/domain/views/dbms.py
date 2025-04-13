@@ -52,7 +52,7 @@ class BugReportResponseDto(BaseResponseModel):
     issue_closed_at: datetime | None
     is_closed: bool
     priority: PriorityLevel
-    repository: str
+    repository: str = ''
     versions_affected: str | None
 
 
