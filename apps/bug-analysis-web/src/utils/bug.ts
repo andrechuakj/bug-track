@@ -163,6 +163,7 @@ export const setBugExplore = (
       description: description ?? '',
     });
   }
+
   setBugExploreDistribution(newDistr);
   setBugReports(bugSearchResult);
 };
