@@ -251,7 +251,7 @@ const BugSideBar: React.FC = () => {
           <Form
             form={form}
             onFinish={(values) =>
-              handleUpdateVersions(bugReport!.id, values as Store)
+              void handleUpdateVersions(bugReport!.id, values as Store)
             }
           >
             <Form.Item

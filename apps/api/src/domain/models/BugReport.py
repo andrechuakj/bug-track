@@ -224,20 +224,17 @@ def update_bug_versions_affected(
 
 def get_new_bug_report_categories(tx: Session, dbms_id: int):
     today = datetime.now(timezone(timedelta(hours=8))).date()
-    categories = (
-        tx.exec(
-            select(
-                BugReport.category_id.label('id'),
-                BugCategory.name.label("name"),
-                func.count(BugReport.id).label("count"),
-            )
-            .where(
-                BugReport.dbms_id == dbms_id,
-                func.date(BugReport.created_at) == today,
-            )
-            .join(BugCategory, BugReport.category_id == BugCategory.id)
-            .group_by(BugReport.category_id, BugCategory.name)
+    categories = tx.exec(
+        select(
+            BugReport.category_id.label("id"),
+            BugCategory.name.label("name"),
+            func.count(BugReport.id).label("count"),
         )
-        .all()
-    )
+        .where(
+            BugReport.dbms_id == dbms_id,
+            func.date(BugReport.created_at) == today,
+        )
+        .join(BugCategory, BugReport.category_id == BugCategory.id)
+        .group_by(BugReport.category_id, BugCategory.name)
+    ).all()
     return categories

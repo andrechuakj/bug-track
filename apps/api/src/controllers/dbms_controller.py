@@ -218,7 +218,9 @@ async def get_num_reports_today(dbms_id: int, r: Request) -> int:
 
 
 @router.get("/{dbms_id}/new_report_categories")
-async def get_new_bug_report_categories_today(dbms_id: int, r: Request) -> list[BugCategoryResponseDto]:
+async def get_new_bug_report_categories_today(
+    dbms_id: int, r: Request
+) -> list[BugCategoryResponseDto]:
     """
     Fetches the categories of new bug reports for a given DBMS today.
 
@@ -228,5 +230,6 @@ async def get_new_bug_report_categories_today(dbms_id: int, r: Request) -> list[
     tx = get_db(r)
     categories = DbmsService.get_new_bug_report_categories_today(tx, dbms_id)
     return categories
+
 
 __all__ = ["router"]

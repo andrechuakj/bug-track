@@ -34,7 +34,11 @@ const BugHeader: React.FC = () => {
           </Button>
         )}
         {bugReport.repository && (
-          <Button type="default" href={`https://github.com/${bugReport.repository}`} target="_blank">
+          <Button
+            type="default"
+            href={`https://github.com/${bugReport.repository}`}
+            target="_blank"
+          >
             View Repository
           </Button>
         )}
