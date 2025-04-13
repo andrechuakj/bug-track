@@ -8,6 +8,7 @@ from domain.models.BugReport import (
     get_bug_report_by_search_and_cat,
     get_bug_report_ids_by_dbms_id,
     get_bug_trend_last_k_days,
+    get_new_bug_report_categories
 )
 from domain.models.DBMSSystem import *
 from sqlmodel import Session
@@ -139,5 +140,12 @@ class _DbmsService(Service):
         if len(trend) == 2:
             return trend[1] - trend[0]
         return 0
+
+    def get_new_bug_report_categories_today(self, tx, dbms_id: int):
+        """
+        Fetches the categories of new bug reports for a given DBMS today.
+        """
+        categories = get_new_bug_report_categories(tx, dbms_id)
+        return categories
 
 DbmsService = _DbmsService()

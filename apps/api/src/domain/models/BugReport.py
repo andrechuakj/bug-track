@@ -220,3 +220,24 @@ def update_bug_versions_affected(
     tx.add(bug_report)
     tx.commit()
     return bug_report
+
+
+def get_new_bug_report_categories(tx: Session, dbms_id: int):
+    today = datetime.now(timezone.utc).date()
+    categories = (
+        tx.exec(
+            select(
+                BugReport.category_id.label('id'),
+                BugCategory.name.label("name"),
+                func.count(BugReport.id).label("count"),
+            )
+            .where(
+                BugReport.dbms_id == dbms_id,
+                func.date(BugReport.created_at) == today,
+            )
+            .join(BugCategory, BugReport.category_id == BugCategory.id)
+            .group_by(BugReport.category_id, BugCategory.name)
+        )
+        .all()
+    )
+    return categories
