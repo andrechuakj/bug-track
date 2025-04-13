@@ -223,7 +223,7 @@ def update_bug_versions_affected(
 
 
 def get_new_bug_report_categories(tx: Session, dbms_id: int):
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(timezone(timedelta(hours=8))).date()
     categories = (
         tx.exec(
             select(
