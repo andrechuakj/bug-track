@@ -9,7 +9,7 @@ import { MockAppProvider } from '../../contexts/MockAppProvider';
 import { BugSearchResultStruct } from '../../../src/utils/bug';
 import { AppTheme, FilterBugCategory } from '../../../src/utils/types';
 import { fireEvent, render } from '@testing-library/react';
-import { expectComponentCalledWithPropsContaining } from '../../MockFnAssertUtils';
+import { expectComponentLastCalledWithPropsContaining } from '../../MockFnAssertUtils';
 import { Dispatch, SetStateAction } from 'react';
 
 const { mockSearchResultListItem, mockLoadingOutlined } = vi.hoisted(() => ({
@@ -104,7 +104,7 @@ describe('BugSearch', () => {
     });
 
     const expectedCategory = Object.values(mockBugReports)[0];
-    expectComponentCalledWithPropsContaining(mockSearchResultListItem, {
+    expectComponentLastCalledWithPropsContaining(mockSearchResultListItem, {
       searchResultCategory: expectedCategory,
     });
   });
@@ -118,7 +118,7 @@ describe('BugSearch', () => {
     });
 
     const expectedCategory = Object.values(mockBugSearchReportsData)[0];
-    expectComponentCalledWithPropsContaining(mockSearchResultListItem, {
+    expectComponentLastCalledWithPropsContaining(mockSearchResultListItem, {
       searchResultCategory: expectedCategory,
     });
   });

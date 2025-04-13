@@ -20,7 +20,7 @@ import {
   mockTenantAData,
 } from '../contexts/MockSessionProvider';
 import {
-  expectComponentCalledWithPropsContaining,
+  expectComponentLastCalledWithPropsContaining,
   expectFnAnyCallContainingArgs,
   expectFnLastCallToContainAnywhere,
 } from '../MockFnAssertUtils';
@@ -231,7 +231,7 @@ describe('dashboard', () => {
       expect(mockBugTrendComponent).toHaveBeenCalled();
     });
 
-    expectComponentCalledWithPropsContaining(mockBugTrendComponent, {
+    expectComponentLastCalledWithPropsContaining(mockBugTrendComponent, {
       bugTrend: mockTrendData,
     });
   });
@@ -249,15 +249,18 @@ describe('dashboard', () => {
     });
 
     await waitFor(() => {
-      expectComponentCalledWithPropsContaining(mockBugTrendComponent, {
+      expectComponentLastCalledWithPropsContaining(mockBugTrendComponent, {
         bugCount: mockTenantAData.bug_count,
       });
     });
 
     await waitFor(() => {
-      expectComponentCalledWithPropsContaining(mockBugDistributionComponent, {
-        categories: mockTenantAData.bug_categories,
-      });
+      expectComponentLastCalledWithPropsContaining(
+        mockBugDistributionComponent,
+        {
+          categories: mockTenantAData.bug_categories,
+        }
+      );
     });
 
     await waitFor(() => {

@@ -2,7 +2,7 @@ import { inspect } from 'util';
 import { expect, Mock } from 'vitest';
 import util from 'node:util';
 
-export const expectComponentCalledWithPropsContaining = (
+export const expectComponentLastCalledWithPropsContaining = (
   mockComponent: Mock,
   expectedProps: Record<string, unknown>
 ) => {
@@ -15,7 +15,7 @@ export const expectComponentCalledWithPropsContaining = (
   }
 };
 
-export const expectNthCallWithPropsContaining = (
+export const expectComponentNthCallWithPropsContaining = (
   mockComponent: Mock,
   callIndex: number, // 1-based index
   expectedProps: Record<string, unknown>
@@ -32,6 +32,17 @@ export const expectNthCallWithPropsContaining = (
   }
 };
 
+export const expectComponentAnyCallWithPropsContaining = (
+  mockComponent: Mock,
+  expectedProps: Record<string, unknown>
+) => {
+  expect(mockComponent.mock.calls).toEqual(
+    expect.arrayContaining([
+      expect.arrayContaining([expect.objectContaining(expectedProps)]),
+    ])
+  );
+};
+
 /**
  * Checks if a mock function was called at least once
  * with the specified argument value present anywhere in the arguments list of any call.
@@ -43,10 +54,6 @@ export const expectFnAnyCallContainingArgs = (
   expect(mockFn).toHaveBeenCalled();
 
   const calls = mockFn.mock.calls;
-  try {
-    console.log(calls[calls.length - 1][0]['options'][0]['options']);
-    // eslint-disable-next-line no-empty
-  } catch {}
   expect(calls).toEqual(
     expect.arrayContaining([expect.arrayContaining([expectedArg])])
   );

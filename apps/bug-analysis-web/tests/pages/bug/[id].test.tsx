@@ -1,7 +1,7 @@
 import { render, RenderResult, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import BugReportPageWrapper from '../../../src/pages/bug/[id]';
-import { expectComponentCalledWithPropsContaining } from '../../MockFnAssertUtils';
+import { expectComponentLastCalledWithPropsContaining } from '../../MockFnAssertUtils';
 
 const {
   mockBugHeader,
@@ -87,7 +87,7 @@ describe('BugReportPage', () => {
     expect(mockBugSideBar).toHaveBeenCalled();
 
     await waitFor(() => {
-      expectComponentCalledWithPropsContaining(mockCommentSection, {
+      expectComponentLastCalledWithPropsContaining(mockCommentSection, {
         bugReportId: testId,
       });
     });
