@@ -32,56 +32,55 @@ export const BugSearch: React.FC<BugSearchProps> = ({
   const { theme } = useAppContext();
   const isDarkMode = theme === 'dark';
 
-  const bugExplore: ReactNode = useMemo(
-    () => (
-      <>
-        {isFetchingSearchResult && <LoadingOutlined />}
-        {!isFetchingSearchResult && bugReports && (
-          <List
-            size="large"
-            bordered
-            dataSource={Object.entries(bugReports)}
-            renderItem={([_, value]) => (
-              <SearchResultListItem
-                searchResultCategory={value}
-                handleLoadMore={handleBugExploreLoadMore}
-              />
-            )}
-            className={clsx(
-              'h-[40vh] overflow-y-scroll',
-              isDarkMode ? 'bg-black' : 'bg-white'
-            )}
+  const bugExplore: ReactNode = useMemo(() => {
+    if (isFetchingSearchResult || !bugReports) {
+      return <LoadingOutlined />;
+    }
+    return (
+      <List
+        size="large"
+        bordered
+        dataSource={Object.entries(bugReports)}
+        renderItem={([_, value]) => (
+          <SearchResultListItem
+            searchResultCategory={value}
+            handleLoadMore={handleBugExploreLoadMore}
           />
         )}
-      </>
-    ),
-    [bugReports, handleBugExploreLoadMore, isDarkMode, isFetchingSearchResult]
-  );
+        className={clsx(
+          'h-[40vh] overflow-y-scroll',
+          isDarkMode ? 'bg-black' : 'bg-white'
+        )}
+      />
+    );
+  }, [
+    bugReports,
+    handleBugExploreLoadMore,
+    isDarkMode,
+    isFetchingSearchResult,
+  ]);
 
-  const bugSearchResults: ReactNode = useMemo(
-    () => (
-      <>
-        {isFetchingSearchResult && <LoadingOutlined />}
-        {!isFetchingSearchResult && bugSearchReports && (
-          <List
-            size="large"
-            bordered
-            dataSource={Object.entries(bugSearchReports)}
-            renderItem={([_, value]) => (
-              <SearchResultListItem searchResultCategory={value} />
-            )}
-            className={clsx(
-              'h-[40vh] overflow-y-scroll',
-              isDarkMode ? 'bg-black' : 'bg-white',
-              Object.keys(bugSearchReports).length === 0 &&
-                'flex justify-center items-center'
-            )}
-          />
+  const bugSearchResults: ReactNode = useMemo(() => {
+    if (isFetchingSearchResult || !bugSearchReports) {
+      return <LoadingOutlined />;
+    }
+    return (
+      <List
+        size="large"
+        bordered
+        dataSource={Object.entries(bugSearchReports)}
+        renderItem={([_, value]) => (
+          <SearchResultListItem searchResultCategory={value} />
         )}
-      </>
-    ),
-    [bugSearchReports, isDarkMode, isFetchingSearchResult]
-  );
+        className={clsx(
+          'h-[40vh] overflow-y-scroll',
+          isDarkMode ? 'bg-black' : 'bg-white',
+          Object.keys(bugSearchReports).length === 0 &&
+            'flex justify-center items-center'
+        )}
+      />
+    );
+  }, [bugSearchReports, isDarkMode, isFetchingSearchResult]);
 
   const items = useMemo(
     () => [
