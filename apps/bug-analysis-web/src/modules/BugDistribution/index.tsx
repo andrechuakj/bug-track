@@ -1,5 +1,6 @@
-import { Card, Typography } from 'antd';
+import { Card, Spin, Typography } from 'antd';
 import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import { BugCategory } from '../../api/dbms';
 import CategoryTag from '../../components/CategoryTag';
 import { useAppContext } from '../../contexts/AppContext';
@@ -17,6 +18,19 @@ export const BugDistribution: React.FC<BugDistributionProps> = ({
   categories,
 }) => {
   const { theme } = useAppContext();
+  const [chartOption, setChartOption] = useState(() =>
+    generateBugDistrBar(categories, theme)
+  );
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+
+    setTimeout(() => {
+      setChartOption(generateBugDistrBar(categories, theme));
+      setLoading(false);
+    }, 500);
+  }, [categories, theme]);
 
   return (
     <Card className="h-[40vh] w-[100%]">
@@ -26,10 +40,14 @@ export const BugDistribution: React.FC<BugDistributionProps> = ({
         </Typography.Title>
       </div>
 
-      <EChartsReact
-        option={generateBugDistrBar(categories, theme)}
-        style={{ height: '20vh' }}
-      />
+      {loading ? (
+        <div className="flex justify-center items-center h-[20vh]">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <EChartsReact option={chartOption} style={{ height: '20vh' }} />
+      )}
+
       <div className="overflow-y-scroll p-1 flex flex-wrap">
         {categories.map(
           (cat: BugCategory, idx: number) =>

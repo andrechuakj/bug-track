@@ -231,7 +231,8 @@ const Dashboard: React.FC = (): ReactNode => {
       0,
       10
     );
-    if (bugReports) {
+
+    if (bugReports !== undefined) {
       setBugExplore(
         bugExploreDistribution,
         setBugExploreDistribution,
@@ -322,7 +323,7 @@ const Dashboard: React.FC = (): ReactNode => {
     [filterModalItems, handleApplyFilter, isFilterModalOpen]
   );
 
-  const dashboardOnSuccess = dbmsData && (
+  const dashboardOnSuccess = currentTenant && dbmsData && (
     <div className="px-4">
       <Form form={redemptionForm} onFinish={() => {}}>
         <div className="flex flex-row flex-wrap">
@@ -404,7 +405,7 @@ const Dashboard: React.FC = (): ReactNode => {
     </div>
   );
 
-  const skeleton = !dbmsData && <Skeleton active round />;
+  const skeleton = (!currentTenant || !dbmsData) && <Skeleton active round />;
 
   return (
     <>
