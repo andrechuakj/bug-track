@@ -111,8 +111,8 @@ const Dashboard: React.FC = (): ReactNode => {
 
   useEffect(() => {
     setIsDashboardLoading(true);
-    fetchDashboardData();
-    setIsDashboardLoading(false);
+    fetchDashboardData().then(() => setIsDashboardLoading(false));
+
     // Only run once on mount (per tenant)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTenant]);
