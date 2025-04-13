@@ -23,9 +23,12 @@ export const mockTenantB: DbmsListResponseDto = {
   name: 'Tenant B',
 };
 
-const defaultTenantList: DbmsListResponseDto[] = [mockTenantA, mockTenantB];
-const defaultRefreshTenants = vi.fn();
-const defaultSetCurrentTenant = vi.fn();
+export const defaultTenantList: DbmsListResponseDto[] = [
+  mockTenantA,
+  mockTenantB,
+];
+export const defaultRefreshTenants = vi.fn();
+export const defaultSetCurrentTenant = vi.fn();
 
 type MockSessionProviderProps = {
   children: ReactNode;
@@ -55,9 +58,9 @@ export const MockSessionProvider: React.FC<MockSessionProviderProps> = ({
     }
   });
   defaultSetCurrentTenant.mockImplementation((id) => {
-    const tenant = tenantList?.find((t) => t.id === id);
+    const tenant = list?.find((t) => t.id === id);
     if (!tenant) {
-      console.error('Tenant not found:', id);
+      console.error('Mock: Tenant not found:', id);
       return;
     }
     setCurrent(tenant);
