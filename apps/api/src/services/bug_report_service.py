@@ -113,6 +113,7 @@ class _BugReportService(Service):
         return _BugReportService.BugReportViewModel(
             **br.model_dump(),
             dbms=br.dbms.name,
+            repository=br.dbms.repository,
             category=br.category.name,
         )
 
