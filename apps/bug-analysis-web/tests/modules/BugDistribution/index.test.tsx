@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { BugDistribution, BugDistributionProps } from '../../../src/modules';
 import { MockAppProvider } from '../../contexts/MockAppProvider';
 import { BugCategory } from '../../../src/api/dbms';
-import { expectNthCallWithPropsContaining } from '../../TestUtils';
+import { expectNthCallWithPropsContaining } from '../../MockFnAssertUtils';
 
 const { mockEChartsReact } = vi.hoisted(() => ({
   mockEChartsReact: vi.fn(() => <div data-testid="mock-echarts-react" />),

@@ -1,5 +1,10 @@
-import { render, RenderResult, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  fireEvent,
+  render,
+  RenderResult,
+  waitFor,
+} from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Responses } from '~api';
 import {
   BugReports,
@@ -14,7 +19,31 @@ import {
   mockTenantA,
   mockTenantAData,
 } from '../contexts/MockSessionProvider';
-import { expectComponentCalledWithPropsContaining } from '../TestUtils';
+import {
+  expectComponentCalledWithPropsContaining,
+  expectFnAnyCallContainingArgs,
+  expectFnLastCallToContainAnywhere,
+} from '../MockFnAssertUtils';
+
+const { autoCompleteSpy } = vi.hoisted(() => ({
+  autoCompleteSpy: vi.fn(),
+}));
+
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return */
+vi.mock('antd', async (importOriginal) => {
+  const antd = (await importOriginal()) as any;
+  const OriginalAutoComplete = antd.AutoComplete;
+  const SpyAutoComplete = (props: any) => {
+    autoCompleteSpy(props);
+    return <OriginalAutoComplete {...props} />;
+  };
+  //
+  return {
+    ...antd,
+    AutoComplete: SpyAutoComplete,
+  };
+});
+/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return */
 
 const { mockSearchBugReports, mockFetchBugTrend, mockFetchDbmsData } =
   vi.hoisted(() => ({
@@ -43,7 +72,7 @@ const mockBugReport: BugReportResponseDto = {
   title: 'Mock Bug Report',
   description: 'A mock description',
   url: '',
-  priority: 'Low',
+  repo_url: '',
   issue_created_at: new Date().toISOString(),
   issue_updated_at: null,
   issue_closed_at: null,
@@ -145,6 +174,9 @@ describe('dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it('redirects to login if not authenticated', async () => {
     renderPage({ isAuthenticated: false, isLoading: false });
@@ -169,8 +201,25 @@ describe('dashboard', () => {
     expect(skeletonElement).toBeInTheDocument();
   });
 
+  it('fetches data on mount', async () => {
+    renderPage({
+      isAuthenticated: true,
+      isLoading: false,
+      currentTenant: mockTenantA,
+    });
+
+    await waitFor(() => {
+      expect(mockFetchDbmsData).toHaveBeenCalledWith(mockTenantA.id);
+    });
+    await waitFor(() => {
+      expect(mockFetchBugTrend).toHaveBeenCalledWith(mockTenantA.id);
+    });
+    await waitFor(() => {
+      expectFnAnyCallContainingArgs(mockSearchBugReports, mockTenantA.id);
+    });
+  });
+
   it('updates BugTrend with fetchBugTrend', async () => {
-    console.log('START');
     renderPage({
       isAuthenticated: true,
       isLoading: false,
@@ -213,6 +262,90 @@ describe('dashboard', () => {
 
     await waitFor(() => {
       expect(mockDbmsDetailsComponent).toHaveBeenCalled();
+    });
+  });
+
+  it('renders the BugSearch component', async () => {
+    const { findByTestId } = renderPage({
+      isAuthenticated: true,
+      isLoading: false,
+      currentTenant: mockTenantA,
+    });
+
+    await waitFor(() => {
+      expect(mockBugSearchComponent).toHaveBeenCalled();
+    });
+
+    const bugSearchElement = await findByTestId('mock-bug-search');
+    expect(bugSearchElement).toBeInTheDocument();
+  });
+
+  it('autocompletes bug reports when searching with long strings', async () => {
+    const { getByPlaceholderText } = renderPage({
+      isAuthenticated: true,
+      isLoading: false,
+      currentTenant: mockTenantA,
+    });
+
+    await waitFor(() => {
+      expect(mockSearchBugReports).toHaveBeenCalled();
+    });
+
+    const searchTerm = mockBugReport.title.substring(0, 5);
+    const searchInput = getByPlaceholderText('Search for bug');
+    fireEvent.change(searchInput, { target: { value: searchTerm } });
+
+    await waitFor(() => {
+      expectFnAnyCallContainingArgs(mockSearchBugReports, mockTenantA.id);
+      expectFnAnyCallContainingArgs(mockSearchBugReports, searchTerm);
+    });
+
+    await waitFor(() => {
+      expectFnLastCallToContainAnywhere(autoCompleteSpy, mockBugReport.title);
+    });
+  });
+
+  it('does not autocomplete if search string too short', async () => {
+    const { getByPlaceholderText } = renderPage({
+      isAuthenticated: true,
+      isLoading: false,
+      currentTenant: mockTenantA,
+    });
+
+    await waitFor(() => {
+      expect(mockSearchBugReports).toHaveBeenCalled();
+    });
+    mockSearchBugReports.mockClear();
+
+    const searchTerm = mockBugReport.title.substring(0, 2);
+    const searchInput = getByPlaceholderText('Search for bug');
+    fireEvent.change(searchInput, { target: { value: searchTerm } });
+
+    expect(mockSearchBugReports).not.toHaveBeenCalled();
+  });
+
+  it('populates search results', async () => {
+    const { getByPlaceholderText } = renderPage({
+      isAuthenticated: true,
+      isLoading: false,
+      currentTenant: mockTenantA,
+    });
+
+    await waitFor(() => {
+      expect(mockSearchBugReports).toHaveBeenCalled();
+    });
+    mockSearchBugReports.mockClear();
+
+    const searchTerm = mockBugReport.title.substring(0, 2);
+    const searchInput = getByPlaceholderText('Search for bug');
+    fireEvent.change(searchInput, { target: { value: searchTerm } });
+    fireEvent.submit(searchInput);
+
+    await waitFor(() => {
+      expectFnLastCallToContainAnywhere(
+        mockBugSearchComponent,
+        mockBugReport.title
+      );
     });
   });
 });

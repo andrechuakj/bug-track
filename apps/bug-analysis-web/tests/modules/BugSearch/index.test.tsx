@@ -9,7 +9,7 @@ import { MockAppProvider } from '../../contexts/MockAppProvider';
 import { BugSearchResultStruct } from '../../../src/utils/bug';
 import { AppTheme, FilterBugCategory } from '../../../src/utils/types';
 import { fireEvent, render } from '@testing-library/react';
-import { expectComponentCalledWithPropsContaining } from '../../TestUtils';
+import { expectComponentCalledWithPropsContaining } from '../../MockFnAssertUtils';
 import { Dispatch, SetStateAction } from 'react';
 
 const { mockSearchResultListItem, mockLoadingOutlined } = vi.hoisted(() => ({
