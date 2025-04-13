@@ -47,7 +47,7 @@ const Comment: React.FC<CommentProps> = ({ name, content, timestamp, idx }) => {
         </div>
       </div>
       <Typography.Text type="secondary">
-        {formatDate(timestamp, 8)}
+        {formatDate(timestamp)}
       </Typography.Text>
     </>
   );
