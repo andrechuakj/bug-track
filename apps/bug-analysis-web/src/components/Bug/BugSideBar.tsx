@@ -244,9 +244,7 @@ const BugSideBar: React.FC = () => {
         {isBugLoading && <Skeleton.Input active size="small" />}
         {!isBugLoading && !isEditingVersions && (
           <Typography.Text>
-            {bugReport?.versions_affected
-              ? bugReport.versions_affected
-              : 'Not specified'}
+            {bugReport?.versions_affected ?? 'Not specified'}
           </Typography.Text>
         )}
         {!isBugLoading && isEditingVersions && (
