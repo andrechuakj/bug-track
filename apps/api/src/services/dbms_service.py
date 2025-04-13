@@ -84,7 +84,7 @@ class _DbmsService(Service):
             )
             categories = get_bug_categories_by_dbms_id(tx, dbms_id)
             self.logger.info(f"Found categories: {categories} for dbms_id: {dbms_id}")
-            per_category_limit = max(limit // len(categories), 1)
+            per_category_limit = max(limit // max(len(categories), 1), 1)
             self.logger.info(
                 f"Setting per_category_limit to {per_category_limit} for dbms_id: {dbms_id}"
             )
