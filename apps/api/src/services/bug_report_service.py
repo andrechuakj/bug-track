@@ -151,6 +151,7 @@ class _BugReportService(Service):
             _BugReportService.BugReportViewModel(
                 **br.model_dump(),
                 dbms=br.dbms.name,
+                repository=br.dbms.repository,
                 category=br.category.name,
             )
             for br, _ in similar_reports[:top_n]
