@@ -4,7 +4,11 @@ from datetime import datetime, timezone
 from configuration.logger import get_logger
 from domain.config import get_session
 from domain.enums import PriorityLevel
-from domain.models.BugReport import BugReport, get_latest_bug_report_time
+from domain.models.BugReport import (
+    BugReport,
+    get_latest_bug_report_time,
+    save_bug_report,
+)
 from domain.models.DBMSSystem import get_dbms_systems
 from github import (
     BadCredentialsException,
@@ -79,9 +83,7 @@ def fetch_github_issues_task(self):
 
         try:
             with get_session() as session:
-                latest_issue_time = get_latest_bug_report_time(
-                    session, dbms_id
-                )
+                latest_issue_time = get_latest_bug_report_time(session, dbms_id)
 
             query = build_github_query(repo, latest_issue_time, label)
             logger.info(f"[DBMS {dbms_id}] Searching with query: {query}")
@@ -118,7 +120,7 @@ def fetch_github_issues_task(self):
                                 is_closed=issue.state == "closed",
                                 priority=PriorityLevel.Unassigned,
                             )
-                            BugReport.save_bug_report(session, bug_report)
+                            save_bug_report(session, bug_report)
                             total_issues_count += 1
                             self.update_state(
                                 state={"total_issues_count": total_issues_count}
