@@ -113,7 +113,13 @@ const Signup: React.FC = () => {
         <Form.Item
           label="Password"
           name="password"
-          rules={[{ required: true, message: 'Please enter your password!' }]}
+          rules={[
+            { required: true, message: 'Please enter your password!' },
+            {
+              min: 10,
+              message: 'Password must be at least 10 characters long!',
+            },
+          ]}
           hasFeedback
           className={`w-full max-w-xs md:max-w-xl`}
         >
