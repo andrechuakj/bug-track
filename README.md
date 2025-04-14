@@ -2,6 +2,10 @@
 
 > ## CS3213 Team 10
 
+## Online deployment
+
+Link to online deployment: https://bug-track.projects.richarddominick.me/
+
 ## Setup NextJS application and dev environment
 
 1. Navigate to the `apps/bug-analysis-web/` directory by running `cd apps/bug-analysis-web/`
@@ -47,3 +51,16 @@ Redis needs to be running for the backend to work.
 1. Install dependencies and start the backend with `yarn && yarn dev`
 
 > To check that the environment is set up, run both frontend & backend, and ensure that the API is fetching correctly.
+
+For your convenience, the same `.env.local` file is below, where you have to populate `OPENAI_API_KEY`:
+
+```
+MODE=development
+DATABASE_URL=
+OPENAI_API_KEY=
+JWT_SECRET_KEY=somesupersecretvalue
+REDIS_BROKER_URL=redis://localhost:6379/0
+GITHUB_TOKEN=your_github_token_here
+CELERY_BEAT_SCHEDULE="0 */6 * * *"
+FRONTEND_ALLOWED_ORIGINS='["http://localhost:3000"]'
+```

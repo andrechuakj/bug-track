@@ -76,7 +76,7 @@ async def get_ai_summary(dbms_id: int, r: Request) -> AiSummaryResponseDto:
         return AiSummaryResponseDto(summary="Summary is not ready for this DBMS yet.")
 
 
-@router.get("/{dbms_id}/bug_search")
+@(router.get("/{dbms_id}/bug_search"))
 async def get_bugs(
     dbms_id: int,
     r: Request,
