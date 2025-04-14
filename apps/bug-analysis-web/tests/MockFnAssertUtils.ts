@@ -1,4 +1,3 @@
-import { inspect } from 'util';
 import { expect, Mock } from 'vitest';
 import util from 'node:util';
 

@@ -28,7 +28,7 @@ describe('DashboardAiSummaryModule', () => {
   });
 
   it('renders loading state correctly', () => {
-    const { getByText, getByRole } = render(<DashboardAiSummary dbmsId={1} />);
+    const { getByRole } = render(<DashboardAiSummary dbmsId={1} />);
     expect(fetchAiSummary).toHaveBeenCalledTimes(1);
     expect(fetchAiSummary).toHaveBeenCalledWith(1);
     const button = getByRole('button', { name: /AI Summary/i });
