@@ -21,7 +21,7 @@ export const mockBugReportData = {
   is_closed: false,
   priority: 'Low',
   repository: '',
-  versions_affected: null
+  versions_affected: null,
 } satisfies BugReport;
 
 export const defaultSetBugReport = vi.fn();

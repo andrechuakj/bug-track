@@ -14,11 +14,14 @@ l.replace(
 `;
 
 const Spa404Redirect = () => {
-    return (
-      <Head>
-        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: redirectScript }} />
-      </Head>
-    )
-}
+  return (
+    <Head>
+      <script
+        type="text/javascript"
+        dangerouslySetInnerHTML={{ __html: redirectScript }}
+      />
+    </Head>
+  );
+};
 
 export default Spa404Redirect;
