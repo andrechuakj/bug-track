@@ -1,6 +1,12 @@
 # Bug Track MonoRepo
 
 > ## CS3213 Team 10
+>
+> * Andre Chua Kai Jun [@andrechuakj](https://github.com/andrechuakj)
+> * Dhiraputta Pathama Tengara [@DhiraPT](https://github.com/DhiraPT)
+> * Lam Cheng Hou [@lamchenghou](https://github.com/lamchenghou)
+> * Richard Dominick [@RichDom2185](https://github.com/RichDom2185)
+> * Sia Zhi Hong [@H1410101](https://github.com/H1410101)
 
 ## Online deployment
 
