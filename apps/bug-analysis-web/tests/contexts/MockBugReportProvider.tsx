@@ -15,11 +15,13 @@ export const mockBugReportData = {
   title: 'Mock Bug: Slow query on user table',
   description: 'The query to fetch user profiles takes longer than 5 seconds.',
   url: 'https://github.com/issues/123',
-  repo_url: 'https://github.com/repos/123',
   issue_created_at: new Date('2024-01-15T10:00:00Z').toISOString(),
   issue_updated_at: new Date('2024-01-16T11:30:00Z').toISOString(),
   issue_closed_at: null,
   is_closed: false,
+  priority: 'Low',
+  repository: '',
+  versions_affected: null
 } satisfies BugReport;
 
 export const defaultSetBugReport = vi.fn();
