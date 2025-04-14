@@ -137,12 +137,12 @@ def get_bug_report_by_search_and_cat(
 
 
 def get_latest_bug_report_time(tx: Session, dbms_id: int):
-    br = tx.scalar(
+    br = tx.scalars(
         select(BugReport)
         .where(BugReport.dbms_id == dbms_id)
         .order_by(BugReport.issue_created_at.desc())
         .limit(1)
-    )
+    ).first()
     return br.issue_created_at if br else None
 
 

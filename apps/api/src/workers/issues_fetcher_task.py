@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from configuration.logger import get_logger
 from domain.config import get_session
 from domain.enums import PriorityLevel
-from domain.models.BugReport import BugReport
+from domain.models.BugReport import BugReport, get_latest_bug_report_time
 from domain.models.DBMSSystem import get_dbms_systems
 from github import (
     BadCredentialsException,
@@ -79,7 +79,7 @@ def fetch_github_issues_task(self):
 
         try:
             with get_session() as session:
-                latest_issue_time = BugReport.get_latest_bug_report_time(
+                latest_issue_time = get_latest_bug_report_time(
                     session, dbms_id
                 )
 
@@ -130,7 +130,7 @@ def fetch_github_issues_task(self):
                             logger.exception(
                                 f"[DBMS {dbms_id}] Failed to save issue: {issue.title} - {save_error}. Retrying in 30s..."
                             )
-                            raise self.retry(exc=e, countdown=30)
+                            raise self.retry(exc=save_error, countdown=30)
 
                 if not coordinator.is_classifier_running():
                     classify_bugs_task.delay()
