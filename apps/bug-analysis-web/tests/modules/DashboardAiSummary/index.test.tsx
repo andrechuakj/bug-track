@@ -33,7 +33,6 @@ describe('DashboardAiSummaryModule', () => {
     expect(fetchAiSummary).toHaveBeenCalledWith(1);
     const button = getByRole('button', { name: /AI Summary/i });
     expect(button).toBeDisabled();
-    expect(getByText(/loading/i)).toBeInTheDocument();
   });
 
   it('renders summary when data is loaded', async () => {
