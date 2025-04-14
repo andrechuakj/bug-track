@@ -6,9 +6,9 @@ from domain.models.BugCategory import BugCategory, get_bug_category_by_id
 from domain.models.DBMSSystem import DBMSSystem
 from internal.errors.client_errors import NotFoundError
 from pydantic import ValidationInfo, field_validator
+from sqlalchemy import Enum
 from sqlalchemy.sql import func
 from sqlalchemy.sql.operators import is_
-from sqlalchemy import Enum
 from sqlmodel import TIMESTAMP, Field, Relationship, Session, select, text
 
 
@@ -137,12 +137,13 @@ def get_bug_report_by_search_and_cat(
 
 
 def get_latest_bug_report_time(tx: Session, dbms_id: int):
-    return tx.scalar(
-        select(BugReport.issue_created_at)
+    br = tx.scalar(
+        select(BugReport)
         .where(BugReport.dbms_id == dbms_id)
         .order_by(BugReport.issue_created_at.desc())
         .limit(1)
     )
+    return br.issue_created_at if br else None
 
 
 def get_unclassified_bugs(tx: Session):
