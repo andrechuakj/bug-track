@@ -24,14 +24,14 @@ def vectorize_bugs_task(self):
         while True:
             with get_session() as session:
                 # Vectorize all unvectorized bugs in this batch
-                classified_count = BugVectorizerService.vectorize_no_vector_bug_reports(
+                vectorized_count = BugVectorizerService.vectorize_no_vector_bug_reports(
                     session
                 )
 
-                total_vectorized += classified_count
+                total_vectorized += vectorized_count
                 self.update_state(state={"total_vectorized": total_vectorized})
 
-                if classified_count > 0:
+                if vectorized_count > 0:
                     continue
 
                 # Check if fetcher is still running
@@ -41,14 +41,14 @@ def vectorize_bugs_task(self):
                 logger.info("Waiting for more bugs from fetcher...")
                 time.sleep(5)
 
-        coordinator.set_classifier_running(False)
+        coordinator.set_vectorizer_running(False)
         logger.info(
-            f"Classification task completed. Total classified: {total_vectorized} bug reports."
+            f"Vectorization task completed. Total vectorized: {total_vectorized} bug reports."
         )
         return total_vectorized
 
     except Exception as e:
-        logger.error(f"Error in classification task: {e}")
+        logger.error(f"Error in vectorizer task: {e}")
         if self.request.retries >= self.max_retries:
             coordinator.set_vectorizer_running(False)
         raise self.retry(exc=e, countdown=30)
