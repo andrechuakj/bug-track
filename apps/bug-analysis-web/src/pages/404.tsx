@@ -16,7 +16,7 @@ l.replace(
 const Spa404Redirect = () => {
     return (
       <Head>
-        <script type="text/javascript" dangerouslySetInnerHtml={{ __html: redirectScript }} />
+        <script type="text/javascript" dangerouslySetInnerHTML={{ __html: redirectScript }} />
       </Head>
     )
 }
