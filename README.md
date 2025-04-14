@@ -104,11 +104,13 @@ Redis needs to be running for the backend to work.
    > On Windows, use WSL to run the commands above.
 
 1. Create an `.env.local` file in the current directory and populate all environment variables. You may take reference from `.env.local.example`.
-   - set `MODE` to `development`.
-   - set `JWT_SECRET_KEY` to any string of your choosing (eg randomly generated). Do not share this.
-   - set `REDIS_BROKER_URL` to a url that matches with the port of the redis container in the previous section.
-   - set `GITHUB_TOKEN` to a Personal Access Token from GitHub, with permissions to read from public repositories.
-   - set `CELERY_BEAT_SCHEDULE` to a string representing the frequency of bug scraping. In the example, it occurs every 6 hours.
+   - Set `MODE` to `development`.
+   - Set `JWT_SECRET_KEY` to any string of your choosing (eg randomly generated). Do not share this.
+   - Set `DATABASE_URL` to a url that matches with the port of the PostgreSQL container in the previous section.
+   - Set `REDIS_BROKER_URL` to a url that matches with the port of the Redis container in the previous section.
+   - Set `GITHUB_TOKEN` to a Personal Access Token from GitHub, with permissions to read from repositories. It can be a read-only token; its sole use is only to bypass the aggressive rate-limiting imposed by GitHub for unauthenticated requests.
+   - Set `CELERY_BEAT_SCHEDULE` to a cron string representing the frequency of bug scraping. In the example, it occurs every 6 hours. For a reference what cron strings are, what they mean, and how to write them, see <https://crontab.guru/>.
+   - Set `FRONTEND_ALLOWED_ORIGINS` to a JSON string representing the allowed origins for the frontend. When running in development, this value is ignored, and the FastAPI backend is accessible from all origins.
 1. Install dependencies and start the backend with `yarn && yarn dev`
 
 > To check that the environment is set up, run both frontend & backend, and ensure that the API is fetching correctly.
@@ -117,7 +119,7 @@ For your convenience, the same `.env.local` file is below, where you have to pop
 
 ```
 MODE=development
-DATABASE_URL=
+DATABASE_URL=postgresql://postgres@localhost:5432/postgres
 OPENAI_API_KEY=
 JWT_SECRET_KEY=somesupersecretvalue
 REDIS_BROKER_URL=redis://localhost:6379/0
