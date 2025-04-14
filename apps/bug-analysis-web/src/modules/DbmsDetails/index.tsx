@@ -9,9 +9,9 @@ import CategoryTag from '../../components/CategoryTag';
 import { antdTagPresets, BugTrackColors } from '../../utils/theme';
 
 // Constants for title text
-const TITLE_KEY_ISSUES = 'Bug Check';
-const TITLE_BUG_CATEGORIES = 'Categories of bugs reported today';
-const TITLE_REPORT_GENERATED = 'Report generated';
+export const TITLE_KEY_ISSUES = 'Bug Check';
+export const TITLE_BUG_CATEGORIES = 'Categories of bugs reported today';
+export const TITLE_REPORT_GENERATED = 'Report generated';
 
 export type DbmsDetailsProps = {
   dbmsId: number;
